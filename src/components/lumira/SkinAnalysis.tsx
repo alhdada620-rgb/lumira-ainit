@@ -63,13 +63,34 @@ function CircularGauge({
   );
 }
 
+type HistoryEntry = { id: number; text: string; ts: number };
+
+function formatRelative(ts: number, now: number): string {
+  const diff = Math.max(0, Math.round((now - ts) / 1000));
+  if (diff < 5) return "just now";
+  if (diff < 60) return `${diff}s ago`;
+  const m = Math.floor(diff / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  return `${h}h ago`;
+}
+
 export function SkinAnalysis() {
   const generate = useServerFn(generateSkinInsight);
   const [values, setValues] = useState<Record<MetricKey, number>>(initialValues);
   const [insight, setInsight] = useState<string>("Analyzing your skin profile…");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [now, setNow] = useState(() => Date.now());
   const reqIdRef = useRef(0);
+  const entryIdRef = useRef(0);
+
+  // Tick every 15s so relative timestamps stay fresh
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 15000);
+    return () => clearInterval(t);
+  }, []);
 
   const fetchInsight = async (next: Record<MetricKey, number>) => {
     const myReq = ++reqIdRef.current;
@@ -80,6 +101,12 @@ export function SkinAnalysis() {
       if (myReq !== reqIdRef.current) return;
       setInsight(res.insight);
       setError(res.error);
+      if (!res.error) {
+        setHistory((prev) => [
+          { id: ++entryIdRef.current, text: res.insight, ts: Date.now() },
+          ...prev,
+        ].slice(0, 3));
+      }
     } catch (e) {
       if (myReq !== reqIdRef.current) return;
       console.error(e);
@@ -163,6 +190,24 @@ export function SkinAnalysis() {
           </p>
         )}
       </div>
+      {history.length > 1 && (
+        <div className="mt-3 space-y-1.5 border-t border-accent/10 pt-2.5">
+          <p className="text-[9px] uppercase tracking-widest text-muted-foreground/60">
+            Recent insights
+          </p>
+          {history.slice(1).map((h) => (
+            <div key={h.id} className="flex items-start gap-2">
+              <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-accent/40" />
+              <p className="flex-1 text-[10px] leading-relaxed text-muted-foreground/70 line-clamp-2">
+                {h.text}
+              </p>
+              <span className="shrink-0 text-[9px] uppercase tracking-wider text-muted-foreground/50">
+                {formatRelative(h.ts, now)}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </GlassPanel>
   );
 }
