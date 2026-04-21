@@ -145,7 +145,7 @@ export function SkinAnalysis() {
             )}
           </p>
           <button
-            onClick={fetchInsight}
+            onClick={() => fetchInsight(values)}
             disabled={loading}
             className="shrink-0 rounded-full p-1 text-accent/70 transition hover:bg-accent/10 hover:text-accent disabled:opacity-40"
             title="Refresh insight"
