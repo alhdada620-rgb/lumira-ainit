@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 
 export function DailyDashboard() {
-  const [now, setNow] = useState(new Date());
+  const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
+    setNow(new Date());
     const t = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
-  const time = now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
-  const date = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  const time = now ? now.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false }) : "--:--";
+  const date = now ? now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) : "\u00a0";
 
   return (
     <GlassPanel className="col-span-full lg:col-span-2">

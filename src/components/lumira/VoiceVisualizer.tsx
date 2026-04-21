@@ -20,9 +20,9 @@ export function VoiceVisualizer() {
               key={i}
               className="w-1 rounded-full bg-gradient-to-t from-primary to-accent animate-voice-wave"
               style={{
-                height: `${30 + Math.sin(i * 0.5) * 30 + 30}%`,
-                animationDelay: `${i * 0.05}s`,
-                animationDuration: `${0.6 + (i % 4) * 0.15}s`,
+                height: `${(30 + Math.sin(i * 0.5) * 30 + 30).toFixed(2)}%`,
+                animationDelay: `${(i * 0.05).toFixed(2)}s`,
+                animationDuration: `${(0.6 + (i % 4) * 0.15).toFixed(2)}s`,
                 boxShadow: "0 0 6px var(--primary)",
               }}
             />
