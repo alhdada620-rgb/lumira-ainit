@@ -65,44 +65,70 @@ function CircularGauge({
 
 export function SkinAnalysis() {
   const generate = useServerFn(generateSkinInsight);
+  const [values, setValues] = useState<Record<MetricKey, number>>(initialValues);
   const [insight, setInsight] = useState<string>("Analyzing your skin profile…");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const reqIdRef = useRef(0);
 
-  const fetchInsight = async () => {
+  const fetchInsight = async (next: Record<MetricKey, number>) => {
+    const myReq = ++reqIdRef.current;
     setLoading(true);
     setError(null);
     try {
-      const res = await generate({
-        data: {
-          hydration: metrics[0].value,
-          smoothness: metrics[1].value,
-          skinTone: metrics[2].value,
-        },
-      });
+      const res = await generate({ data: next });
+      if (myReq !== reqIdRef.current) return;
       setInsight(res.insight);
       setError(res.error);
     } catch (e) {
+      if (myReq !== reqIdRef.current) return;
       console.error(e);
       setInsight("Unable to generate insight right now.");
       setError("network_error");
     } finally {
-      setLoading(false);
+      if (myReq === reqIdRef.current) setLoading(false);
     }
   };
 
+  // Debounce AI calls so rapid taps don't spam the gateway
   useEffect(() => {
-    fetchInsight();
+    const t = setTimeout(() => {
+      fetchInsight(values);
+    }, 400);
+    return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [values]);
+
+  const simulate = (key: MetricKey) => {
+    setValues((prev) => {
+      const current = prev[key];
+      let next = current;
+      let tries = 0;
+      while (next === current && tries < 5) {
+        const delta = Math.round((Math.random() - 0.5) * 30);
+        next = Math.max(40, Math.min(99, current + delta));
+        tries++;
+      }
+      return { ...prev, [key]: next };
+    });
+  };
 
   return (
     <GlassPanel title="AI Skin Analysis" icon={<Sparkles className="h-3.5 w-3.5" />} accent>
       <div className="flex justify-around">
-        {metrics.map((m) => (
-          <CircularGauge key={m.label} value={m.value} color={m.color} label={m.label} />
+        {metricConfig.map((m) => (
+          <CircularGauge
+            key={m.key}
+            value={values[m.key]}
+            color={m.color}
+            label={m.label}
+            onClick={() => simulate(m.key)}
+          />
         ))}
       </div>
+      <p className="mt-2 text-center text-[9px] uppercase tracking-widest text-muted-foreground/60">
+        Tap a gauge to simulate a new reading
+      </p>
       <div className="mt-5 rounded-md border border-accent/20 bg-accent/5 p-3">
         <div className="flex items-start justify-between gap-2">
           <p className="text-xs leading-relaxed text-muted-foreground">
