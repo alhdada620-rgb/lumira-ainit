@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useServerFn } from "@tanstack/react-start";
 import { generateSkinInsight } from "@/utils/skin-insight.functions";
+import { onVoiceCommand } from "./voice-events";
 
 type MetricKey = "hydration" | "smoothness" | "skinTone";
 
@@ -123,6 +124,15 @@ export function SkinAnalysis() {
       fetchInsight(values);
     }, 400);
     return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values]);
+
+  // Voice command: re-run analysis on demand
+  useEffect(() => {
+    const off = onVoiceCommand((cmd) => {
+      if (cmd === "analyze-skin") fetchInsight(values);
+    });
+    return off;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values]);
 
