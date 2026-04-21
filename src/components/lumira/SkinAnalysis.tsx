@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useServerFn } from "@tanstack/react-start";
 import { generateSkinInsight } from "@/utils/skin-insight.functions";
+import { onVoiceCommand } from "./voice-events";
 
 type MetricKey = "hydration" | "smoothness" | "skinTone";
 
