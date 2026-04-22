@@ -1,6 +1,7 @@
 import { Wallet, CheckCircle2, Loader2, LogOut, Copy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
+import { onVoiceCommand } from "./voice-events";
 
 interface PiUser {
   username: string;
@@ -21,6 +22,7 @@ export function PiWallet() {
   const [copied, setCopied] = useState(false);
 
   const connect = async () => {
+    if (status !== "idle") return;
     setStatus("connecting");
     // Simulate Pi SDK login flow: request → consent → permissions → success
     await new Promise((r) => setTimeout(r, 1400));
@@ -31,6 +33,14 @@ export function PiWallet() {
     });
     setStatus("connected");
   };
+
+  // Voice / preset command integration
+  useEffect(() => {
+    return onVoiceCommand((cmd) => {
+      if (cmd === "connect-pi-wallet") void connect();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const disconnect = () => {
     setUser(null);

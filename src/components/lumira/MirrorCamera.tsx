@@ -2,10 +2,19 @@ import { Camera, CameraOff, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
+import { onVoiceCommand } from "./voice-events";
 
 export function MirrorCamera() {
   const { stream, active, error, starting, start, stop } = useCamera();
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Voice / preset command integration
+  useEffect(() => {
+    return onVoiceCommand((cmd) => {
+      if (cmd === "start-mirror") void start();
+      else if (cmd === "stop-mirror") stop();
+    });
+  }, [start, stop]);
 
   useEffect(() => {
     const v = videoRef.current;
