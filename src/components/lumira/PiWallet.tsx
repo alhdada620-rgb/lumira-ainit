@@ -113,7 +113,7 @@ export function PiWallet() {
 
         {status !== "connected" ? (
           <button
-            onClick={connect}
+            onClick={() => connect("tap")}
             disabled={status === "connecting"}
             className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-full border border-accent/50 bg-gradient-to-r from-accent/20 via-primary/20 to-accent/20 px-5 py-3 text-xs uppercase tracking-[0.3em] text-foreground shadow-[var(--glow-accent)] transition hover:shadow-[var(--glow-primary)] disabled:opacity-70"
           >
