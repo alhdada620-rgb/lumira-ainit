@@ -2,17 +2,46 @@ import { Camera, CameraOff, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
-import { onVoiceCommand } from "./voice-events";
+import { onVoiceCommand, reportCommandResult } from "./voice-events";
 
 export function MirrorCamera() {
   const { stream, active, error, starting, start, stop } = useCamera();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const activeRef = useRef(active);
+  activeRef.current = active;
 
   // Voice / preset command integration
   useEffect(() => {
-    return onVoiceCommand((cmd) => {
-      if (cmd === "start-mirror") void start();
-      else if (cmd === "stop-mirror") stop();
+    return onVoiceCommand(async (cmd, source) => {
+      if (cmd === "start-mirror") {
+        if (activeRef.current) {
+          reportCommandResult({
+            command: cmd, source, status: "success", message: "Mirror already live",
+          });
+          return;
+        }
+        try {
+          await start();
+          // start() swallows errors into context state; check after
+          if (activeRef.current) {
+            reportCommandResult({ command: cmd, source, status: "success", message: "Front camera activated" });
+          } else {
+            reportCommandResult({ command: cmd, source, status: "error", message: "Camera unavailable" });
+          }
+        } catch (e) {
+          reportCommandResult({
+            command: cmd, source, status: "error",
+            message: e instanceof Error ? e.message : "Camera error",
+          });
+        }
+      } else if (cmd === "stop-mirror") {
+        if (!activeRef.current) {
+          reportCommandResult({ command: cmd, source, status: "error", message: "Mirror is already off" });
+          return;
+        }
+        stop();
+        reportCommandResult({ command: cmd, source, status: "success", message: "Mirror stopped" });
+      }
     });
   }, [start, stop]);
 

@@ -106,10 +106,10 @@ export function VoiceVisualizer() {
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const wantListeningRef = useRef(false);
 
-  const triggerPreset = (preset: Preset) => {
+  const triggerPreset = (preset: Preset, source: "voice" | "tap" = "tap") => {
     setFeedback(preset.feedback);
     setActivePreset(preset.command);
-    emitVoiceCommand(preset.command);
+    emitVoiceCommand(preset.command, source);
     window.setTimeout(() => {
       setFeedback("");
       setActivePreset(null);
@@ -143,7 +143,7 @@ export function VoiceVisualizer() {
       if (combined) setTranscript(combined);
       const check = finalText || interim;
       const preset = check ? matchPreset(check) : null;
-      if (preset) triggerPreset(preset);
+      if (preset) triggerPreset(preset, "voice");
     };
 
     rec.onerror = (e) => {

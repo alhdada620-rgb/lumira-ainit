@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useServerFn } from "@tanstack/react-start";
 import { generateSkinInsight } from "@/utils/skin-insight.functions";
-import { onVoiceCommand } from "./voice-events";
+import { onVoiceCommand, reportCommandResult, type CommandSource } from "./voice-events";
 
 type MetricKey = "hydration" | "smoothness" | "skinTone";
 
@@ -93,7 +93,7 @@ export function SkinAnalysis() {
     return () => clearInterval(t);
   }, []);
 
-  const fetchInsight = async (next: Record<MetricKey, number>) => {
+  const fetchInsight = async (next: Record<MetricKey, number>, source?: CommandSource) => {
     const myReq = ++reqIdRef.current;
     setLoading(true);
     setError(null);
@@ -107,12 +107,32 @@ export function SkinAnalysis() {
           { id: ++entryIdRef.current, text: res.insight, ts: Date.now() },
           ...prev,
         ].slice(0, 3));
+        if (source) {
+          reportCommandResult({
+            command: "analyze-skin", source, status: "success",
+            message: "New insight generated",
+          });
+        }
+      } else if (source) {
+        reportCommandResult({
+          command: "analyze-skin", source, status: "error",
+          message:
+            res.error === "rate_limit" ? "Rate limited" :
+            res.error === "payment_required" ? "AI credits exhausted" :
+            res.error === "missing_key" ? "AI not configured" :
+            "AI gateway error",
+        });
       }
     } catch (e) {
       if (myReq !== reqIdRef.current) return;
       console.error(e);
       setInsight("Unable to generate insight right now.");
       setError("network_error");
+      if (source) {
+        reportCommandResult({
+          command: "analyze-skin", source, status: "error", message: "Network error",
+        });
+      }
     } finally {
       if (myReq === reqIdRef.current) setLoading(false);
     }
@@ -129,8 +149,8 @@ export function SkinAnalysis() {
 
   // Voice command: re-run analysis on demand
   useEffect(() => {
-    const off = onVoiceCommand((cmd) => {
-      if (cmd === "analyze-skin") fetchInsight(values);
+    const off = onVoiceCommand((cmd, source) => {
+      if (cmd === "analyze-skin") fetchInsight(values, source);
     });
     return off;
     // eslint-disable-next-line react-hooks/exhaustive-deps

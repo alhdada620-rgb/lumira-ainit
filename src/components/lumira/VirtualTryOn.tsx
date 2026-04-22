@@ -2,7 +2,7 @@ import { Shirt, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
-import { onVoiceCommand } from "./voice-events";
+import { onVoiceCommand, reportCommandResult } from "./voice-events";
 
 const outfits = [
   { name: "Aurora Coat", color: "linear-gradient(135deg, oklch(0.6 0.18 280), oklch(0.7 0.2 320))", tag: "Couture" },
@@ -18,8 +18,17 @@ export function VirtualTryOn() {
 
   // Voice / preset command integration
   useEffect(() => {
-    return onVoiceCommand((cmd) => {
-      if (cmd === "next-outfit") setIdx((i) => (i + 1) % outfits.length);
+    return onVoiceCommand((cmd, source) => {
+      if (cmd === "next-outfit") {
+        setIdx((i) => {
+          const next = (i + 1) % outfits.length;
+          reportCommandResult({
+            command: cmd, source, status: "success",
+            message: `Now showing ${outfits[next].name}`,
+          });
+          return next;
+        });
+      }
     });
   }, []);
 
