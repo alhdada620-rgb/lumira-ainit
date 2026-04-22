@@ -1,9 +1,14 @@
 // Simple cross-component bus for voice commands.
-// SkinAnalysis subscribes; VoiceVisualizer dispatches.
+// VoiceVisualizer dispatches; feature panels subscribe.
 
 export const VOICE_EVENT = "lumira:voice-command";
 
-export type VoiceCommand = "analyze-skin";
+export type VoiceCommand =
+  | "analyze-skin"
+  | "start-mirror"
+  | "stop-mirror"
+  | "connect-pi-wallet"
+  | "next-outfit";
 
 export function emitVoiceCommand(command: VoiceCommand) {
   if (typeof window === "undefined") return;

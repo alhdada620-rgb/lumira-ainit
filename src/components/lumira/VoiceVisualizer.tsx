@@ -1,7 +1,7 @@
-import { Mic, MicOff } from "lucide-react";
+import { Mic, MicOff, Sparkles, Camera, Wallet, Shirt } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
-import { emitVoiceCommand } from "./voice-events";
+import { emitVoiceCommand, type VoiceCommand } from "./voice-events";
 
 // Minimal Web Speech API types (not in lib.dom for all TS configs)
 type SpeechRecognitionResult = { transcript: string };
@@ -20,14 +20,79 @@ interface SpeechRecognitionLike {
   stop: () => void;
 }
 
-const TRIGGER_PHRASES = [
-  /lumira[, ]+analy[sz]e my skin/i,
-  /analy[sz]e my skin/i,
-  /lumira[, ]+skin (analysis|check|scan)/i,
+type Preset = {
+  command: VoiceCommand;
+  label: string;
+  phrase: string;
+  feedback: string;
+  icon: typeof Sparkles;
+  patterns: RegExp[];
+};
+
+const PRESETS: Preset[] = [
+  {
+    command: "analyze-skin",
+    label: "Analyze my skin",
+    phrase: "Lumira, analyze my skin",
+    feedback: "Analyzing your skin…",
+    icon: Sparkles,
+    patterns: [
+      /lumira[, ]+analy[sz]e my skin/i,
+      /analy[sz]e my skin/i,
+      /lumira[, ]+skin (analysis|check|scan)/i,
+    ],
+  },
+  {
+    command: "start-mirror",
+    label: "Start mirror",
+    phrase: "Lumira, start the mirror",
+    feedback: "Activating the mirror…",
+    icon: Camera,
+    patterns: [
+      /(start|activate|turn on|open)( the)? mirror/i,
+      /(start|open)( the)? camera/i,
+    ],
+  },
+  {
+    command: "stop-mirror",
+    label: "Stop mirror",
+    phrase: "Stop the mirror",
+    feedback: "Stopping the mirror…",
+    icon: Camera,
+    patterns: [
+      /(stop|close|turn off|deactivate)( the)? mirror/i,
+      /(stop|close)( the)? camera/i,
+    ],
+  },
+  {
+    command: "connect-pi-wallet",
+    label: "Connect Pi wallet",
+    phrase: "Connect Pi wallet",
+    feedback: "Connecting your Pi wallet…",
+    icon: Wallet,
+    patterns: [
+      /connect( my)? pi( network)?( wallet)?/i,
+      /(open|launch) pi( wallet)?/i,
+    ],
+  },
+  {
+    command: "next-outfit",
+    label: "Next outfit",
+    phrase: "Show me the next outfit",
+    feedback: "Switching outfit…",
+    icon: Shirt,
+    patterns: [
+      /(next|change|switch)( the)? outfit/i,
+      /try (on )?(another|next) (look|outfit)/i,
+    ],
+  },
 ];
 
-function matchesTrigger(text: string): boolean {
-  return TRIGGER_PHRASES.some((re) => re.test(text));
+function matchPreset(text: string): Preset | null {
+  for (const p of PRESETS) {
+    if (p.patterns.some((re) => re.test(text))) return p;
+  }
+  return null;
 }
 
 export function VoiceVisualizer() {
@@ -36,9 +101,20 @@ export function VoiceVisualizer() {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState<string>("");
   const [feedback, setFeedback] = useState<string>("");
+  const [activePreset, setActivePreset] = useState<VoiceCommand | null>(null);
   const [error, setError] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const wantListeningRef = useRef(false);
+
+  const triggerPreset = (preset: Preset) => {
+    setFeedback(preset.feedback);
+    setActivePreset(preset.command);
+    emitVoiceCommand(preset.command);
+    window.setTimeout(() => {
+      setFeedback("");
+      setActivePreset(null);
+    }, 2000);
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -65,13 +141,9 @@ export function VoiceVisualizer() {
       }
       const combined = (finalText || interim).trim();
       if (combined) setTranscript(combined);
-      const check = (finalText || interim);
-      if (check && matchesTrigger(check)) {
-        setFeedback("Analyzing your skin…");
-        emitVoiceCommand("analyze-skin");
-        // Clear feedback after a moment
-        window.setTimeout(() => setFeedback(""), 2500);
-      }
+      const check = finalText || interim;
+      const preset = check ? matchPreset(check) : null;
+      if (preset) triggerPreset(preset);
     };
 
     rec.onerror = (e) => {
@@ -87,7 +159,6 @@ export function VoiceVisualizer() {
     };
 
     rec.onend = () => {
-      // Auto-restart while user wants to keep listening (Chrome stops periodically)
       if (wantListeningRef.current) {
         try {
           rec.start();
@@ -124,7 +195,6 @@ export function VoiceVisualizer() {
         rec.start();
         setListening(true);
       } catch {
-        // start() can throw if already running
         setListening(true);
       }
     }
@@ -136,7 +206,7 @@ export function VoiceVisualizer() {
       ? error
       : listening
         ? "Listening…"
-        : "Tap mic to activate";
+        : "Tap mic or a preset";
 
   return (
     <GlassPanel title="Voice Assistant" icon={<Mic className="h-3.5 w-3.5" />}>
@@ -184,7 +254,7 @@ export function VoiceVisualizer() {
           {listening ? "Stop" : "Listen"}
         </button>
 
-        <div className="flex h-12 w-full items-center justify-center gap-1">
+        <div className="flex h-10 w-full items-center justify-center gap-1">
           {bars.map((_, i) => (
             <span
               key={i}
@@ -218,8 +288,37 @@ export function VoiceVisualizer() {
             ) : transcript ? (
               <span className="italic">"{transcript}"</span>
             ) : (
-              <>Say "Lumira, analyze my skin"</>
+              <>Say or tap a command below</>
             )}
+          </div>
+        </div>
+
+        {/* Preset command chips */}
+        <div className="w-full border-t border-primary/10 pt-3">
+          <p className="mb-2 text-center text-[9px] uppercase tracking-[0.3em] text-muted-foreground/60">
+            Quick commands
+          </p>
+          <div className="flex flex-wrap justify-center gap-1.5">
+            {PRESETS.map((p) => {
+              const Icon = p.icon;
+              const isActive = activePreset === p.command;
+              return (
+                <button
+                  key={p.command}
+                  type="button"
+                  onClick={() => triggerPreset(p)}
+                  title={`"${p.phrase}"`}
+                  className={`group inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] transition ${
+                    isActive
+                      ? "border-accent bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                      : "border-primary/20 bg-card/40 text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
+                  }`}
+                >
+                  <Icon className="h-3 w-3" />
+                  <span className="tracking-wide">{p.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
