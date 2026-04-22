@@ -6,6 +6,7 @@ import { VirtualTryOn } from "@/components/lumira/VirtualTryOn";
 import { VoiceVisualizer } from "@/components/lumira/VoiceVisualizer";
 import { MirrorCamera } from "@/components/lumira/MirrorCamera";
 import { PiWallet } from "@/components/lumira/PiWallet";
+import { CommandLog } from "@/components/lumira/CommandLog";
 import { CameraProvider } from "@/components/lumira/camera-context";
 
 export const Route = createFileRoute("/")({
@@ -54,6 +55,7 @@ function Index() {
           <HealthVitals />
           <VirtualTryOn />
           <PiWallet />
+          <CommandLog />
         </div>
 
         {/* Signature Footer */}
