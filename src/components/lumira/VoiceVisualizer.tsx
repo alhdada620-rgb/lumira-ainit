@@ -170,6 +170,20 @@ export function VoiceVisualizer() {
           </div>
         </button>
 
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={!supported}
+          className={`inline-flex items-center gap-2 rounded-full border px-5 py-2 text-xs uppercase tracking-[0.3em] transition disabled:cursor-not-allowed disabled:opacity-50 ${
+            listening
+              ? "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
+              : "border-primary/50 bg-gradient-to-r from-primary/20 to-accent/20 text-primary shadow-[var(--glow-soft)] hover:shadow-[var(--glow-primary)]"
+          }`}
+        >
+          {listening ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5" />}
+          {listening ? "Stop" : "Listen"}
+        </button>
+
         <div className="flex h-12 w-full items-center justify-center gap-1">
           {bars.map((_, i) => (
             <span

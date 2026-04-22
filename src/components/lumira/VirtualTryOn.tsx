@@ -1,6 +1,7 @@
-import { Shirt, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { Shirt, ChevronLeft, ChevronRight, Camera } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
+import { useCamera } from "./camera-context";
 
 const outfits = [
   { name: "Aurora Coat", color: "linear-gradient(135deg, oklch(0.6 0.18 280), oklch(0.7 0.2 320))", tag: "Couture" },
@@ -11,30 +12,78 @@ const outfits = [
 export function VirtualTryOn() {
   const [idx, setIdx] = useState(0);
   const outfit = outfits[idx];
+  const { stream, active, start, starting } = useCamera();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (stream) {
+      v.srcObject = stream;
+      v.play().catch(() => {});
+    } else {
+      v.srcObject = null;
+    }
+  }, [stream]);
 
   return (
     <GlassPanel title="Virtual Try-On · AR" icon={<Shirt className="h-3.5 w-3.5" />} accent>
       <div className="space-y-4">
         <div className="relative h-44 overflow-hidden rounded-lg border border-accent/20">
-          <div className="absolute inset-0" style={{ background: outfit.color, opacity: 0.6 }} />
+          {/* Live camera feed */}
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{
+              transform: "scaleX(-1)",
+              filter: "brightness(1.05) saturate(1.1)",
+              opacity: active ? 1 : 0,
+              transition: "opacity 0.5s ease",
+            }}
+          />
+
+          {/* Outfit gradient overlay */}
+          <div
+            className="absolute inset-0 transition-opacity"
+            style={{ background: outfit.color, opacity: active ? 0.45 : 0.6, mixBlendMode: active ? "overlay" : "normal" }}
+          />
           <div className="absolute inset-0 hud-grid opacity-40" />
-          {/* mannequin silhouette */}
-          <svg viewBox="0 0 100 120" className="absolute inset-0 h-full w-full text-foreground/70">
-            <circle cx="50" cy="20" r="10" fill="currentColor" opacity="0.5" />
-            <path d="M30,40 L70,40 L75,90 L60,90 L55,55 L45,55 L40,90 L25,90 Z" fill="currentColor" opacity="0.5" />
-          </svg>
+
+          {/* mannequin silhouette - only when no camera */}
+          {!active && (
+            <svg viewBox="0 0 100 120" className="absolute inset-0 h-full w-full text-foreground/70">
+              <circle cx="50" cy="20" r="10" fill="currentColor" opacity="0.5" />
+              <path d="M30,40 L70,40 L75,90 L60,90 L55,55 L45,55 L40,90 L25,90 Z" fill="currentColor" opacity="0.5" />
+            </svg>
+          )}
+
           {/* scan line */}
           <div className="absolute inset-x-0 h-12 animate-scan bg-gradient-to-b from-transparent via-accent/30 to-transparent" />
-          <div className="absolute left-3 top-3 rounded-full border border-accent/40 bg-background/40 px-2 py-0.5 text-[9px] uppercase tracking-widest text-accent backdrop-blur">
-            ● AR Live
+
+          <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full border border-accent/40 bg-background/40 px-2 py-0.5 text-[9px] uppercase tracking-widest text-accent backdrop-blur">
+            <span className={`h-1 w-1 rounded-full ${active ? "bg-emerald-400" : "bg-accent"}`} />
+            {active ? "AR · Live" : "AR Preview"}
           </div>
+
           <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-foreground/70">{outfit.tag}</div>
+              <div className="text-[10px] uppercase tracking-widest text-foreground/80">{outfit.tag}</div>
               <div className="text-sm text-foreground text-glow-accent">{outfit.name}</div>
             </div>
             <div className="text-[10px] text-muted-foreground">Match · 94%</div>
           </div>
+
+          {!active && (
+            <button
+              onClick={start}
+              disabled={starting}
+              className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-primary/50 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur transition hover:bg-primary/10 disabled:opacity-60"
+            >
+              <Camera className="h-3 w-3" /> {starting ? "…" : "Live"}
+            </button>
+          )}
         </div>
 
         <div className="flex items-center justify-between">

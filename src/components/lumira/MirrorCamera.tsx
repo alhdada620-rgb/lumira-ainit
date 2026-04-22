@@ -1,0 +1,114 @@
+import { Camera, CameraOff, Loader2 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { GlassPanel } from "./GlassPanel";
+import { useCamera } from "./camera-context";
+
+export function MirrorCamera() {
+  const { stream, active, error, starting, start, stop } = useCamera();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (stream) {
+      v.srcObject = stream;
+      v.play().catch(() => {});
+    } else {
+      v.srcObject = null;
+    }
+  }, [stream]);
+
+  return (
+    <GlassPanel title="Smart Mirror · Live" icon={<Camera className="h-3.5 w-3.5" />} className="lg:col-span-2">
+      <div className="space-y-4">
+        <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-primary/30 bg-background/40">
+          {/* Soft glow ring */}
+          <div className="pointer-events-none absolute -inset-px rounded-xl shadow-[var(--glow-primary)]" />
+          {/* HUD grid */}
+          <div className="absolute inset-0 hud-grid opacity-30" />
+
+          {/* Video feed (mirrored + glow filter) */}
+          <video
+            ref={videoRef}
+            playsInline
+            muted
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{
+              transform: "scaleX(-1)",
+              filter: "brightness(1.05) contrast(1.05) saturate(1.1) blur(0.3px) drop-shadow(0 0 18px var(--primary))",
+              opacity: active ? 1 : 0,
+              transition: "opacity 0.6s ease",
+            }}
+          />
+
+          {/* Soft glow overlay */}
+          {active && (
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(ellipse at center, transparent 55%, oklch(0.85 0.15 200 / 0.18) 100%)",
+                mixBlendMode: "screen",
+              }}
+            />
+          )}
+
+          {/* Scan line when live */}
+          {active && (
+            <div className="pointer-events-none absolute inset-x-0 h-16 animate-scan bg-gradient-to-b from-transparent via-primary/25 to-transparent" />
+          )}
+
+          {/* Idle state */}
+          {!active && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center">
+              <div className="relative h-20 w-20">
+                <div className="absolute inset-0 animate-ring-rotate rounded-full border border-dashed border-primary/40" />
+                <div className="absolute inset-3 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 shadow-[var(--glow-soft)]" />
+                <Camera className="absolute inset-0 m-auto h-8 w-8 text-primary" />
+              </div>
+              <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
+                Mirror standby
+              </p>
+              {error && <p className="text-xs text-destructive/80">{error}</p>}
+            </div>
+          )}
+
+          {/* Status badge */}
+          <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full border border-primary/40 bg-background/50 px-2.5 py-1 text-[9px] uppercase tracking-widest backdrop-blur">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                active ? "bg-emerald-400 shadow-[0_0_8px_oklch(0.7_0.2_150)]" : "bg-muted-foreground/50"
+              }`}
+            />
+            <span className={active ? "text-primary" : "text-muted-foreground"}>
+              {active ? "Live Feed" : "Offline"}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+            {active ? "Soft glow filter · enhanced" : "Activate the front camera"}
+          </p>
+          {active ? (
+            <button
+              onClick={stop}
+              className="inline-flex items-center gap-2 rounded-full border border-destructive/40 bg-destructive/10 px-4 py-2 text-xs uppercase tracking-widest text-destructive transition hover:bg-destructive/20"
+            >
+              <CameraOff className="h-3.5 w-3.5" /> Stop Mirror
+            </button>
+          ) : (
+            <button
+              onClick={start}
+              disabled={starting}
+              className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-gradient-to-r from-primary/20 to-accent/20 px-5 py-2 text-xs uppercase tracking-widest text-primary shadow-[var(--glow-soft)] transition hover:shadow-[var(--glow-primary)] disabled:opacity-60"
+            >
+              {starting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
+              {starting ? "Starting…" : "Start Mirror"}
+            </button>
+          )}
+        </div>
+      </div>
+    </GlassPanel>
+  );
+}
