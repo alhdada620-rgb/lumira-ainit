@@ -2,15 +2,23 @@ import { Shirt, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
-import { onVoiceCommand, reportCommandResult } from "./voice-events";
+import { onVoiceCommand, onTryOnItem, reportCommandResult } from "./voice-events";
 
-const outfits = [
+interface OutfitItem {
+  name: string;
+  color: string;
+  tag: string;
+  brand?: string;
+}
+
+const defaultOutfits: OutfitItem[] = [
   { name: "Aurora Coat", color: "linear-gradient(135deg, oklch(0.6 0.18 280), oklch(0.7 0.2 320))", tag: "Couture" },
   { name: "Nebula Silk", color: "linear-gradient(135deg, oklch(0.5 0.15 200), oklch(0.65 0.18 180))", tag: "Evening" },
   { name: "Solstice Knit", color: "linear-gradient(135deg, oklch(0.7 0.15 60), oklch(0.6 0.18 30))", tag: "Casual" },
 ];
 
 export function VirtualTryOn() {
+  const [outfits, setOutfits] = useState<OutfitItem[]>(defaultOutfits);
   const [idx, setIdx] = useState(0);
   const outfit = outfits[idx];
   const { stream, active, start, starting } = useCamera();
@@ -29,6 +37,32 @@ export function VirtualTryOn() {
           return next;
         });
       }
+    });
+  }, [outfits]);
+
+  // Wardrobe item selection — inject into the carousel and focus it
+  useEffect(() => {
+    return onTryOnItem((item, source) => {
+      const incoming: OutfitItem = {
+        name: item.name,
+        color: item.gradient,
+        tag: `${item.brand} · ${item.tag}`,
+        brand: item.brand,
+      };
+      setOutfits((prev) => {
+        const existing = prev.findIndex((o) => o.name === incoming.name);
+        if (existing >= 0) {
+          setIdx(existing);
+          return prev;
+        }
+        const next = [incoming, ...prev].slice(0, 8);
+        setIdx(0);
+        return next;
+      });
+      reportCommandResult({
+        command: "try-on-item", source, status: "success",
+        message: `Trying ${item.brand} · ${item.name}`,
+      });
     });
   }, []);
 
