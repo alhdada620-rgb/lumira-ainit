@@ -292,19 +292,17 @@ export function VirtualWardrobe() {
                 key={item.id}
                 className="flex items-center gap-3 px-2.5 py-2 transition hover:bg-primary/5"
               >
-                {/* Swatch + glyph */}
+                {/* Swatch + brand glyph */}
                 <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-primary/20">
                   <div className="absolute inset-0" style={{ background: item.gradient }} />
-                  <div
-                    className={`absolute inset-0 flex items-center justify-center text-[10px] leading-none ${style.glyphBg} ${style.glyphText} opacity-90`}
+                  <span
+                    className={`absolute inset-0 flex items-center justify-center text-[11px] leading-none ${style.glyphBg} ${style.glyphText}`}
+                    style={{ clipPath: "inset(35% 35% 0 0)" }}
                     aria-label={`${item.brand} logo`}
                     title={item.brand}
-                    style={{ background: undefined, mixBlendMode: "normal" }}
                   >
-                    <span className={`flex h-4 w-4 items-center justify-center rounded ${style.glyphBg}`}>
-                      {BRAND_GLYPH[item.brand]}
-                    </span>
-                  </div>
+                    {BRAND_GLYPH[item.brand]}
+                  </span>
                 </div>
 
                 {/* Info */}
