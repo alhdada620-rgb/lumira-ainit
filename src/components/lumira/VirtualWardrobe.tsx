@@ -164,6 +164,15 @@ export function VirtualWardrobe() {
     window.setTimeout(() => setLastTried((cur) => (cur === item.id ? null : cur)), 1200);
   };
 
+  const clearQuery = () => {
+    setQuery("");
+    try {
+      window.localStorage.removeItem("lumira:wardrobe-query");
+    } catch {
+      // ignore privacy-mode failures
+    }
+  };
+
   return (
     <GlassPanel
       title="Virtual Wardrobe"
@@ -179,22 +188,21 @@ export function VirtualWardrobe() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search items, brands, occasions…"
+            onKeyDown={(e) => {
+              if (e.key === "Escape" && query) {
+                e.preventDefault();
+                clearQuery();
+              }
+            }}
+            placeholder="Search items, brands, occasions… (Esc to clear)"
             className="w-full rounded-full border border-primary/25 bg-card/40 py-2 pl-9 pr-9 text-xs text-foreground placeholder:text-muted-foreground/60 backdrop-blur transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
           />
           {query && (
             <button
               type="button"
-              onClick={() => {
-                setQuery("");
-                try {
-                  window.localStorage.removeItem("lumira:wardrobe-query");
-                } catch {
-                  // ignore privacy-mode failures
-                }
-              }}
+              onClick={clearQuery}
               aria-label="Clear search"
-              title="Clear search"
+              title="Clear search (Esc)"
               className="absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground/70 transition hover:bg-primary/10 hover:text-foreground"
             >
               <X className="h-3 w-3" />
