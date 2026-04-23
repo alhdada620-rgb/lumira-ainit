@@ -9,7 +9,17 @@ export type VoiceCommand =
   | "start-mirror"
   | "stop-mirror"
   | "connect-pi-wallet"
-  | "next-outfit";
+  | "next-outfit"
+  | "try-on-item";
+
+export interface TryOnPayload {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+  gradient: string;
+  tag: string;
+}
 
 export type CommandStatus = "success" | "error";
 export type CommandSource = "voice" | "tap";
