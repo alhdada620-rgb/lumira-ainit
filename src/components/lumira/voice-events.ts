@@ -43,6 +43,29 @@ export function emitVoiceCommand(command: VoiceCommand, source: CommandSource = 
   );
 }
 
+export const TRYON_EVENT = "lumira:tryon-item";
+
+export function emitTryOnItem(item: TryOnPayload, source: CommandSource = "tap") {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent<{ item: TryOnPayload; source: CommandSource }>(TRYON_EVENT, {
+      detail: { item, source },
+    }),
+  );
+}
+
+export function onTryOnItem(
+  handler: (item: TryOnPayload, source: CommandSource) => void,
+) {
+  if (typeof window === "undefined") return () => {};
+  const listener = (e: Event) => {
+    const detail = (e as CustomEvent<{ item: TryOnPayload; source: CommandSource }>).detail;
+    handler(detail.item, detail.source);
+  };
+  window.addEventListener(TRYON_EVENT, listener);
+  return () => window.removeEventListener(TRYON_EVENT, listener);
+}
+
 export function onVoiceCommand(
   handler: (command: VoiceCommand, source: CommandSource) => void,
 ) {
