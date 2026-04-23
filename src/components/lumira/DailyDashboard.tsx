@@ -50,8 +50,7 @@ export function DailyDashboard() {
             <span className="text-3xl font-light text-glow-accent">π</span>
             <span className="font-light text-4xl tabular-nums text-glow-accent">1,247.83</span>
           </div>
-          <div className="mt-1 text-xs text-emerald-400/90">+12.4 today</div>
-          <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">≈ $419.27 USD</div>
+          <div className="mt-1 text-xs uppercase tracking-widest text-emerald-400/90">+12.4 TODAY</div>
         </div>
       </div>
     </GlassPanel>
