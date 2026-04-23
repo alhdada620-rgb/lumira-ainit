@@ -96,7 +96,21 @@ type CategoryKey = (typeof CATEGORIES)[number]["key"];
 
 export function VirtualWardrobe() {
   const [query, setQuery] = useState("");
-  const [cat, setCat] = useState<CategoryKey>("all");
+  const [cat, setCat] = useState<CategoryKey>(() => {
+    if (typeof window === "undefined") return "all";
+    const saved = window.localStorage.getItem("lumira:wardrobe-category");
+    const valid = CATEGORIES.some((c) => c.key === saved);
+    return valid ? (saved as CategoryKey) : "all";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem("lumira:wardrobe-category", cat);
+    } catch {
+      // ignore quota / privacy-mode failures
+    }
+  }, [cat]);
   const [lastTried, setLastTried] = useState<string | null>(null);
   const [view, setView] = useState<ViewMode>(() => {
     if (typeof window === "undefined") return "grid";
