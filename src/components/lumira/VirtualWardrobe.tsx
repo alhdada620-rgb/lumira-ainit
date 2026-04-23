@@ -95,7 +95,23 @@ const CATEGORIES = [
 type CategoryKey = (typeof CATEGORIES)[number]["key"];
 
 export function VirtualWardrobe() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return window.localStorage.getItem("lumira:wardrobe-query") ?? "";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (query) {
+        window.localStorage.setItem("lumira:wardrobe-query", query);
+      } else {
+        window.localStorage.removeItem("lumira:wardrobe-query");
+      }
+    } catch {
+      // ignore quota / privacy-mode failures
+    }
+  }, [query]);
   const [cat, setCat] = useState<CategoryKey>(() => {
     if (typeof window === "undefined") return "all";
     const saved = window.localStorage.getItem("lumira:wardrobe-category");
