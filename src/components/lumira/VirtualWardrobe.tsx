@@ -1,4 +1,4 @@
-import { Shirt, Search, Sparkles, LayoutGrid, List } from "lucide-react";
+import { Shirt, Search, Sparkles, LayoutGrid, List, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitTryOnItem, type TryOnPayload } from "./voice-events";
@@ -180,8 +180,26 @@ export function VirtualWardrobe() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search items, brands, occasions…"
-            className="w-full rounded-full border border-primary/25 bg-card/40 py-2 pl-9 pr-3 text-xs text-foreground placeholder:text-muted-foreground/60 backdrop-blur transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+            className="w-full rounded-full border border-primary/25 bg-card/40 py-2 pl-9 pr-9 text-xs text-foreground placeholder:text-muted-foreground/60 backdrop-blur transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
           />
+          {query && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                try {
+                  window.localStorage.removeItem("lumira:wardrobe-query");
+                } catch {
+                  // ignore privacy-mode failures
+                }
+              }}
+              aria-label="Clear search"
+              title="Clear search"
+              className="absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground/70 transition hover:bg-primary/10 hover:text-foreground"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
