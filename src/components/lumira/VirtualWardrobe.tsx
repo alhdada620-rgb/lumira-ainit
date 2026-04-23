@@ -1,7 +1,9 @@
-import { Shirt, Search, Sparkles } from "lucide-react";
+import { Shirt, Search, Sparkles, LayoutGrid, List } from "lucide-react";
 import { useMemo, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitTryOnItem, type TryOnPayload } from "./voice-events";
+
+type ViewMode = "grid" | "list";
 
 type Brand = "Zara" | "H&M" | "Nike" | "Arabic Elegance";
 
@@ -96,6 +98,7 @@ export function VirtualWardrobe() {
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState<CategoryKey>("all");
   const [lastTried, setLastTried] = useState<string | null>(null);
+  const [view, setView] = useState<ViewMode>("grid");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -138,7 +141,7 @@ export function VirtualWardrobe() {
           />
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           {CATEGORIES.map((c) => {
             const isActive = cat === c.key;
             return (
@@ -155,6 +158,40 @@ export function VirtualWardrobe() {
               </button>
             );
           })}
+
+          {/* View toggle */}
+          <div
+            role="group"
+            aria-label="Wardrobe view"
+            className="ml-1 inline-flex overflow-hidden rounded-full border border-primary/25 bg-card/30 backdrop-blur"
+          >
+            <button
+              type="button"
+              onClick={() => setView("grid")}
+              aria-pressed={view === "grid"}
+              title="Grid view"
+              className={`flex h-7 w-7 items-center justify-center transition ${
+                view === "grid"
+                  ? "bg-accent/15 text-accent shadow-[var(--glow-soft)]"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setView("list")}
+              aria-pressed={view === "list"}
+              title="List view"
+              className={`flex h-7 w-7 items-center justify-center border-l border-primary/25 transition ${
+                view === "list"
+                  ? "bg-accent/15 text-accent shadow-[var(--glow-soft)]"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -169,7 +206,7 @@ export function VirtualWardrobe() {
             Try a different brand or keyword
           </p>
         </div>
-      ) : (
+      ) : view === "grid" ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {filtered.map((item) => {
             const style = BRAND_STYLE[item.brand];
@@ -245,6 +282,53 @@ export function VirtualWardrobe() {
             );
           })}
         </div>
+      ) : (
+        <ul className="divide-y divide-primary/10 overflow-hidden rounded-lg border border-primary/20 bg-card/20 backdrop-blur">
+          {filtered.map((item) => {
+            const style = BRAND_STYLE[item.brand];
+            const wasTried = lastTried === item.id;
+            return (
+              <li
+                key={item.id}
+                className="flex items-center gap-3 px-2.5 py-2 transition hover:bg-primary/5"
+              >
+                {/* Swatch + brand glyph */}
+                <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md border border-primary/20">
+                  <div className="absolute inset-0" style={{ background: item.gradient }} />
+                  <span
+                    className={`absolute inset-0 flex items-center justify-center text-[11px] leading-none ${style.glyphBg} ${style.glyphText}`}
+                    style={{ clipPath: "inset(35% 35% 0 0)" }}
+                    aria-label={`${item.brand} logo`}
+                    title={item.brand}
+                  >
+                    {BRAND_GLYPH[item.brand]}
+                  </span>
+                </div>
+
+                {/* Info */}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-xs text-foreground">{item.name}</p>
+                  <p className="truncate text-[10px] text-muted-foreground">
+                    {item.brand} · {item.category} · {item.tag}
+                  </p>
+                </div>
+
+                {/* Try On */}
+                <button
+                  onClick={() => handleTryOn(item)}
+                  className={`inline-flex shrink-0 items-center gap-1 rounded-md border px-2 py-1 text-[10px] uppercase tracking-widest transition ${
+                    wasTried
+                      ? "border-accent/60 bg-accent/15 text-accent shadow-[var(--glow-soft)]"
+                      : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
+                  }`}
+                >
+                  <Sparkles className="h-3 w-3" />
+                  {wasTried ? "Sent" : "Try On"}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       )}
     </GlassPanel>
   );
