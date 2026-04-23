@@ -1,5 +1,5 @@
 import { Shirt, Search, Sparkles, LayoutGrid, List } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitTryOnItem, type TryOnPayload } from "./voice-events";
 
@@ -98,7 +98,20 @@ export function VirtualWardrobe() {
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState<CategoryKey>("all");
   const [lastTried, setLastTried] = useState<string | null>(null);
-  const [view, setView] = useState<ViewMode>("grid");
+  const [view, setView] = useState<ViewMode>(() => {
+    if (typeof window === "undefined") return "grid";
+    const saved = window.localStorage.getItem("lumira:wardrobe-view");
+    return saved === "list" || saved === "grid" ? saved : "grid";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem("lumira:wardrobe-view", view);
+    } catch {
+      // ignore quota / privacy-mode failures
+    }
+  }, [view]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
