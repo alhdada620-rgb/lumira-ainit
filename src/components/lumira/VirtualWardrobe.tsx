@@ -1,7 +1,9 @@
-import { Shirt, Search, Sparkles } from "lucide-react";
+import { Shirt, Search, Sparkles, LayoutGrid, List } from "lucide-react";
 import { useMemo, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitTryOnItem, type TryOnPayload } from "./voice-events";
+
+type ViewMode = "grid" | "list";
 
 type Brand = "Zara" | "H&M" | "Nike" | "Arabic Elegance";
 
