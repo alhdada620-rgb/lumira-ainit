@@ -164,6 +164,15 @@ export function VirtualWardrobe() {
     window.setTimeout(() => setLastTried((cur) => (cur === item.id ? null : cur)), 1200);
   };
 
+  const clearQuery = () => {
+    setQuery("");
+    try {
+      window.localStorage.removeItem("lumira:wardrobe-query");
+    } catch {
+      // ignore privacy-mode failures
+    }
+  };
+
   return (
     <GlassPanel
       title="Virtual Wardrobe"
