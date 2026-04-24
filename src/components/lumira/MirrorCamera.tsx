@@ -215,31 +215,70 @@ export function MirrorCamera() {
           )}
         </div>
 
-        {/* Persistent AR overlay status + reset (visible even when camera is off) */}
-        {arOverlay && (
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 backdrop-blur">
+        {/* Persistent AR overlay status + history controls (visible even when camera is off) */}
+        {(arOverlay || arHistoryLength > 0) && (
+          <div className="flex flex-col gap-2 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 backdrop-blur sm:flex-row sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-2">
               <span
                 className="h-4 w-4 shrink-0 rounded-full border border-accent/40 shadow-[var(--glow-soft)]"
-                style={{ background: arOverlay.color }}
+                style={{ background: arOverlay ? arOverlay.color : "transparent" }}
                 aria-hidden
               />
               <div className="min-w-0">
                 <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-accent">
-                  <Sparkles className="h-3 w-3" /> AR Saved · {arOverlay.kind}
+                  <Sparkles className="h-3 w-3" />
+                  {arOverlay ? `AR Saved · ${arOverlay.kind}` : "AR Cleared"}
+                  {arHistoryLength > 0 && (
+                    <span className="text-muted-foreground/70">
+                      · {arHistoryIndex + 1}/{arHistoryLength}
+                    </span>
+                  )}
                 </div>
-                <div className="truncate text-[11px] text-foreground">{arOverlay.label}</div>
+                <div className="truncate text-[11px] text-foreground">
+                  {arOverlay ? arOverlay.label : "No overlay applied"}
+                </div>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={clearAROverlay}
-              title="Reset AR overlay and clear saved state"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-destructive/40 bg-destructive/5 px-3 py-1.5 text-[10px] uppercase tracking-widest text-destructive transition hover:bg-destructive/15"
-            >
-              <RotateCcw className="h-3 w-3" /> Reset AR
-            </button>
+
+            <div className="flex shrink-0 items-center gap-1.5">
+              {/* Undo */}
+              <button
+                type="button"
+                onClick={undoAR}
+                disabled={!canUndoAR}
+                aria-label="Undo AR overlay change"
+                title="Undo AR overlay change"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-primary/30 bg-card/40 text-primary transition hover:bg-primary/10 hover:shadow-[var(--glow-soft)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-card/40 disabled:hover:shadow-none"
+              >
+                <Undo2 className="h-3.5 w-3.5" />
+              </button>
+
+              {/* Redo */}
+              <button
+                type="button"
+                onClick={redoAR}
+                disabled={!canRedoAR}
+                aria-label="Redo AR overlay change"
+                title="Redo AR overlay change"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-primary/30 bg-card/40 text-primary transition hover:bg-primary/10 hover:shadow-[var(--glow-soft)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-card/40 disabled:hover:shadow-none"
+              >
+                <Redo2 className="h-3.5 w-3.5" />
+              </button>
+
+              {/* Reset (only when an overlay is active) */}
+              {arOverlay && (
+                <button
+                  type="button"
+                  onClick={clearAROverlay}
+                  title="Reset AR overlay (adds to history — undo to restore)"
+                  className="ml-1 inline-flex shrink-0 items-center gap-1.5 rounded-full border border-destructive/40 bg-destructive/5 px-3 py-1.5 text-[10px] uppercase tracking-widest text-destructive transition hover:bg-destructive/15"
+                >
+                  <RotateCcw className="h-3 w-3" /> Reset
+                </button>
+              )}
+            </div>
           </div>
+        )}
         )}
       </div>
     </GlassPanel>
