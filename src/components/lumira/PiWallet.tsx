@@ -2,11 +2,11 @@ import { Wallet, CheckCircle2, Loader2, LogOut, Copy } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { onVoiceCommand, reportCommandResult, type CommandSource } from "./voice-events";
+import { useWallet } from "./wallet-context";
 
 interface PiUser {
   username: string;
   uid: string;
-  balance: number;
 }
 
 function makeAddress() {
@@ -22,6 +22,7 @@ export function PiWallet() {
   const [copied, setCopied] = useState(false);
   const statusRef = useRef(status);
   statusRef.current = status;
+  const { balance, todayDelta, unlocked } = useWallet();
 
   const connect = async (source?: CommandSource) => {
     if (statusRef.current !== "idle") {
@@ -39,7 +40,6 @@ export function PiWallet() {
     const newUser = {
       username: "lumira_pioneer",
       uid: makeAddress(),
-      balance: +(Math.random() * 250 + 12).toFixed(4),
     };
     setUser(newUser);
     setStatus("connected");
@@ -50,6 +50,7 @@ export function PiWallet() {
       });
     }
   };
+
 
   // Voice / preset command integration
   useEffect(() => {
