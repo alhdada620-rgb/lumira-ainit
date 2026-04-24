@@ -1,11 +1,16 @@
-import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw } from "lucide-react";
+import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw, Undo2, Redo2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
 import { onVoiceCommand, reportCommandResult } from "./voice-events";
 
 export function MirrorCamera() {
-  const { stream, active, error, starting, start, stop, arOverlay, clearAROverlay } = useCamera();
+  const {
+    stream, active, error, starting, start, stop,
+    arOverlay, clearAROverlay,
+    canUndoAR, canRedoAR, undoAR, redoAR,
+    arHistoryLength, arHistoryIndex,
+  } = useCamera();
   const videoRef = useRef<HTMLVideoElement>(null);
   const activeRef = useRef(active);
   activeRef.current = active;
