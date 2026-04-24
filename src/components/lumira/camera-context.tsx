@@ -1,5 +1,38 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from "react";
 
+const AR_OVERLAY_STORAGE_KEY = "lumira:ar-overlay";
+
+function readPersistedOverlay(): AROverlay | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(AR_OVERLAY_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<AROverlay>;
+    if (
+      !parsed ||
+      typeof parsed.id !== "string" ||
+      typeof parsed.label !== "string" ||
+      typeof parsed.color !== "string" ||
+      (parsed.kind !== "outfit" &&
+        parsed.kind !== "lipstick" &&
+        parsed.kind !== "eyeliner" &&
+        parsed.kind !== "blush")
+    ) {
+      return null;
+    }
+    return {
+      id: parsed.id,
+      kind: parsed.kind,
+      label: parsed.label,
+      color: parsed.color,
+      sub: typeof parsed.sub === "string" ? parsed.sub : undefined,
+      ts: typeof parsed.ts === "number" ? parsed.ts : Date.now(),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export type AROverlayKind = "outfit" | "lipstick" | "eyeliner" | "blush";
 
 export interface AROverlay {
@@ -34,7 +67,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
-  const [arOverlay, setAROverlayState] = useState<AROverlay | null>(null);
+  const [arOverlay, setAROverlayState] = useState<AROverlay | null>(() => readPersistedOverlay());
   const streamRef = useRef<MediaStream | null>(null);
 
   const stop = useCallback(() => {
@@ -67,6 +100,20 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const clearAROverlay = useCallback(() => setAROverlayState(null), []);
+
+  // Persist the active AR overlay so it survives page reloads.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      if (arOverlay) {
+        window.localStorage.setItem(AR_OVERLAY_STORAGE_KEY, JSON.stringify(arOverlay));
+      } else {
+        window.localStorage.removeItem(AR_OVERLAY_STORAGE_KEY);
+      }
+    } catch {
+      // ignore quota / privacy-mode failures
+    }
+  }, [arOverlay]);
 
   useEffect(() => () => stop(), [stop]);
 
