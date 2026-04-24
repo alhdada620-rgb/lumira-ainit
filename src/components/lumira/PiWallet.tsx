@@ -86,11 +86,21 @@ export function PiWallet() {
           <div className="relative flex items-center justify-between">
             <div>
               <div className="text-[9px] uppercase tracking-[0.35em] text-foreground/70">π Network</div>
-              <div className="mt-1 text-2xl font-light text-foreground text-glow-accent">
-                {status === "connected" && user ? `${user.balance.toFixed(4)} π` : "—.—— π"}
+              <div className="mt-1 text-2xl font-light text-foreground text-glow-accent tabular-nums">
+                π {balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="mt-1 text-[10px] text-muted-foreground">
-                {status === "connected" && user ? `@${user.username}` : "Not connected"}
+                {status === "connected" && user
+                  ? `@${user.username}`
+                  : "Live balance · ready to spend"}
+              </div>
+              <div
+                className={`mt-1 text-[10px] uppercase tracking-widest ${
+                  todayDelta >= 0 ? "text-emerald-400" : "text-destructive"
+                }`}
+              >
+                {todayDelta >= 0 ? "+" : "−"}
+                {Math.abs(todayDelta).toFixed(2)} TODAY
               </div>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background/40 ring-1 ring-accent/40 backdrop-blur">
@@ -109,6 +119,22 @@ export function PiWallet() {
                 {copied ? "Copied" : "Copy"}
               </span>
             </button>
+          )}
+
+          {unlocked.length > 0 && (
+            <div className="mt-3 rounded-lg border border-accent/20 bg-background/30 px-3 py-2">
+              <div className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
+                Unlocked with Pi · {unlocked.length}
+              </div>
+              <ul className="mt-1 space-y-0.5">
+                {unlocked.slice(-3).reverse().map((u) => (
+                  <li key={u.id} className="flex items-center justify-between text-[10px] text-foreground/90">
+                    <span className="truncate pr-2">{u.name}</span>
+                    <span className="shrink-0 tabular-nums text-accent">−{u.price.toFixed(2)} π</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
 
