@@ -1,4 +1,4 @@
-import { Camera, CameraOff, Loader2, Sparkles, X } from "lucide-react";
+import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
@@ -209,6 +209,33 @@ export function MirrorCamera() {
             </button>
           )}
         </div>
+
+        {/* Persistent AR overlay status + reset (visible even when camera is off) */}
+        {arOverlay && (
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 backdrop-blur">
+            <div className="flex min-w-0 items-center gap-2">
+              <span
+                className="h-4 w-4 shrink-0 rounded-full border border-accent/40 shadow-[var(--glow-soft)]"
+                style={{ background: arOverlay.color }}
+                aria-hidden
+              />
+              <div className="min-w-0">
+                <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-accent">
+                  <Sparkles className="h-3 w-3" /> AR Saved · {arOverlay.kind}
+                </div>
+                <div className="truncate text-[11px] text-foreground">{arOverlay.label}</div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={clearAROverlay}
+              title="Reset AR overlay and clear saved state"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-destructive/40 bg-destructive/5 px-3 py-1.5 text-[10px] uppercase tracking-widest text-destructive transition hover:bg-destructive/15"
+            >
+              <RotateCcw className="h-3 w-3" /> Reset AR
+            </button>
+          </div>
+        )}
       </div>
     </GlassPanel>
   );
