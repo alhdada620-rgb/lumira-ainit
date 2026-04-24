@@ -1,5 +1,20 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, ReactNode } from "react";
 
+export type AROverlayKind = "outfit" | "lipstick" | "eyeliner" | "blush";
+
+export interface AROverlay {
+  /** Source identifier (e.g. catalog item id) */
+  id: string;
+  kind: AROverlayKind;
+  /** Display label shown on the mirror HUD */
+  label: string;
+  /** CSS color or gradient string used to render the placeholder filter */
+  color: string;
+  /** Brand or category sub-label */
+  sub?: string;
+  ts: number;
+}
+
 interface CameraContextValue {
   stream: MediaStream | null;
   active: boolean;
@@ -7,6 +22,10 @@ interface CameraContextValue {
   starting: boolean;
   start: () => Promise<void>;
   stop: () => void;
+  /** Currently applied AR filter on the mirror feed (null = no overlay) */
+  arOverlay: AROverlay | null;
+  setAROverlay: (overlay: Omit<AROverlay, "ts"> | null) => void;
+  clearAROverlay: () => void;
 }
 
 const CameraContext = createContext<CameraContextValue | null>(null);
@@ -15,6 +34,7 @@ export function CameraProvider({ children }: { children: ReactNode }) {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
+  const [arOverlay, setAROverlayState] = useState<AROverlay | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   const stop = useCallback(() => {
@@ -42,10 +62,28 @@ export function CameraProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const setAROverlay = useCallback((overlay: Omit<AROverlay, "ts"> | null) => {
+    setAROverlayState(overlay ? { ...overlay, ts: Date.now() } : null);
+  }, []);
+
+  const clearAROverlay = useCallback(() => setAROverlayState(null), []);
+
   useEffect(() => () => stop(), [stop]);
 
   return (
-    <CameraContext.Provider value={{ stream, active: !!stream, error, starting, start, stop }}>
+    <CameraContext.Provider
+      value={{
+        stream,
+        active: !!stream,
+        error,
+        starting,
+        start,
+        stop,
+        arOverlay,
+        setAROverlay,
+        clearAROverlay,
+      }}
+    >
       {children}
     </CameraContext.Provider>
   );
