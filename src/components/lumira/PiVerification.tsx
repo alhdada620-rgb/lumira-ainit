@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, XCircle, Loader2, ExternalLink, RefreshCw, AlertTriangle } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, ExternalLink, RefreshCw, AlertTriangle, Wand2 } from "lucide-react";
 import { z } from "zod";
 
 const EXPECTED_KEY =
