@@ -59,6 +59,53 @@ function buildTargetUrl(domain: string): string {
   return `${base}/validation-key.txt`;
 }
 
+/**
+ * Best-effort normalization for the domain input:
+ * - Trims whitespace and strips internal spaces
+ * - Drops common copy-paste noise (surrounding quotes, trailing punctuation)
+ * - Removes leading "@" and "://" typos
+ * - Adds https:// if no protocol
+ * - Lowercases the protocol + hostname
+ * - Removes trailing slashes and a trailing /validation-key.txt
+ */
+function normalizeDomain(raw: string): string {
+  if (!raw) return "";
+  let v = raw.trim();
+  if (!v) return "";
+  // Strip wrapping quotes/backticks
+  v = v.replace(/^["'`]+|["'`]+$/g, "");
+  // Remove all internal whitespace
+  v = v.replace(/\s+/g, "");
+  // Drop trailing punctuation often pasted from sentences
+  v = v.replace(/[.,;:!?]+$/g, "");
+  // Fix "@host.com" → "host.com"
+  v = v.replace(/^@+/, "");
+  // Fix accidental "://host" without scheme
+  v = v.replace(/^:\/+/, "");
+  // Collapse "https:/host" → "https://host"
+  v = v.replace(/^(https?):\/(?!\/)/i, "$1://");
+  // Add https:// if missing
+  if (!/^https?:\/\//i.test(v)) {
+    v = `https://${v}`;
+  }
+  try {
+    const u = new URL(v);
+    u.protocol = u.protocol.toLowerCase();
+    const host = u.hostname.toLowerCase();
+    // Rebuild to drop path/search/hash and trailing slashes
+    let out = `${u.protocol}//${host}`;
+    if (u.port) out += `:${u.port}`;
+    return out;
+  } catch {
+    // Fallback: collapse multiple slashes after scheme, strip trailing /
+    return v
+      .replace(/^(https?:\/\/)\/+/i, "$1")
+      .replace(/\/validation-key\.txt$/i, "")
+      .replace(/\/+$/, "");
+  }
+}
+
+
 export function PiVerification() {
   const [mounted, setMounted] = useState(false);
   const [domain, setDomain] = useState<string>("");
