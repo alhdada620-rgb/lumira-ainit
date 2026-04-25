@@ -213,37 +213,56 @@ export function PiVerification() {
         )}
       </div>
 
-      <div className="flex w-full flex-col gap-2 rounded-2xl border border-primary/20 bg-card/40 p-3 backdrop-blur sm:flex-row sm:items-center">
-        <input
-          type="url"
-          inputMode="url"
-          placeholder="https://your-domain.com (leave blank for current site)"
-          value={domain}
-          onChange={(e) => setDomain(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSaveAndCheck();
-          }}
-          className="flex-1 rounded-full border border-primary/20 bg-background/40 px-4 py-2 text-xs tracking-wider text-foreground placeholder:text-muted-foreground/50 focus:border-primary/60 focus:outline-none"
-        />
-        <button
-          type="button"
-          onClick={handleSaveAndCheck}
-          disabled={status === "checking"}
-          className="inline-flex items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-[10px] uppercase tracking-[0.25em] text-primary transition hover:bg-primary/20 disabled:opacity-50"
-        >
-          <RefreshCw
-            className={`h-3 w-3 ${status === "checking" ? "animate-spin" : ""}`}
+      <div className="flex w-full flex-col gap-2 rounded-2xl border border-primary/20 bg-card/40 p-3 backdrop-blur">
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center">
+          <input
+            type="url"
+            inputMode="url"
+            placeholder="https://your-domain.com (leave blank for current site)"
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
+            onBlur={() => setTouched(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSaveAndCheck();
+            }}
+            aria-invalid={showError}
+            aria-describedby={showError ? "pi-domain-error" : undefined}
+            className={`flex-1 rounded-full border bg-background/40 px-4 py-2 text-xs tracking-wider text-foreground placeholder:text-muted-foreground/50 focus:outline-none ${
+              showError
+                ? "border-destructive/60 focus:border-destructive"
+                : "border-primary/20 focus:border-primary/60"
+            }`}
           />
-          Verify
-        </button>
-        {domain && (
           <button
             type="button"
-            onClick={handleClearDomain}
-            className="rounded-full border border-border/40 px-3 py-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
+            onClick={handleSaveAndCheck}
+            disabled={status === "checking" || showError}
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-[10px] uppercase tracking-[0.25em] text-primary transition hover:bg-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Clear
+            <RefreshCw
+              className={`h-3 w-3 ${status === "checking" ? "animate-spin" : ""}`}
+            />
+            Verify
           </button>
+          {domain && (
+            <button
+              type="button"
+              onClick={handleClearDomain}
+              className="rounded-full border border-border/40 px-3 py-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+        {showError && (
+          <p
+            id="pi-domain-error"
+            role="alert"
+            className="flex items-center gap-1.5 text-[10px] tracking-wider text-destructive"
+          >
+            <AlertTriangle className="h-3 w-3" />
+            {validationError}
+          </p>
         )}
       </div>
 
