@@ -209,6 +209,18 @@ export function PiVerification() {
     runCheck("");
   };
 
+  const handleAutoFix = () => {
+    const fixed = normalizeDomain(domain);
+    setDomain(fixed);
+    setTouched(true);
+  };
+
+  const normalizedPreview = useMemo(() => normalizeDomain(domain), [domain]);
+  const canAutoFix =
+    !!domain.trim() &&
+    normalizedPreview !== domain &&
+    !validateDomain(normalizedPreview);
+
 
   if (!mounted) return null;
 
