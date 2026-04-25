@@ -9,6 +9,7 @@ import { MirrorCamera } from "@/components/lumira/MirrorCamera";
 import { PiWallet } from "@/components/lumira/PiWallet";
 import { CommandLog } from "@/components/lumira/CommandLog";
 import { SmartCatalog } from "@/components/lumira/SmartCatalog";
+import { PiVerification } from "@/components/lumira/PiVerification";
 import { CameraProvider } from "@/components/lumira/camera-context";
 import { WalletProvider } from "@/components/lumira/wallet-context";
 
@@ -87,6 +88,7 @@ function Index() {
             <div className="text-[9px] tracking-[0.3em] text-muted-foreground/60">
               © {new Date().getFullYear()} · LUMIRA SMART MIRROR
             </div>
+            <PiVerification />
           </footer>
         </main>
       </CameraProvider>
