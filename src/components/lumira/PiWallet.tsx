@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { onVoiceCommand, reportCommandResult, type CommandSource } from "./voice-events";
 import { useWallet } from "./wallet-context";
+import { useT } from "./i18n";
 
 interface PiUser {
   username: string;
@@ -17,6 +18,7 @@ function makeAddress() {
 }
 
 export function PiWallet() {
+  const { t } = useT();
   const [status, setStatus] = useState<"idle" | "connecting" | "connected">("idle");
   const [user, setUser] = useState<PiUser | null>(null);
   const [copied, setCopied] = useState(false);
@@ -29,7 +31,7 @@ export function PiWallet() {
       if (source) {
         reportCommandResult({
           command: "connect-pi-wallet", source, status: "error",
-          message: statusRef.current === "connected" ? "Wallet already connected" : "Connection in progress",
+          message: statusRef.current === "connected" ? t("wallet.cmd.alreadyConnected") : t("wallet.cmd.inProgress"),
         });
       }
       return;
@@ -46,7 +48,7 @@ export function PiWallet() {
     if (source) {
       reportCommandResult({
         command: "connect-pi-wallet", source, status: "success",
-        message: `Authenticated as @${newUser.username}`,
+        message: t("wallet.cmd.authedAs", { user: newUser.username }),
       });
     }
   };
@@ -77,7 +79,7 @@ export function PiWallet() {
   };
 
   return (
-    <GlassPanel title="Pi Wallet · Web3" icon={<Wallet className="h-3.5 w-3.5" />} accent>
+    <GlassPanel title={t("wallet.title")} icon={<Wallet className="h-3.5 w-3.5" />} accent>
       <div className="space-y-4">
         <div className="relative overflow-hidden rounded-xl border border-accent/30 p-4"
           style={{ background: "var(--gradient-aurora)" }}
@@ -85,14 +87,14 @@ export function PiWallet() {
           <div className="absolute inset-0 hud-grid opacity-30" />
           <div className="relative flex items-center justify-between">
             <div>
-              <div className="text-[9px] uppercase tracking-[0.35em] text-foreground/70">π Network</div>
+              <div className="text-[9px] uppercase tracking-[0.35em] text-foreground/70">{t("wallet.network")}</div>
               <div className="mt-1 text-2xl font-light text-foreground text-glow-accent tabular-nums">
                 π {balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div className="mt-1 text-[10px] text-muted-foreground">
                 {status === "connected" && user
                   ? `@${user.username}`
-                  : "Live balance · ready to spend"}
+                  : t("wallet.liveBalance")}
               </div>
               <div
                 className={`mt-1 text-[10px] uppercase tracking-widest ${
@@ -100,7 +102,7 @@ export function PiWallet() {
                 }`}
               >
                 {todayDelta >= 0 ? "+" : "−"}
-                {Math.abs(todayDelta).toFixed(2)} TODAY
+                {Math.abs(todayDelta).toFixed(2)} {t("wallet.today")}
               </div>
             </div>
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-background/40 ring-1 ring-accent/40 backdrop-blur">
@@ -114,9 +116,9 @@ export function PiWallet() {
               className="mt-3 flex w-full items-center justify-between rounded-lg border border-accent/20 bg-background/30 px-3 py-2 text-left text-[10px] font-mono text-muted-foreground transition hover:border-accent/40 hover:text-foreground"
             >
               <span className="truncate">{user.uid}</span>
-              <span className="ml-2 inline-flex items-center gap-1 text-accent">
+              <span className="ms-2 inline-flex items-center gap-1 text-accent">
                 {copied ? <CheckCircle2 className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                {copied ? "Copied" : "Copy"}
+                {copied ? t("wallet.copied") : t("wallet.copy")}
               </span>
             </button>
           )}
@@ -124,7 +126,7 @@ export function PiWallet() {
           {unlocked.length > 0 && (
             <div className="mt-3 rounded-lg border border-accent/20 bg-background/30 px-3 py-2">
               <div className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
-                Unlocked with Pi · {unlocked.length}
+                {t("wallet.unlocked", { count: unlocked.length })}
               </div>
               <ul className="mt-1 space-y-0.5">
                 {unlocked.slice(-3).reverse().map((u) => (
@@ -149,31 +151,31 @@ export function PiWallet() {
             />
             {status === "connecting" ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Authorizing…
+                <Loader2 className="h-4 w-4 animate-spin" /> {t("wallet.authorizing")}
               </>
             ) : (
               <>
-                <Wallet className="h-4 w-4" /> Connect Pi Wallet
+                <Wallet className="h-4 w-4" /> {t("wallet.connect")}
               </>
             )}
           </button>
         ) : (
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-emerald-400">
-              <CheckCircle2 className="h-3.5 w-3.5" /> Authenticated
+              <CheckCircle2 className="h-3.5 w-3.5" /> {t("wallet.authenticated")}
             </div>
             <button
               onClick={disconnect}
               className="inline-flex items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/5 px-3 py-1.5 text-[10px] uppercase tracking-widest text-destructive/80 transition hover:bg-destructive/15"
             >
-              <LogOut className="h-3 w-3" /> Disconnect
+              <LogOut className="h-3 w-3" /> {t("wallet.disconnect")}
             </button>
           </div>
         )}
 
         <p className="text-[10px] leading-relaxed text-muted-foreground">
-          Simulated Pi SDK flow — replace with{" "}
-          <span className="font-mono text-primary">Pi.authenticate()</span> for live mainnet integration.
+          {t("wallet.simulatedNote")}{" "}
+          <span className="font-mono text-primary">Pi.authenticate()</span> {t("wallet.simulatedSuffix")}
         </p>
       </div>
     </GlassPanel>
