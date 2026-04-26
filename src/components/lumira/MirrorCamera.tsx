@@ -3,8 +3,10 @@ import { useEffect, useRef } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
 import { onVoiceCommand, reportCommandResult } from "./voice-events";
+import { useT } from "./i18n";
 
 export function MirrorCamera() {
+  const { t } = useT();
   const {
     stream, active, error, starting, start, stop,
     arOverlay, clearAROverlay,
@@ -21,31 +23,30 @@ export function MirrorCamera() {
       if (cmd === "start-mirror") {
         if (activeRef.current) {
           reportCommandResult({
-            command: cmd, source, status: "success", message: "Mirror already live",
+            command: cmd, source, status: "success", message: t("mirror.cmd.alreadyLive"),
           });
           return;
         }
         try {
           await start();
-          // start() swallows errors into context state; check after
           if (activeRef.current) {
-            reportCommandResult({ command: cmd, source, status: "success", message: "Front camera activated" });
+            reportCommandResult({ command: cmd, source, status: "success", message: t("mirror.cmd.activated") });
           } else {
-            reportCommandResult({ command: cmd, source, status: "error", message: "Camera unavailable" });
+            reportCommandResult({ command: cmd, source, status: "error", message: t("mirror.cmd.unavailable") });
           }
         } catch (e) {
           reportCommandResult({
             command: cmd, source, status: "error",
-            message: e instanceof Error ? e.message : "Camera error",
+            message: e instanceof Error ? e.message : t("mirror.cmd.cameraError"),
           });
         }
       } else if (cmd === "stop-mirror") {
         if (!activeRef.current) {
-          reportCommandResult({ command: cmd, source, status: "error", message: "Mirror is already off" });
+          reportCommandResult({ command: cmd, source, status: "error", message: t("mirror.cmd.alreadyOff") });
           return;
         }
         stop();
-        reportCommandResult({ command: cmd, source, status: "success", message: "Mirror stopped" });
+        reportCommandResult({ command: cmd, source, status: "success", message: t("mirror.cmd.stopped") });
       }
     });
   }, [start, stop]);
@@ -62,7 +63,7 @@ export function MirrorCamera() {
   }, [stream]);
 
   return (
-    <GlassPanel title="Smart Mirror · Live" icon={<Camera className="h-3.5 w-3.5" />} className="lg:col-span-2">
+    <GlassPanel title={t("mirror.title")} icon={<Camera className="h-3.5 w-3.5" />} className="lg:col-span-2">
       <div className="space-y-4">
         <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-primary/30 bg-background/40">
           {/* Soft glow ring */}
@@ -110,7 +111,7 @@ export function MirrorCamera() {
                 <Camera className="absolute inset-0 m-auto h-8 w-8 text-primary" />
               </div>
               <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
-                Mirror standby
+                {t("mirror.standby")}
               </p>
               {error && <p className="text-xs text-destructive/80">{error}</p>}
             </div>
@@ -173,7 +174,7 @@ export function MirrorCamera() {
                   onClick={clearAROverlay}
                   className="inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-destructive backdrop-blur transition hover:bg-destructive/15"
                 >
-                  <X className="h-3 w-3" /> Clear
+                  <X className="h-3 w-3" /> {t("mirror.ar.clear")}
                 </button>
               </div>
             </>
@@ -187,21 +188,21 @@ export function MirrorCamera() {
               }`}
             />
             <span className={active ? "text-primary" : "text-muted-foreground"}>
-              {active ? "Live Feed" : "Offline"}
+              {active ? t("mirror.live") : t("mirror.offline")}
             </span>
           </div>
         </div>
 
         <div className="flex items-center justify-between gap-3">
           <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-            {active ? "Soft glow filter · enhanced" : "Activate the front camera"}
+            {active ? t("mirror.softGlow") : t("mirror.activate")}
           </p>
           {active ? (
             <button
               onClick={stop}
               className="inline-flex items-center gap-2 rounded-full border border-destructive/40 bg-destructive/10 px-4 py-2 text-xs uppercase tracking-widest text-destructive transition hover:bg-destructive/20"
             >
-              <CameraOff className="h-3.5 w-3.5" /> Stop Mirror
+              <CameraOff className="h-3.5 w-3.5" /> {t("mirror.stopBtn")}
             </button>
           ) : (
             <button
@@ -210,7 +211,7 @@ export function MirrorCamera() {
               className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-gradient-to-r from-primary/20 to-accent/20 px-5 py-2 text-xs uppercase tracking-widest text-primary shadow-[var(--glow-soft)] transition hover:shadow-[var(--glow-primary)] disabled:opacity-60"
             >
               {starting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
-              {starting ? "Starting…" : "Start Mirror"}
+              {starting ? t("mirror.starting") : t("mirror.startBtn")}
             </button>
           )}
         </div>
@@ -227,7 +228,7 @@ export function MirrorCamera() {
               <div className="min-w-0">
                 <div className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-accent">
                   <Sparkles className="h-3 w-3" />
-                  {arOverlay ? `AR Saved · ${arOverlay.kind}` : "AR Cleared"}
+                  {arOverlay ? t("mirror.ar.saved", { kind: arOverlay.kind }) : t("mirror.ar.cleared")}
                   {arHistoryLength > 0 && (
                     <span className="text-muted-foreground/70">
                       · {arHistoryIndex + 1}/{arHistoryLength}
@@ -235,7 +236,7 @@ export function MirrorCamera() {
                   )}
                 </div>
                 <div className="truncate text-[11px] text-foreground">
-                  {arOverlay ? arOverlay.label : "No overlay applied"}
+                  {arOverlay ? arOverlay.label : t("mirror.ar.noOverlay")}
                 </div>
               </div>
             </div>
@@ -246,8 +247,8 @@ export function MirrorCamera() {
                 type="button"
                 onClick={undoAR}
                 disabled={!canUndoAR}
-                aria-label="Undo AR overlay change"
-                title="Undo AR overlay change"
+                aria-label={t("mirror.ar.undo")}
+                title={t("mirror.ar.undo")}
                 className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-primary/30 bg-card/40 text-primary transition hover:bg-primary/10 hover:shadow-[var(--glow-soft)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-card/40 disabled:hover:shadow-none"
               >
                 <Undo2 className="h-3.5 w-3.5" />
@@ -258,8 +259,8 @@ export function MirrorCamera() {
                 type="button"
                 onClick={redoAR}
                 disabled={!canRedoAR}
-                aria-label="Redo AR overlay change"
-                title="Redo AR overlay change"
+                aria-label={t("mirror.ar.redo")}
+                title={t("mirror.ar.redo")}
                 className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-primary/30 bg-card/40 text-primary transition hover:bg-primary/10 hover:shadow-[var(--glow-soft)] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-card/40 disabled:hover:shadow-none"
               >
                 <Redo2 className="h-3.5 w-3.5" />
@@ -270,10 +271,10 @@ export function MirrorCamera() {
                 <button
                   type="button"
                   onClick={clearAROverlay}
-                  title="Reset AR overlay (adds to history — undo to restore)"
-                  className="ml-1 inline-flex shrink-0 items-center gap-1.5 rounded-full border border-destructive/40 bg-destructive/5 px-3 py-1.5 text-[10px] uppercase tracking-widest text-destructive transition hover:bg-destructive/15"
+                  title={t("mirror.ar.resetTitle")}
+                  className="ms-1 inline-flex shrink-0 items-center gap-1.5 rounded-full border border-destructive/40 bg-destructive/5 px-3 py-1.5 text-[10px] uppercase tracking-widest text-destructive transition hover:bg-destructive/15"
                 >
-                  <RotateCcw className="h-3 w-3" /> Reset
+                  <RotateCcw className="h-3 w-3" /> {t("mirror.ar.reset")}
                 </button>
               )}
             </div>
