@@ -108,30 +108,28 @@ function IndexShell() {
           </div>
         </div>
 
-        {/* Footer signature */}
-        <footer className="mt-10 flex flex-col items-center justify-center gap-2">
-          <div className="h-px w-40 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-          <p
-            className="text-center text-xs tracking-[0.25em] text-foreground/90 text-glow"
-            style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
-          >
-            {isAr ? "تطوير وتصميم" : "Developed by"}{" "}
-            <span className="font-medium text-primary">eslam Ali</span>
-            <span className="mx-2 text-muted-foreground/60">—</span>
-            <span
-              dir="rtl"
-              lang="ar"
-              className="text-accent text-glow-accent"
-              style={{ fontFamily: "'Tajawal','Noto Kufi Arabic','Cairo',system-ui,sans-serif", fontWeight: 500 }}
-            >
-              #إسلام_علي
-            </span>
-          </p>
-          <div className="text-[9px] tracking-[0.3em] text-muted-foreground/60">
-            © {new Date().getFullYear()} · LUMIRA
-          </div>
-        </footer>
       </main>
+
+      {/* Bottom-right signature */}
+      <footer className="fixed bottom-3 end-4 z-20 flex items-center gap-2 rounded-full border border-primary/20 bg-background/40 px-3 py-1.5 backdrop-blur-md">
+        <span className="h-1 w-1 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" />
+        <p
+          className="text-[10px] tracking-[0.2em] text-foreground/85 text-glow"
+          style={{ fontFamily: "'Inter', system-ui, sans-serif", fontWeight: 300 }}
+        >
+          {isAr ? "تطوير" : "Developed by:"}{" "}
+          <span className="font-medium text-primary">eslam Ali</span>
+          <span className="mx-1.5 text-muted-foreground/50">·</span>
+          <span
+            dir="rtl"
+            lang="ar"
+            className="text-accent text-glow-accent"
+            style={{ fontFamily: "'Tajawal','Noto Kufi Arabic','Cairo',system-ui,sans-serif", fontWeight: 500 }}
+          >
+            #إسلام_علي
+          </span>
+        </p>
+      </footer>
     </>
   );
 }
