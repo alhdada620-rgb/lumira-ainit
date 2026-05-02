@@ -2,6 +2,7 @@ import { Shirt, Search, Sparkles, LayoutGrid, List, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitTryOnItem, type TryOnPayload } from "./voice-events";
+import { useT } from "./i18n";
 
 type ViewMode = "grid" | "list";
 
