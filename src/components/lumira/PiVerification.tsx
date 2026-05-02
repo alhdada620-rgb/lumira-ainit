@@ -352,10 +352,10 @@ export function PiVerification() {
           rel="noreferrer"
           className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
         >
-          {t("piverif.openFile")} <ExternalLink className="h-3 w-3" />
+          {t("piverif.openFile")} <ExternalLink className="h-3 w-3 rtl:-scale-x-100" />
         </a>
         {lastUrl && (
-          <span className="max-w-full truncate text-[9px] tracking-widest text-muted-foreground/60">
+          <span dir="ltr" className="max-w-full truncate text-[9px] tracking-widest text-muted-foreground/60">
             {t("piverif.target")} {lastUrl}
           </span>
         )}
