@@ -96,6 +96,7 @@ const CATEGORIES = [
 type CategoryKey = (typeof CATEGORIES)[number]["key"];
 
 export function VirtualWardrobe() {
+  const { t } = useT();
   const [query, setQuery] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     return window.localStorage.getItem("lumira:wardrobe-query") ?? "";
@@ -176,7 +177,7 @@ export function VirtualWardrobe() {
 
   return (
     <GlassPanel
-      title="Virtual Wardrobe"
+      title={t("wardrobe.title")}
       icon={<Shirt className="h-3.5 w-3.5" />}
       className="lg:col-span-3"
       accent
@@ -195,15 +196,15 @@ export function VirtualWardrobe() {
                 clearQuery();
               }
             }}
-            placeholder="Search items, brands, occasions… (Esc to clear)"
+            placeholder={t("wardrobe.search")}
             className="w-full rounded-full border border-primary/25 bg-card/40 py-2 pl-9 pr-9 text-xs text-foreground placeholder:text-muted-foreground/60 backdrop-blur transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
           />
           {query && (
             <button
               type="button"
               onClick={clearQuery}
-              aria-label="Clear search"
-              title="Clear search (Esc)"
+              aria-label={t("wardrobe.clearSearch")}
+              title={t("wardrobe.clearSearchTitle")}
               className="absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground/70 transition hover:bg-primary/10 hover:text-foreground"
             >
               <X className="h-3 w-3" />
@@ -224,7 +225,7 @@ export function VirtualWardrobe() {
                     : "border-primary/25 bg-card/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
               >
-                {c.label}
+                {t(c.labelKey)}
               </button>
             );
           })}
