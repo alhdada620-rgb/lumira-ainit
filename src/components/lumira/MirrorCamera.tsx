@@ -1,5 +1,5 @@
-import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw, Undo2, Redo2, Move, Maximize2, Magnet, Crosshair } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw, Undo2, Redo2, Move, Maximize2, Magnet, Crosshair, Wand2 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
@@ -82,6 +82,155 @@ export function MirrorCamera() {
     setArOffsetY(0);
     setActivePreset(null);
   };
+
+  // ===== Auto-Align: estimate feature position from the live feed =====
+  const [autoAligning, setAutoAligning] = useState(false);
+  const [autoAlignMsg, setAutoAlignMsg] = useState<string | null>(null);
+
+  // Detect a face box (cx, cy, size) in normalized [0..1] coords. Falls back to
+  // a luminance-based centroid (skin/face is usually the brightest cluster).
+  const detectFeature = useCallback(async (
+    video: HTMLVideoElement,
+  ): Promise<{ cx: number; cy: number; size: number; source: "face" | "luma" } | null> => {
+    const w = video.videoWidth;
+    const h = video.videoHeight;
+    if (!w || !h) return null;
+
+    // Try the experimental FaceDetector API first (Chromium on Android, etc.)
+    type FaceBox = { boundingBox: { x: number; y: number; width: number; height: number } };
+    const FD = (globalThis as unknown as { FaceDetector?: new (opts?: unknown) => { detect: (src: CanvasImageSource) => Promise<FaceBox[]> } }).FaceDetector;
+    if (FD) {
+      try {
+        const detector = new FD({ fastMode: true, maxDetectedFaces: 1 });
+        const faces = await detector.detect(video);
+        if (faces && faces.length > 0) {
+          const b = faces[0].boundingBox;
+          return {
+            cx: (b.x + b.width / 2) / w,
+            cy: (b.y + b.height / 2) / h,
+            size: Math.max(b.width / w, b.height / h),
+            source: "face",
+          };
+        }
+      } catch {
+        // ignore and fall through to luminance heuristic
+      }
+    }
+
+    // Luminance/skin-tone centroid fallback. Downsample for speed.
+    const sw = 80;
+    const sh = Math.max(1, Math.round((h / w) * sw));
+    const canvas = document.createElement("canvas");
+    canvas.width = sw;
+    canvas.height = sh;
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    if (!ctx) return null;
+    // Mirror the canvas because the video is rendered with scaleX(-1) — we
+    // want the centroid to match the on-screen orientation.
+    ctx.translate(sw, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, sw, sh);
+    let img: ImageData;
+    try {
+      img = ctx.getImageData(0, 0, sw, sh);
+    } catch {
+      return null; // tainted canvas (cross-origin) — bail out
+    }
+    const d = img.data;
+    let sx = 0, sy = 0, weight = 0, minX = sw, minY = sh, maxX = 0, maxY = 0;
+    for (let y = 0; y < sh; y++) {
+      for (let x = 0; x < sw; x++) {
+        const i = (y * sw + x) * 4;
+        const r = d[i], g = d[i + 1], b = d[i + 2];
+        // Cheap skin-tone heuristic + brightness
+        const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+        const isSkin = r > 95 && g > 40 && b > 20 && r > g && r > b && (r - Math.min(g, b)) > 15;
+        const w2 = isSkin ? lum * 1.5 : lum * 0.4;
+        if (w2 > 80) {
+          sx += x * w2;
+          sy += y * w2;
+          weight += w2;
+          if (x < minX) minX = x; if (x > maxX) maxX = x;
+          if (y < minY) minY = y; if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (weight <= 0) return null;
+    const cx = sx / weight / sw;
+    const cy = sy / weight / sh;
+    const size = Math.max((maxX - minX) / sw, (maxY - minY) / sh);
+    return { cx, cy, size, source: "luma" };
+  }, []);
+
+  // Pick the best preset given a detected feature center & size.
+  const pickBestPreset = useCallback((
+    feature: { cx: number; cy: number; size: number },
+    list: Preset[],
+  ): { preset: Preset; offsetX: number; offsetY: number; scale: number } | null => {
+    if (!list.length) return null;
+    // Convert detected center (0..1) into our offset space (-50..+50% of frame
+    // around center). For an outfit/full-body overlay, anchor the top of the
+    // overlay to roughly the shoulders (just below the face center).
+    const dx = (feature.cx - 0.5) * 100;
+    const dy = (feature.cy - 0.5) * 100;
+
+    // Find the preset whose nominal (x, y) is closest to the detected offset.
+    let best = list[0];
+    let bestDist = Infinity;
+    for (const p of list) {
+      const d2 = (p.x - dx) ** 2 + (p.y - dy) ** 2;
+      if (d2 < bestDist) { bestDist = d2; best = p; }
+    }
+
+    // Suggest a scale: face size hints at distance from camera. Keep within
+    // the slider bounds and bias toward the preset's nominal scale.
+    const sizeBoost = feature.size > 0 ? Math.min(1.6, Math.max(0.7, 1 / Math.max(0.18, feature.size) * 0.35)) : 1;
+    const scale = Math.round(Math.max(50, Math.min(180, best.scale * sizeBoost)));
+
+    // Clamp offsets so the overlay stays inside the slider range.
+    const clamp = (n: number) => Math.max(-40, Math.min(40, Math.round(n)));
+    return { preset: best, offsetX: clamp(dx), offsetY: clamp(dy), scale };
+  }, []);
+
+  const autoAlign = useCallback(async () => {
+    const v = videoRef.current;
+    if (!v || !active || !arOverlay) return;
+    setAutoAligning(true);
+    setAutoAlignMsg(null);
+    try {
+      const feature = await detectFeature(v);
+      if (!feature) {
+        setAutoAlignMsg(t("mirror.ar.autoAlign.noFace"));
+        return;
+      }
+      const result = pickBestPreset(feature, currentPresets);
+      if (!result) {
+        setAutoAlignMsg(t("mirror.ar.autoAlign.noPreset"));
+        return;
+      }
+      setArScale(result.scale);
+      setArOffsetX(result.offsetX);
+      setArOffsetY(result.offsetY);
+      setActivePreset(result.preset.id);
+      setAutoAlignMsg(
+        t("mirror.ar.autoAlign.locked", {
+          preset: t(result.preset.labelKey),
+          source: feature.source === "face" ? t("mirror.ar.autoAlign.srcFace") : t("mirror.ar.autoAlign.srcLuma"),
+        }),
+      );
+    } catch (e) {
+      setAutoAlignMsg(e instanceof Error ? e.message : t("mirror.ar.autoAlign.error"));
+    } finally {
+      setAutoAligning(false);
+    }
+  }, [active, arOverlay, currentPresets, detectFeature, pickBestPreset, t]);
+
+  // Clear the transient auto-align message after a few seconds
+  useEffect(() => {
+    if (!autoAlignMsg) return;
+    const id = setTimeout(() => setAutoAlignMsg(null), 3500);
+    return () => clearTimeout(id);
+  }, [autoAlignMsg]);
   // Reset transform when overlay identity changes
   const overlayKey = arOverlay ? `${arOverlay.kind}:${arOverlay.id}` : null;
   useEffect(() => {
@@ -307,6 +456,16 @@ export function MirrorCamera() {
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
+                  onClick={autoAlign}
+                  disabled={autoAligning}
+                  title={t("mirror.ar.autoAlign.title")}
+                  className="inline-flex items-center gap-1 rounded-full border border-accent/50 bg-gradient-to-r from-primary/20 to-accent/20 px-2.5 py-1 text-[9px] uppercase tracking-widest text-accent shadow-[var(--glow-soft)] transition hover:shadow-[var(--glow-primary)] disabled:opacity-60"
+                >
+                  {autoAligning ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
+                  {autoAligning ? t("mirror.ar.autoAlign.scanning") : t("mirror.ar.autoAlign.btn")}
+                </button>
+                <button
+                  type="button"
                   onClick={() => setSnapEnabled((s) => !s)}
                   aria-pressed={snapEnabled}
                   title={t("mirror.ar.snapTitle")}
@@ -327,6 +486,12 @@ export function MirrorCamera() {
                 </button>
               </div>
             </div>
+
+            {autoAlignMsg && (
+              <div className="rounded-md border border-accent/30 bg-accent/5 px-2 py-1 text-[10px] text-accent">
+                {autoAlignMsg}
+              </div>
+            )}
 
             {/* Alignment presets */}
             {currentPresets.length > 0 && (
