@@ -1,31 +1,122 @@
-import { Wallet, Loader2, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { Wallet, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { useEffect, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useWallet } from "./wallet-context";
 import { useT } from "./i18n";
+import { approvePiPayment, completePiPayment } from "@/server/pi.functions";
 
-type PayState = "idle" | "auth" | "creating" | "approved" | "completed";
+type PayState = "idle" | "auth" | "creating" | "approved" | "completed" | "error";
+
+// Pi SDK types (loaded from https://sdk.minepi.com/pi-sdk.js)
+interface PiAuthResult {
+  user: { uid: string; username: string };
+  accessToken: string;
+}
+interface PiPaymentDTO {
+  identifier: string;
+  amount: number;
+  memo: string;
+  metadata: Record<string, unknown>;
+}
+interface PiPaymentCallbacks {
+  onReadyForServerApproval: (paymentId: string) => void;
+  onReadyForServerCompletion: (paymentId: string, txid: string) => void;
+  onCancel: (paymentId: string) => void;
+  onError: (error: Error, payment?: unknown) => void;
+}
+interface PiSDK {
+  init(opts: { version: "2.0"; sandbox?: boolean }): void;
+  authenticate(
+    scopes: string[],
+    onIncompletePaymentFound: (p: { identifier: string; transaction?: { txid: string } }) => void,
+  ): Promise<PiAuthResult>;
+  createPayment(payment: PiPaymentDTO, callbacks: PiPaymentCallbacks): void;
+}
+declare global {
+  interface Window { Pi?: PiSDK }
+}
 
 export function PiPayWallet() {
   const { lang } = useT();
   const isAr = lang === "ar";
   const { balance, todayDelta } = useWallet();
   const [state, setState] = useState<PayState>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Initialize Pi SDK in sandbox mode (Testnet) once available
+  useEffect(() => {
+    let cancelled = false;
+    const tryInit = () => {
+      if (cancelled) return;
+      if (window.Pi) {
+        try { window.Pi.init({ version: "2.0", sandbox: true }); } catch { /* already inited */ }
+        return;
+      }
+      setTimeout(tryInit, 300);
+    };
+    tryInit();
+    return () => { cancelled = true; };
+  }, []);
 
   const usd = (balance * 0.336).toFixed(2);
 
+  const handleIncomplete = async (p: { identifier: string; transaction?: { txid: string } }) => {
+    if (p.transaction?.txid) {
+      try { await completePiPayment({ data: { paymentId: p.identifier, txid: p.transaction.txid } }); }
+      catch { /* swallow — incomplete cleanup */ }
+    }
+  };
+
   const payWithPi = async () => {
-    if (state !== "idle") return;
-    // Mock Pi.createPayment flow
-    setState("auth");
-    await new Promise((r) => setTimeout(r, 700));
-    setState("creating");
-    await new Promise((r) => setTimeout(r, 900));
-    setState("approved");
-    await new Promise((r) => setTimeout(r, 700));
-    setState("completed");
-    await new Promise((r) => setTimeout(r, 1400));
-    setState("idle");
+    if (state !== "idle" && state !== "error" && state !== "completed") return;
+    setErrorMsg(null);
+
+    if (!window.Pi) {
+      setErrorMsg(isAr ? "افتح التطبيق داخل متصفح Pi" : "Open this app inside the Pi Browser");
+      setState("error");
+      return;
+    }
+
+    try {
+      setState("auth");
+      await window.Pi.authenticate(["username", "payments"], handleIncomplete);
+
+      setState("creating");
+      window.Pi.createPayment(
+        {
+          amount: 0.01,
+          memo: "Lumira test transaction (Step 10)",
+          metadata: { kind: "lumira_test", ts: Date.now() },
+          identifier: `lumira-${Date.now()}`,
+        },
+        {
+          onReadyForServerApproval: async (paymentId) => {
+            try {
+              await approvePiPayment({ data: { paymentId } });
+              setState("approved");
+            } catch (e) {
+              setErrorMsg((e as Error).message);
+              setState("error");
+            }
+          },
+          onReadyForServerCompletion: async (paymentId, txid) => {
+            try {
+              await completePiPayment({ data: { paymentId, txid } });
+              setState("completed");
+              setTimeout(() => setState("idle"), 2200);
+            } catch (e) {
+              setErrorMsg((e as Error).message);
+              setState("error");
+            }
+          },
+          onCancel: () => { setState("idle"); },
+          onError: (err) => { setErrorMsg(err.message); setState("error"); },
+        },
+      );
+    } catch (e) {
+      setErrorMsg((e as Error).message);
+      setState("error");
+    }
   };
 
   const labels: Record<PayState, string> = isAr
@@ -33,18 +124,20 @@ export function PiPayWallet() {
         idle: "ادفع بـ Pi",
         auth: "مصادقة Pi…",
         creating: "إنشاء الدفعة…",
-        approved: "بانتظار الموافقة…",
+        approved: "بانتظار التأكيد…",
         completed: "تم الدفع ✓",
+        error: "حاول مرة أخرى",
       }
     : {
         idle: "Pay with Pi",
         auth: "Authenticating…",
         creating: "Creating payment…",
-        approved: "Awaiting approval…",
+        approved: "Awaiting confirmation…",
         completed: "Payment Complete ✓",
+        error: "Retry",
       };
 
-  const isBusy = state !== "idle";
+  const isBusy = state === "auth" || state === "creating" || state === "approved";
 
   return (
     <GlassPanel
@@ -88,16 +181,22 @@ export function PiPayWallet() {
             <Wallet className="h-4 w-4" />
           ) : state === "completed" ? (
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          ) : state === "error" ? (
+            <AlertTriangle className="h-4 w-4 text-destructive" />
           ) : (
             <Loader2 className="h-4 w-4 animate-spin" />
           )}
           {labels[state]}
         </button>
 
+        {errorMsg && (
+          <p className="text-[10px] leading-relaxed text-destructive/90 break-words">{errorMsg}</p>
+        )}
+
         <p className="text-[10px] leading-relaxed text-muted-foreground">
           {isAr
-            ? "تكامل Pi SDK · الوضع الاختباري نشط — Pi.createPayment()"
-            : "Pi SDK · Sandbox active — Pi.createPayment()"}
+            ? "Pi SDK · الوضع الاختباري — Pi.createPayment()"
+            : "Pi SDK · Sandbox (Testnet) — Pi.createPayment()"}
         </p>
       </div>
     </GlassPanel>
