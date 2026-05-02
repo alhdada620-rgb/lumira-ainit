@@ -251,6 +251,13 @@
   to { transform: rotate(360deg); }
 }
 
+@keyframes bg-zoom {
+  0%, 100% { transform: scale(1.08) translate(0, 0); }
+  50% { transform: scale(1.18) translate(-1%, -1%); }
+}
+
+.animate-bg-zoom { animation: bg-zoom 30s ease-in-out infinite; }
+
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
 .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
 .animate-scan { animation: scan-line 4s linear infinite; }

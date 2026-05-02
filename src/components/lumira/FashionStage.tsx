@@ -13,8 +13,10 @@ interface Brand {
 
 const BRANDS: Brand[] = [
   { id: "hm", name: "H&M", tint: "linear-gradient(135deg, oklch(0.55 0.2 25 / 0.55), oklch(0.4 0.15 25 / 0.4))", outfit: "Casual Crew" },
+  { id: "nike", name: "NIKE", tint: "linear-gradient(135deg, oklch(0.5 0.1 230 / 0.55), oklch(0.3 0.05 230 / 0.45))", outfit: "Sporty Tech Fleece" },
+  { id: "zara", name: "ZARA", tint: "linear-gradient(135deg, oklch(0.35 0.04 60 / 0.55), oklch(0.2 0.02 60 / 0.45))", outfit: "Minimal Tailoring" },
   { id: "namshi", name: "NAMSHI", tint: "linear-gradient(135deg, oklch(0.6 0.18 320 / 0.5), oklch(0.4 0.12 280 / 0.4))", outfit: "Modern Abaya" },
-  { id: "nike", name: "NIKE", tint: "linear-gradient(135deg, oklch(0.5 0.1 230 / 0.55), oklch(0.3 0.05 230 / 0.45))", outfit: "Tech Fleece" },
+  { id: "adidas", name: "ADIDAS", tint: "linear-gradient(135deg, oklch(0.45 0.08 250 / 0.55), oklch(0.25 0.04 250 / 0.45))", outfit: "Track Suit" },
   { id: "sephora", name: "SEPHORA", tint: "linear-gradient(135deg, oklch(0.6 0.2 0 / 0.5), oklch(0.4 0.18 350 / 0.4))", outfit: "Beauty Glow" },
 ];
 
