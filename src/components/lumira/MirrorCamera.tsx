@@ -456,6 +456,16 @@ export function MirrorCamera() {
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
+                  onClick={autoAlign}
+                  disabled={autoAligning}
+                  title={t("mirror.ar.autoAlign.title")}
+                  className="inline-flex items-center gap-1 rounded-full border border-accent/50 bg-gradient-to-r from-primary/20 to-accent/20 px-2.5 py-1 text-[9px] uppercase tracking-widest text-accent shadow-[var(--glow-soft)] transition hover:shadow-[var(--glow-primary)] disabled:opacity-60"
+                >
+                  {autoAligning ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
+                  {autoAligning ? t("mirror.ar.autoAlign.scanning") : t("mirror.ar.autoAlign.btn")}
+                </button>
+                <button
+                  type="button"
                   onClick={() => setSnapEnabled((s) => !s)}
                   aria-pressed={snapEnabled}
                   title={t("mirror.ar.snapTitle")}
@@ -476,6 +486,12 @@ export function MirrorCamera() {
                 </button>
               </div>
             </div>
+
+            {autoAlignMsg && (
+              <div className="rounded-md border border-accent/30 bg-accent/5 px-2 py-1 text-[10px] text-accent">
+                {autoAlignMsg}
+              </div>
+            )}
 
             {/* Alignment presets */}
             {currentPresets.length > 0 && (
