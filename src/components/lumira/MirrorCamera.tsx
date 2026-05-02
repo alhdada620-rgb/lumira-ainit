@@ -1,5 +1,6 @@
-import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw, Undo2, Redo2 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw, Undo2, Redo2, Move, Maximize2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Slider } from "@/components/ui/slider";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
 import { onVoiceCommand, reportCommandResult } from "./voice-events";
