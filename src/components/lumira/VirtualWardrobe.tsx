@@ -233,14 +233,14 @@ export function VirtualWardrobe() {
           {/* View toggle */}
           <div
             role="group"
-            aria-label="Wardrobe view"
+            aria-label={t("wardrobe.view.aria")}
             className="ml-1 inline-flex overflow-hidden rounded-full border border-primary/25 bg-card/30 backdrop-blur"
           >
             <button
               type="button"
               onClick={() => setView("grid")}
               aria-pressed={view === "grid"}
-              title="Grid view"
+              title={t("wardrobe.view.grid")}
               className={`flex h-7 w-7 items-center justify-center transition ${
                 view === "grid"
                   ? "bg-accent/15 text-accent shadow-[var(--glow-soft)]"
@@ -253,7 +253,7 @@ export function VirtualWardrobe() {
               type="button"
               onClick={() => setView("list")}
               aria-pressed={view === "list"}
-              title="List view"
+              title={t("wardrobe.view.list")}
               className={`flex h-7 w-7 items-center justify-center border-l border-primary/25 transition ${
                 view === "list"
                   ? "bg-accent/15 text-accent shadow-[var(--glow-soft)]"
@@ -271,10 +271,10 @@ export function VirtualWardrobe() {
         <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
           <Search className="h-6 w-6 text-muted-foreground/40" />
           <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60">
-            No matches
+            {t("wardrobe.empty.title")}
           </p>
           <p className="text-[10px] text-muted-foreground/50">
-            Try a different brand or keyword
+            {t("wardrobe.empty.subtitle")}
           </p>
         </div>
       ) : view === "grid" ? (
@@ -325,7 +325,7 @@ export function VirtualWardrobe() {
                   {wasTried && (
                     <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-sm">
                       <span className="inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-accent">
-                        <Sparkles className="h-3 w-3" /> Sent to AR
+                        <Sparkles className="h-3 w-3" /> {t("wardrobe.sentToAR")}
                       </span>
                     </div>
                   )}
@@ -346,7 +346,7 @@ export function VirtualWardrobe() {
                     onClick={() => handleTryOn(item)}
                     className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1.5 text-[10px] uppercase tracking-widest text-primary transition hover:bg-primary/20 hover:shadow-[var(--glow-soft)]"
                   >
-                    <Sparkles className="h-3 w-3" /> Try On
+                    <Sparkles className="h-3 w-3" /> {t("wardrobe.tryOn")}
                   </button>
                 </div>
               </article>
@@ -394,7 +394,7 @@ export function VirtualWardrobe() {
                   }`}
                 >
                   <Sparkles className="h-3 w-3" />
-                  {wasTried ? "Sent" : "Try On"}
+                  {wasTried ? t("wardrobe.sent") : t("wardrobe.tryOn")}
                 </button>
               </li>
             );
