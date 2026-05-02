@@ -96,7 +96,7 @@ const CATEGORIES = [
 type CategoryKey = (typeof CATEGORIES)[number]["key"];
 
 export function VirtualWardrobe() {
-  const { t } = useT();
+  const { t, dir } = useT();
   const [query, setQuery] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     return window.localStorage.getItem("lumira:wardrobe-query") ?? "";
@@ -368,7 +368,7 @@ export function VirtualWardrobe() {
                   <div className="absolute inset-0" style={{ background: item.gradient }} />
                   <span
                     className={`absolute inset-0 flex items-center justify-center text-[11px] leading-none ${style.glyphBg} ${style.glyphText}`}
-                    style={{ clipPath: "inset(35% 35% 0 0)" }}
+                    style={{ clipPath: dir === "rtl" ? "inset(35% 0 0 35%)" : "inset(35% 35% 0 0)" }}
                     aria-label={`${item.brand} logo`}
                     title={item.brand}
                   >
