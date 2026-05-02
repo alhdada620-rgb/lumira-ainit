@@ -16,6 +16,12 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       include: ["src/components/lumira/**", "src/routes/index.tsx", "src/i18n/**"],
       exclude: ["src/test/**", "**/*.d.ts", "src/routeTree.gen.ts"],
+      thresholds: {
+        lines: 13,
+        branches: 9,
+        functions: 12,
+        statements: 13,
+      },
     },
   },
   esbuild: {
