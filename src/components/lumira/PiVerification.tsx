@@ -242,12 +242,12 @@ export function PiVerification() {
 
   const label =
     status === "ok"
-      ? "Verified"
+      ? t("piverif.label.verified")
       : status === "checking" || status === "idle"
-      ? "Checking…"
+      ? t("piverif.label.checking")
       : status === "mismatch"
-      ? "Mismatch"
-      : "Unreachable";
+      ? t("piverif.label.mismatch")
+      : t("piverif.label.unreachable");
 
   const fileLink = buildTargetUrl(domain);
 
@@ -260,7 +260,7 @@ export function PiVerification() {
           className={`h-3.5 w-3.5 ${status === "checking" ? "animate-spin" : ""}`}
         />
         <span className="text-[10px] uppercase tracking-[0.25em]">
-          Pi Verification: {label}
+          {t("piverif.title")} {label}
         </span>
         {httpCode !== null && (
           <span className="rounded-full border border-current/40 px-2 py-0.5 text-[9px] font-medium tracking-widest">
@@ -279,7 +279,7 @@ export function PiVerification() {
           <input
             type="url"
             inputMode="url"
-            placeholder="https://your-domain.com (leave blank for current site)"
+            placeholder={t("piverif.placeholder")}
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             onBlur={() => setTouched(true)}
@@ -303,7 +303,7 @@ export function PiVerification() {
             <RefreshCw
               className={`h-3 w-3 ${status === "checking" ? "animate-spin" : ""}`}
             />
-            Verify
+            {t("piverif.verify")}
           </button>
           {canAutoFix && (
             <button
@@ -313,7 +313,7 @@ export function PiVerification() {
               className="inline-flex items-center justify-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-4 py-2 text-[10px] uppercase tracking-[0.25em] text-accent transition hover:bg-accent/20"
             >
               <Wand2 className="h-3 w-3" />
-              Auto-fix
+              {t("piverif.autofix")}
             </button>
           )}
           {domain && (
@@ -322,7 +322,7 @@ export function PiVerification() {
               onClick={handleClearDomain}
               className="rounded-full border border-border/40 px-3 py-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
             >
-              Clear
+              {t("piverif.clear")}
             </button>
           )}
         </div>
@@ -336,7 +336,7 @@ export function PiVerification() {
             {validationError}
             {canAutoFix && (
               <span className="text-muted-foreground/80">
-                · Tap <span className="text-accent">Auto-fix</span> to use{" "}
+                · {t("piverif.autofixHint")} <span className="text-accent">{t("piverif.autofix")}</span> {t("piverif.autofixHint.use")}{" "}
                 <span className="font-medium text-foreground">{normalizedPreview}</span>
               </span>
             )}
@@ -351,18 +351,18 @@ export function PiVerification() {
           rel="noreferrer"
           className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground"
         >
-          Open file <ExternalLink className="h-3 w-3" />
+          {t("piverif.openFile")} <ExternalLink className="h-3 w-3" />
         </a>
         {lastUrl && (
           <span className="max-w-full truncate text-[9px] tracking-widest text-muted-foreground/60">
-            Target: {lastUrl}
+            {t("piverif.target")} {lastUrl}
           </span>
         )}
       </div>
 
       {lastCheckedAt && (
         <span className="text-[9px] tracking-[0.3em] text-muted-foreground/60">
-          Last checked {lastCheckedAt}
+          {t("piverif.lastChecked", { time: lastCheckedAt })}
         </span>
       )}
     </div>
