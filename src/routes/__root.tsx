@@ -51,6 +51,9 @@ export const Route = createRootRoute({
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Tajawal:wght@300;400;500;700&display=swap",
       },
     ],
+    scripts: [
+      { src: "https://sdk.minepi.com/pi-sdk.js" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
