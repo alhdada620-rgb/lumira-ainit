@@ -86,11 +86,11 @@ const ITEMS: WardrobeItem[] = [
 ];
 
 const CATEGORIES = [
-  { key: "all", label: "All" },
-  { key: "Zara", label: "Zara · M & W" },
-  { key: "H&M", label: "H&M · Casual" },
-  { key: "Nike", label: "Nike · Sport" },
-  { key: "Arabic Elegance", label: "Arabic Elegance" },
+  { key: "all", labelKey: "wardrobe.cat.all" },
+  { key: "Zara", labelKey: "wardrobe.cat.zara" },
+  { key: "H&M", labelKey: "wardrobe.cat.hm" },
+  { key: "Nike", labelKey: "wardrobe.cat.nike" },
+  { key: "Arabic Elegance", labelKey: "wardrobe.cat.arabic" },
 ] as const;
 
 type CategoryKey = (typeof CATEGORIES)[number]["key"];
