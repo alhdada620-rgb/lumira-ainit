@@ -3,6 +3,7 @@ import { useState, type ComponentType } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera, type AROverlayKind } from "./camera-context";
 import { useWallet } from "./wallet-context";
+import { useT } from "./i18n";
 
 type CatalogTab = "wardrobe" | "makeup";
 
@@ -126,6 +127,7 @@ const MAKEUP_KIND: Record<MakeupCategory, AROverlayKind> = {
 };
 
 export function SmartCatalog() {
+  const { t } = useT();
   const [tab, setTab] = useState<CatalogTab>("wardrobe");
   const [brandFilter, setBrandFilter] = useState<"All" | WardrobeBrand>("All");
   const [makeupFilter, setMakeupFilter] = useState<"All" | MakeupCategory>("All");
@@ -171,11 +173,11 @@ export function SmartCatalog() {
     if (!item.price) return;
     const result = unlock({ id: item.id, name: item.name, price: item.price });
     if (result.ok) {
-      showFeedback(item.id, "ok", `Unlocked · −${item.price.toFixed(2)} π`);
+      showFeedback(item.id, "ok", t("catalog.unlocked", { price: item.price.toFixed(2) }));
     } else if (result.reason === "insufficient") {
-      showFeedback(item.id, "err", "Insufficient π balance");
+      showFeedback(item.id, "err", t("catalog.insufficient"));
     } else {
-      showFeedback(item.id, "ok", "Already unlocked");
+      showFeedback(item.id, "ok", t("catalog.alreadyUnlocked"));
     }
   };
 
@@ -184,7 +186,7 @@ export function SmartCatalog() {
 
   return (
     <GlassPanel
-      title="Smart Catalog · Branded Libraries"
+      title={t("catalog.title")}
       icon={<Sparkles className="h-3.5 w-3.5" />}
       className="lg:col-span-3"
       accent
@@ -206,7 +208,7 @@ export function SmartCatalog() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Shirt className="h-3 w-3" /> Wardrobe
+            <Shirt className="h-3 w-3" /> {t("catalog.tab.wardrobe")}
           </button>
           <button
             role="tab"
@@ -218,7 +220,7 @@ export function SmartCatalog() {
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Palette className="h-3 w-3" /> Makeup Studio
+            <Palette className="h-3 w-3" /> {t("catalog.tab.makeup")}
           </button>
         </div>
 
@@ -230,7 +232,7 @@ export function SmartCatalog() {
             disabled={starting}
             className="inline-flex items-center gap-1.5 self-start rounded-full border border-primary/40 bg-background/40 px-3 py-1.5 text-[10px] uppercase tracking-widest text-primary backdrop-blur transition hover:bg-primary/10 disabled:opacity-60 md:self-auto"
           >
-            <Camera className="h-3 w-3" /> {starting ? "Starting…" : "Activate Mirror for AR"}
+            <Camera className="h-3 w-3" /> {starting ? t("catalog.starting") : t("catalog.activateMirror")}
           </button>
         )}
       </div>
@@ -248,7 +250,7 @@ export function SmartCatalog() {
                   : "border-primary/25 bg-card/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
               }`}
             >
-              {b === "Namshi" ? "Namshi · Arabic" : b}
+              {b === "Namshi" ? t("catalog.brand.namshiArabic") : b}
             </button>
           ))}
         </div>
@@ -264,7 +266,7 @@ export function SmartCatalog() {
                   : "border-primary/25 bg-card/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
               }`}
             >
-              {c}
+              {c === "Lipstick" ? t("catalog.cat.lipstick") : c === "Eyeliner" ? t("catalog.cat.eyeliner") : c === "Blush" ? t("catalog.cat.blush") : c}
             </button>
           ))}
         </div>
@@ -300,7 +302,7 @@ export function SmartCatalog() {
 
                   {item.premium && (
                     <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-accent backdrop-blur">
-                      <Lock className="h-2.5 w-2.5" /> Premium
+                      <Lock className="h-2.5 w-2.5" /> {t("catalog.premium")}
                     </span>
                   )}
 
@@ -316,7 +318,7 @@ export function SmartCatalog() {
                   {tried && (
                     <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-sm">
                       <span className="inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-accent">
-                        <Sparkles className="h-3 w-3" /> Sent to Mirror
+                        <Sparkles className="h-3 w-3" /> {t("catalog.sentMirror")}
                       </span>
                     </div>
                   )}
@@ -335,16 +337,16 @@ export function SmartCatalog() {
                       onClick={() => handleUnlock(item)}
                       disabled={!canAfford}
                       className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-md border border-accent/50 bg-gradient-to-r from-accent/15 via-primary/15 to-accent/15 px-2 py-1.5 text-[10px] uppercase tracking-widest text-accent shadow-[var(--glow-soft)] transition hover:shadow-[var(--glow-accent)] disabled:opacity-50"
-                      title={canAfford ? "Pay with your Pi balance" : "Insufficient π balance"}
+                      title={canAfford ? t("catalog.payTitle") : t("catalog.insufficient")}
                     >
-                      <Lock className="h-3 w-3" /> Unlock · {item.price?.toFixed(2)} π
+                      <Lock className="h-3 w-3" /> {t("catalog.unlock")} · {item.price?.toFixed(2)} π
                     </button>
                   ) : (
                     <button
                       onClick={() => handleTryWardrobe(item)}
                       className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1.5 text-[10px] uppercase tracking-widest text-primary transition hover:bg-primary/20 hover:shadow-[var(--glow-soft)]"
                     >
-                      <Sparkles className="h-3 w-3" /> Try On
+                      <Sparkles className="h-3 w-3" /> {t("catalog.tryOn")}
                     </button>
                   )}
 
@@ -394,7 +396,7 @@ export function SmartCatalog() {
 
                   {item.premium && (
                     <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-accent backdrop-blur">
-                      <Lock className="h-2.5 w-2.5" /> Premium
+                      <Lock className="h-2.5 w-2.5" /> {t("catalog.premium")}
                     </span>
                   )}
 
@@ -403,7 +405,7 @@ export function SmartCatalog() {
                   {tried && (
                     <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-sm">
                       <span className="inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-accent">
-                        <Sparkles className="h-3 w-3" /> Applied to Mirror
+                        <Sparkles className="h-3 w-3" /> {t("catalog.appliedMirror")}
                       </span>
                     </div>
                   )}
@@ -422,16 +424,16 @@ export function SmartCatalog() {
                       onClick={() => handleUnlock(item)}
                       disabled={!canAfford}
                       className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-md border border-accent/50 bg-gradient-to-r from-accent/15 via-primary/15 to-accent/15 px-2 py-1.5 text-[10px] uppercase tracking-widest text-accent shadow-[var(--glow-soft)] transition hover:shadow-[var(--glow-accent)] disabled:opacity-50"
-                      title={canAfford ? "Pay with your Pi balance" : "Insufficient π balance"}
+                      title={canAfford ? t("catalog.payTitle") : t("catalog.insufficient")}
                     >
-                      <Lock className="h-3 w-3" /> Unlock · {item.price?.toFixed(2)} π
+                      <Lock className="h-3 w-3" /> {t("catalog.unlock")} · {item.price?.toFixed(2)} π
                     </button>
                   ) : (
                     <button
                       onClick={() => handleTryMakeup(item)}
                       className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1.5 text-[10px] uppercase tracking-widest text-accent transition hover:bg-accent/20 hover:shadow-[var(--glow-soft)]"
                     >
-                      <Sparkles className="h-3 w-3" /> Try On
+                      <Sparkles className="h-3 w-3" /> {t("catalog.tryOn")}
                     </button>
                   )}
 
@@ -452,7 +454,7 @@ export function SmartCatalog() {
       )}
 
       <p className="mt-3 text-[10px] leading-relaxed text-muted-foreground">
-        Tap <span className="text-primary">Try On</span> to project a brand placeholder onto the live mirror feed. Premium pieces unlock instantly with your <span className="text-accent">π</span> balance — no fiat conversion.
+        {t("catalog.footnote.tap")} <span className="text-primary">{t("catalog.tryOn")}</span> {t("catalog.footnote.body")} <span className="text-accent">π</span> {t("catalog.footnote.suffix")}
       </p>
     </GlassPanel>
   );
