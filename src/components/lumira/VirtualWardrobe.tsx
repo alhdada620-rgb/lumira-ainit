@@ -185,7 +185,7 @@ export function VirtualWardrobe() {
       {/* Controls */}
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="relative flex-1 md:max-w-sm">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/70" />
+          <Search className="pointer-events-none absolute start-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/70" />
           <input
             type="search"
             value={query}
@@ -197,7 +197,7 @@ export function VirtualWardrobe() {
               }
             }}
             placeholder={t("wardrobe.search")}
-            className="w-full rounded-full border border-primary/25 bg-card/40 py-2 pl-9 pr-9 text-xs text-foreground placeholder:text-muted-foreground/60 backdrop-blur transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+            className="w-full rounded-full border border-primary/25 bg-card/40 py-2 ps-9 pe-9 text-xs text-foreground placeholder:text-muted-foreground/60 backdrop-blur transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
           />
           {query && (
             <button
@@ -205,7 +205,7 @@ export function VirtualWardrobe() {
               onClick={clearQuery}
               aria-label={t("wardrobe.clearSearch")}
               title={t("wardrobe.clearSearchTitle")}
-              className="absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground/70 transition hover:bg-primary/10 hover:text-foreground"
+              className="absolute end-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground/70 transition hover:bg-primary/10 hover:text-foreground"
             >
               <X className="h-3 w-3" />
             </button>
@@ -234,7 +234,7 @@ export function VirtualWardrobe() {
           <div
             role="group"
             aria-label={t("wardrobe.view.aria")}
-            className="ml-1 inline-flex overflow-hidden rounded-full border border-primary/25 bg-card/30 backdrop-blur"
+            className="ms-1 inline-flex overflow-hidden rounded-full border border-primary/25 bg-card/30 backdrop-blur"
           >
             <button
               type="button"
@@ -254,7 +254,7 @@ export function VirtualWardrobe() {
               onClick={() => setView("list")}
               aria-pressed={view === "list"}
               title={t("wardrobe.view.list")}
-              className={`flex h-7 w-7 items-center justify-center border-l border-primary/25 transition ${
+              className={`flex h-7 w-7 items-center justify-center border-s border-primary/25 transition ${
                 view === "list"
                   ? "bg-accent/15 text-accent shadow-[var(--glow-soft)]"
                   : "text-muted-foreground hover:text-foreground"
@@ -297,7 +297,7 @@ export function VirtualWardrobe() {
 
                   {/* Brand glyph (corner) */}
                   <div
-                    className={`absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-md text-[11px] leading-none shadow-md ${style.glyphBg} ${style.glyphText}`}
+                    className={`absolute end-2 top-2 flex h-6 w-6 items-center justify-center rounded-md text-[11px] leading-none shadow-md ${style.glyphBg} ${style.glyphText}`}
                     aria-label={`${item.brand} logo`}
                     title={item.brand}
                   >
@@ -306,7 +306,7 @@ export function VirtualWardrobe() {
 
                   {/* Category chip */}
                   <span
-                    className={`absolute left-2 top-2 rounded-full border bg-background/40 px-1.5 py-0.5 text-[8px] uppercase tracking-widest backdrop-blur ${style.chip}`}
+                    className={`absolute start-2 top-2 rounded-full border bg-background/40 px-1.5 py-0.5 text-[8px] uppercase tracking-widest backdrop-blur ${style.chip}`}
                   >
                     {item.category}
                   </span>
