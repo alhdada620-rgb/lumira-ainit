@@ -140,43 +140,48 @@ export function MirrorCamera() {
           {/* AR overlay (Smart Catalog placeholder filter) */}
           {arOverlay && active && (
             <>
-              {arOverlay.kind === "outfit" ? (
-                <div
-                  className="pointer-events-none absolute inset-0 transition-opacity"
-                  style={{
-                    background: arOverlay.color,
-                    opacity: 0.42,
-                    mixBlendMode: "overlay",
-                  }}
-                />
-              ) : arOverlay.kind === "lipstick" ? (
-                <div
-                  className="pointer-events-none absolute left-1/2 top-[68%] h-[6%] w-[18%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[6px]"
-                  style={{ background: arOverlay.color, opacity: 0.7, mixBlendMode: "multiply" }}
-                />
-              ) : arOverlay.kind === "blush" ? (
-                <>
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{ transform: arTransform, transformOrigin: "center", transition: "transform 0.15s ease-out" }}
+              >
+                {arOverlay.kind === "outfit" ? (
                   <div
-                    className="pointer-events-none absolute left-[28%] top-[58%] h-[14%] w-[18%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[14px]"
-                    style={{ background: arOverlay.color, opacity: 0.55, mixBlendMode: "soft-light" }}
+                    className="absolute inset-0 transition-opacity"
+                    style={{
+                      background: arOverlay.color,
+                      opacity: 0.42,
+                      mixBlendMode: "overlay",
+                    }}
                   />
+                ) : arOverlay.kind === "lipstick" ? (
                   <div
-                    className="pointer-events-none absolute left-[72%] top-[58%] h-[14%] w-[18%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[14px]"
-                    style={{ background: arOverlay.color, opacity: 0.55, mixBlendMode: "soft-light" }}
+                    className="absolute left-1/2 top-[68%] h-[6%] w-[18%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[6px]"
+                    style={{ background: arOverlay.color, opacity: 0.7, mixBlendMode: "multiply" }}
                   />
-                </>
-              ) : (
-                <>
-                  <div
-                    className="pointer-events-none absolute left-[35%] top-[44%] h-[1.5%] w-[14%] -translate-y-1/2 rounded-full"
-                    style={{ background: arOverlay.color, opacity: 0.85 }}
-                  />
-                  <div
-                    className="pointer-events-none absolute right-[35%] top-[44%] h-[1.5%] w-[14%] -translate-y-1/2 rounded-full"
-                    style={{ background: arOverlay.color, opacity: 0.85 }}
-                  />
-                </>
-              )}
+                ) : arOverlay.kind === "blush" ? (
+                  <>
+                    <div
+                      className="absolute left-[28%] top-[58%] h-[14%] w-[18%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[14px]"
+                      style={{ background: arOverlay.color, opacity: 0.55, mixBlendMode: "soft-light" }}
+                    />
+                    <div
+                      className="absolute left-[72%] top-[58%] h-[14%] w-[18%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[14px]"
+                      style={{ background: arOverlay.color, opacity: 0.55, mixBlendMode: "soft-light" }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className="absolute left-[35%] top-[44%] h-[1.5%] w-[14%] -translate-y-1/2 rounded-full"
+                      style={{ background: arOverlay.color, opacity: 0.85 }}
+                    />
+                    <div
+                      className="absolute right-[35%] top-[44%] h-[1.5%] w-[14%] -translate-y-1/2 rounded-full"
+                      style={{ background: arOverlay.color, opacity: 0.85 }}
+                    />
+                  </>
+                )}
+              </div>
 
               {/* Overlay HUD label */}
               <div className="pointer-events-auto absolute bottom-3 left-3 right-3 flex items-end justify-between gap-2">
