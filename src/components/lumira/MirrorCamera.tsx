@@ -1,5 +1,5 @@
-import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw, Undo2, Redo2, Move, Maximize2 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Camera, CameraOff, Loader2, Sparkles, X, RotateCcw, Undo2, Redo2, Move, Maximize2, Magnet, Crosshair } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
@@ -22,10 +22,65 @@ export function MirrorCamera() {
   const [arScale, setArScale] = useState(100);
   const [arOffsetX, setArOffsetX] = useState(0);
   const [arOffsetY, setArOffsetY] = useState(0);
+  const [snapEnabled, setSnapEnabled] = useState(true);
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
+  // Per-kind alignment presets (scale + offsetX/Y in % of frame)
+  type Preset = { id: string; labelKey: string; scale: number; x: number; y: number };
+  const presets = useMemo<Record<string, Preset[]>>(() => ({
+    outfit: [
+      { id: "fit-shoulders", labelKey: "mirror.ar.preset.shoulders", scale: 105, x: 0, y: -4 },
+      { id: "fit-torso",     labelKey: "mirror.ar.preset.torso",     scale: 100, x: 0, y: 0 },
+      { id: "fit-hips",      labelKey: "mirror.ar.preset.hips",      scale: 110, x: 0, y: 8 },
+      { id: "fit-full",      labelKey: "mirror.ar.preset.full",      scale: 120, x: 0, y: 0 },
+    ],
+    lipstick: [
+      { id: "lips-center", labelKey: "mirror.ar.preset.lipsCenter", scale: 100, x: 0,  y: 0 },
+      { id: "lips-upper",  labelKey: "mirror.ar.preset.lipsUpper",  scale: 95,  x: 0,  y: -3 },
+      { id: "lips-wide",   labelKey: "mirror.ar.preset.lipsWide",   scale: 115, x: 0,  y: 0 },
+    ],
+    blush: [
+      { id: "cheeks-natural", labelKey: "mirror.ar.preset.cheeksNatural", scale: 100, x: 0, y: 0 },
+      { id: "cheeks-high",    labelKey: "mirror.ar.preset.cheeksHigh",    scale: 95,  x: 0, y: -4 },
+      { id: "cheeks-broad",   labelKey: "mirror.ar.preset.cheeksBroad",   scale: 115, x: 0, y: 2 },
+    ],
+    eyeliner: [
+      { id: "eyes-natural", labelKey: "mirror.ar.preset.eyesNatural", scale: 100, x: 0, y: 0 },
+      { id: "eyes-cat",     labelKey: "mirror.ar.preset.eyesCat",     scale: 110, x: 0, y: -2 },
+      { id: "eyes-soft",    labelKey: "mirror.ar.preset.eyesSoft",    scale: 95,  x: 0, y: 1 },
+    ],
+  }), []);
+
+  const currentPresets = arOverlay ? presets[arOverlay.kind] ?? [] : [];
+
+  // Snap configuration: scale to nearest 5%, offsets to nearest 2% with a tight threshold
+  const snap = (val: number, step: number, threshold = 1.25) => {
+    const nearest = Math.round(val / step) * step;
+    return Math.abs(val - nearest) <= threshold ? nearest : val;
+  };
+  const applyScale = (v: number) => {
+    setActivePreset(null);
+    setArScale(snapEnabled ? snap(v, 5) : v);
+  };
+  const applyOffsetX = (v: number) => {
+    setActivePreset(null);
+    setArOffsetX(snapEnabled ? snap(v, 2) : v);
+  };
+  const applyOffsetY = (v: number) => {
+    setActivePreset(null);
+    setArOffsetY(snapEnabled ? snap(v, 2) : v);
+  };
+  const applyPreset = (p: Preset) => {
+    setArScale(p.scale);
+    setArOffsetX(p.x);
+    setArOffsetY(p.y);
+    setActivePreset(p.id);
+  };
   const resetTransform = () => {
     setArScale(100);
     setArOffsetX(0);
     setArOffsetY(0);
+    setActivePreset(null);
   };
   // Reset transform when overlay identity changes
   const overlayKey = arOverlay ? `${arOverlay.kind}:${arOverlay.id}` : null;
@@ -33,6 +88,7 @@ export function MirrorCamera() {
     setArScale(100);
     setArOffsetX(0);
     setArOffsetY(0);
+    setActivePreset(null);
   }, [overlayKey]);
 
   const arTransform = `translate(${arOffsetX}%, ${arOffsetY}%) scale(${arScale / 100})`;
@@ -244,18 +300,59 @@ export function MirrorCamera() {
         {/* AR fine-tune controls — visible while an overlay is active and camera live */}
         {arOverlay && active && (
           <div className="space-y-2 rounded-lg border border-primary/25 bg-primary/5 px-3 py-2.5 backdrop-blur">
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-primary">
                 <Move className="h-3 w-3" /> {t("mirror.ar.fineTune")}
               </div>
-              <button
-                type="button"
-                onClick={resetTransform}
-                className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-card/40 px-2 py-1 text-[9px] uppercase tracking-widest text-primary transition hover:bg-primary/10"
-              >
-                <RotateCcw className="h-3 w-3" /> {t("mirror.ar.recenter")}
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setSnapEnabled((s) => !s)}
+                  aria-pressed={snapEnabled}
+                  title={t("mirror.ar.snapTitle")}
+                  className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[9px] uppercase tracking-widest transition ${
+                    snapEnabled
+                      ? "border-accent/50 bg-accent/15 text-accent shadow-[var(--glow-soft)]"
+                      : "border-primary/30 bg-card/40 text-muted-foreground hover:bg-primary/10"
+                  }`}
+                >
+                  <Magnet className="h-3 w-3" /> {snapEnabled ? t("mirror.ar.snapOn") : t("mirror.ar.snapOff")}
+                </button>
+                <button
+                  type="button"
+                  onClick={resetTransform}
+                  className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-card/40 px-2 py-1 text-[9px] uppercase tracking-widest text-primary transition hover:bg-primary/10"
+                >
+                  <RotateCcw className="h-3 w-3" /> {t("mirror.ar.recenter")}
+                </button>
+              </div>
             </div>
+
+            {/* Alignment presets */}
+            {currentPresets.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <Crosshair className="h-2.5 w-2.5" /> {t("mirror.ar.presets")}
+                </span>
+                {currentPresets.map((p) => {
+                  const isActive = activePreset === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => applyPreset(p)}
+                      className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wider transition ${
+                        isActive
+                          ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-soft)]"
+                          : "border-primary/25 bg-card/40 text-foreground/80 hover:border-primary/50 hover:bg-primary/10"
+                      }`}
+                    >
+                      {t(p.labelKey)}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <label className="space-y-1">
@@ -263,7 +360,7 @@ export function MirrorCamera() {
                   <span className="inline-flex items-center gap-1"><Maximize2 className="h-2.5 w-2.5" /> {t("mirror.ar.scale")}</span>
                   <span className="text-foreground">{arScale}%</span>
                 </div>
-                <Slider value={[arScale]} min={50} max={180} step={1} onValueChange={(v) => setArScale(v[0] ?? 100)} />
+                <Slider value={[arScale]} min={50} max={180} step={1} onValueChange={(v) => applyScale(v[0] ?? 100)} />
               </label>
 
               <label className="space-y-1">
@@ -271,7 +368,7 @@ export function MirrorCamera() {
                   <span>{t("mirror.ar.offsetX")}</span>
                   <span className="text-foreground">{arOffsetX > 0 ? `+${arOffsetX}` : arOffsetX}%</span>
                 </div>
-                <Slider value={[arOffsetX]} min={-40} max={40} step={1} onValueChange={(v) => setArOffsetX(v[0] ?? 0)} />
+                <Slider value={[arOffsetX]} min={-40} max={40} step={1} onValueChange={(v) => applyOffsetX(v[0] ?? 0)} />
               </label>
 
               <label className="space-y-1">
@@ -279,7 +376,7 @@ export function MirrorCamera() {
                   <span>{t("mirror.ar.offsetY")}</span>
                   <span className="text-foreground">{arOffsetY > 0 ? `+${arOffsetY}` : arOffsetY}%</span>
                 </div>
-                <Slider value={[arOffsetY]} min={-40} max={40} step={1} onValueChange={(v) => setArOffsetY(v[0] ?? 0)} />
+                <Slider value={[arOffsetY]} min={-40} max={40} step={1} onValueChange={(v) => applyOffsetY(v[0] ?? 0)} />
               </label>
             </div>
           </div>
