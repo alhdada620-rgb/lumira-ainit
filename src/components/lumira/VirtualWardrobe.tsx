@@ -2,6 +2,7 @@ import { Shirt, Search, Sparkles, LayoutGrid, List, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitTryOnItem, type TryOnPayload } from "./voice-events";
+import { useT } from "./i18n";
 
 type ViewMode = "grid" | "list";
 
@@ -85,16 +86,17 @@ const ITEMS: WardrobeItem[] = [
 ];
 
 const CATEGORIES = [
-  { key: "all", label: "All" },
-  { key: "Zara", label: "Zara · M & W" },
-  { key: "H&M", label: "H&M · Casual" },
-  { key: "Nike", label: "Nike · Sport" },
-  { key: "Arabic Elegance", label: "Arabic Elegance" },
+  { key: "all", labelKey: "wardrobe.cat.all" },
+  { key: "Zara", labelKey: "wardrobe.cat.zara" },
+  { key: "H&M", labelKey: "wardrobe.cat.hm" },
+  { key: "Nike", labelKey: "wardrobe.cat.nike" },
+  { key: "Arabic Elegance", labelKey: "wardrobe.cat.arabic" },
 ] as const;
 
 type CategoryKey = (typeof CATEGORIES)[number]["key"];
 
 export function VirtualWardrobe() {
+  const { t } = useT();
   const [query, setQuery] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     return window.localStorage.getItem("lumira:wardrobe-query") ?? "";
@@ -175,7 +177,7 @@ export function VirtualWardrobe() {
 
   return (
     <GlassPanel
-      title="Virtual Wardrobe"
+      title={t("wardrobe.title")}
       icon={<Shirt className="h-3.5 w-3.5" />}
       className="lg:col-span-3"
       accent
@@ -194,15 +196,15 @@ export function VirtualWardrobe() {
                 clearQuery();
               }
             }}
-            placeholder="Search items, brands, occasions… (Esc to clear)"
+            placeholder={t("wardrobe.search")}
             className="w-full rounded-full border border-primary/25 bg-card/40 py-2 pl-9 pr-9 text-xs text-foreground placeholder:text-muted-foreground/60 backdrop-blur transition focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
           />
           {query && (
             <button
               type="button"
               onClick={clearQuery}
-              aria-label="Clear search"
-              title="Clear search (Esc)"
+              aria-label={t("wardrobe.clearSearch")}
+              title={t("wardrobe.clearSearchTitle")}
               className="absolute right-2 top-1/2 flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground/70 transition hover:bg-primary/10 hover:text-foreground"
             >
               <X className="h-3 w-3" />
@@ -223,7 +225,7 @@ export function VirtualWardrobe() {
                     : "border-primary/25 bg-card/30 text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
               >
-                {c.label}
+                {t(c.labelKey)}
               </button>
             );
           })}
@@ -231,14 +233,14 @@ export function VirtualWardrobe() {
           {/* View toggle */}
           <div
             role="group"
-            aria-label="Wardrobe view"
+            aria-label={t("wardrobe.view.aria")}
             className="ml-1 inline-flex overflow-hidden rounded-full border border-primary/25 bg-card/30 backdrop-blur"
           >
             <button
               type="button"
               onClick={() => setView("grid")}
               aria-pressed={view === "grid"}
-              title="Grid view"
+              title={t("wardrobe.view.grid")}
               className={`flex h-7 w-7 items-center justify-center transition ${
                 view === "grid"
                   ? "bg-accent/15 text-accent shadow-[var(--glow-soft)]"
@@ -251,7 +253,7 @@ export function VirtualWardrobe() {
               type="button"
               onClick={() => setView("list")}
               aria-pressed={view === "list"}
-              title="List view"
+              title={t("wardrobe.view.list")}
               className={`flex h-7 w-7 items-center justify-center border-l border-primary/25 transition ${
                 view === "list"
                   ? "bg-accent/15 text-accent shadow-[var(--glow-soft)]"
@@ -269,10 +271,10 @@ export function VirtualWardrobe() {
         <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
           <Search className="h-6 w-6 text-muted-foreground/40" />
           <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60">
-            No matches
+            {t("wardrobe.empty.title")}
           </p>
           <p className="text-[10px] text-muted-foreground/50">
-            Try a different brand or keyword
+            {t("wardrobe.empty.subtitle")}
           </p>
         </div>
       ) : view === "grid" ? (
@@ -323,7 +325,7 @@ export function VirtualWardrobe() {
                   {wasTried && (
                     <div className="absolute inset-0 flex items-center justify-center bg-background/40 backdrop-blur-sm">
                       <span className="inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-accent">
-                        <Sparkles className="h-3 w-3" /> Sent to AR
+                        <Sparkles className="h-3 w-3" /> {t("wardrobe.sentToAR")}
                       </span>
                     </div>
                   )}
@@ -344,7 +346,7 @@ export function VirtualWardrobe() {
                     onClick={() => handleTryOn(item)}
                     className="mt-2 inline-flex w-full items-center justify-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1.5 text-[10px] uppercase tracking-widest text-primary transition hover:bg-primary/20 hover:shadow-[var(--glow-soft)]"
                   >
-                    <Sparkles className="h-3 w-3" /> Try On
+                    <Sparkles className="h-3 w-3" /> {t("wardrobe.tryOn")}
                   </button>
                 </div>
               </article>
@@ -392,7 +394,7 @@ export function VirtualWardrobe() {
                   }`}
                 >
                   <Sparkles className="h-3 w-3" />
-                  {wasTried ? "Sent" : "Try On"}
+                  {wasTried ? t("wardrobe.sent") : t("wardrobe.tryOn")}
                 </button>
               </li>
             );
