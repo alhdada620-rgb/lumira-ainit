@@ -26,8 +26,8 @@ async function piFetch(path: string, init: RequestInit = {}): Promise<Record<str
 export const approvePiPayment = createServerFn({ method: "POST" })
   .inputValidator((data) => z.object({ paymentId: z.string().min(1) }).parse(data))
   .handler(async ({ data }) => {
-    const result = await piFetch(`/payments/${data.paymentId}/approve`, { method: "POST" });
-    return { ok: true, result };
+    await piFetch(`/payments/${data.paymentId}/approve`, { method: "POST" });
+    return { ok: true as const };
   });
 
 export const completePiPayment = createServerFn({ method: "POST" })
@@ -35,9 +35,9 @@ export const completePiPayment = createServerFn({ method: "POST" })
     z.object({ paymentId: z.string().min(1), txid: z.string().min(1) }).parse(data),
   )
   .handler(async ({ data }) => {
-    const result = await piFetch(`/payments/${data.paymentId}/complete`, {
+    await piFetch(`/payments/${data.paymentId}/complete`, {
       method: "POST",
       body: JSON.stringify({ txid: data.txid }),
     });
-    return { ok: true, result };
+    return { ok: true as const };
   });
