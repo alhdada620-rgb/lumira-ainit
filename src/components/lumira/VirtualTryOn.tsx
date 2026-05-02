@@ -130,12 +130,12 @@ export function VirtualTryOn() {
           {/* scan line */}
           <div className="absolute inset-x-0 h-12 animate-scan bg-gradient-to-b from-transparent via-accent/30 to-transparent" />
 
-          <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full border border-accent/40 bg-background/40 px-2 py-0.5 text-[9px] uppercase tracking-widest text-accent backdrop-blur">
+          <div className="absolute start-3 top-3 flex items-center gap-1.5 rounded-full border border-accent/40 bg-background/40 px-2 py-0.5 text-[9px] uppercase tracking-widest text-accent backdrop-blur">
             <span className={`h-1 w-1 rounded-full ${active ? "bg-emerald-400" : "bg-accent"}`} />
             {active ? t("tryon.live") : t("tryon.preview")}
           </div>
 
-          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+          <div className="absolute bottom-3 start-3 end-3 flex items-end justify-between">
             <div>
               <div className="text-[10px] uppercase tracking-widest text-foreground/80">{outfit.tag}</div>
               <div className="text-sm text-foreground text-glow-accent">{outfit.name}</div>
@@ -147,7 +147,7 @@ export function VirtualTryOn() {
             <button
               onClick={start}
               disabled={starting}
-              className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border border-primary/50 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur transition hover:bg-primary/10 disabled:opacity-60"
+              className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-primary/50 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur transition hover:bg-primary/10 disabled:opacity-60"
             >
               <Camera className="h-3 w-3" /> {starting ? t("tryon.starting") : t("tryon.live.btn")}
             </button>
@@ -159,7 +159,7 @@ export function VirtualTryOn() {
             onClick={() => setIdx((i) => (i - 1 + outfits.length) % outfits.length)}
             className="flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card/40 text-primary transition hover:bg-primary/10 hover:shadow-[var(--glow-soft)]"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 rtl:-scale-x-100" />
           </button>
           <div className="flex gap-1.5">
             {outfits.map((_, i) => (
@@ -170,7 +170,7 @@ export function VirtualTryOn() {
             onClick={() => setIdx((i) => (i + 1) % outfits.length)}
             className="flex h-8 w-8 items-center justify-center rounded-full border border-primary/30 bg-card/40 text-primary transition hover:bg-primary/10 hover:shadow-[var(--glow-soft)]"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 rtl:-scale-x-100" />
           </button>
         </div>
       </div>
