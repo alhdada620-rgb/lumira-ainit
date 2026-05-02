@@ -25,7 +25,9 @@ function Providers({ children }: { children: ReactNode }) {
 
 function LangSwitcher({ to }: { to: "en" | "ar" }) {
   const { lang, toggleLang } = useT();
-  if (lang !== to) toggleLang();
+  useEffect(() => {
+    if (lang !== to) toggleLang();
+  }, [lang, to, toggleLang]);
   return null;
 }
 
