@@ -293,7 +293,7 @@ export function SmartCatalog() {
                   <div className="absolute inset-0 hud-grid opacity-30" />
 
                   <div
-                    className={`absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-md text-[11px] leading-none shadow-md ${style.glyphBg} ${style.glyphText}`}
+                    className={`absolute end-2 top-2 flex h-6 w-6 items-center justify-center rounded-md text-[11px] leading-none shadow-md ${style.glyphBg} ${style.glyphText}`}
                     aria-label={`${item.brand} logo`}
                     title={item.brand}
                   >
@@ -301,7 +301,7 @@ export function SmartCatalog() {
                   </div>
 
                   {item.premium && (
-                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-accent backdrop-blur">
+                    <span className="absolute start-2 top-2 inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-accent backdrop-blur">
                       <Lock className="h-2.5 w-2.5" /> {t("catalog.premium")}
                     </span>
                   )}
@@ -390,12 +390,12 @@ export function SmartCatalog() {
                   <div className="absolute inset-0 hud-grid opacity-25" />
 
                   {/* Sephora chip */}
-                  <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-foreground/30 bg-background/50 px-1.5 py-0.5 text-[8px] uppercase tracking-[0.2em] text-foreground/90 backdrop-blur">
+                  <span className="absolute start-2 top-2 inline-flex items-center gap-1 rounded-full border border-foreground/30 bg-background/50 px-1.5 py-0.5 text-[8px] uppercase tracking-[0.2em] text-foreground/90 backdrop-blur">
                     <span className="font-serif italic">S</span> Sephora
                   </span>
 
                   {item.premium && (
-                    <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-accent backdrop-blur">
+                    <span className="absolute end-2 top-2 inline-flex items-center gap-1 rounded-full border border-accent/60 bg-background/60 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-accent backdrop-blur">
                       <Lock className="h-2.5 w-2.5" /> {t("catalog.premium")}
                     </span>
                   )}
