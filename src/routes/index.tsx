@@ -40,11 +40,10 @@ function IndexShell() {
     <>
       {/* Cinematic luxury background */}
       <div
-        className="fixed inset-0 -z-10 bg-cover bg-center"
+        className="fixed inset-0 -z-10 bg-cover bg-center animate-bg-zoom"
         style={{
           backgroundImage: `url(${bgImg})`,
           filter: "blur(8px) brightness(0.55) saturate(1.1)",
-          transform: "scale(1.08)",
         }}
         aria-hidden
       />
