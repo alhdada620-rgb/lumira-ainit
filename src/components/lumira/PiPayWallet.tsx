@@ -1,4 +1,4 @@
-import { Wallet, Loader2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { Wallet, Loader2, CheckCircle2, AlertTriangle, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useWallet } from "./wallet-context";
