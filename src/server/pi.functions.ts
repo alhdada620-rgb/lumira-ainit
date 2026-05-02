@@ -3,7 +3,7 @@ import { z } from "zod";
 
 const PI_API_BASE = "https://api.minepi.com/v2";
 
-async function piFetch(path: string, init: RequestInit = {}) {
+async function piFetch(path: string, init: RequestInit = {}): Promise<Record<string, unknown>> {
   const apiKey = process.env.PI_API_KEY;
   if (!apiKey) throw new Error("PI_API_KEY is not configured");
   const res = await fetch(`${PI_API_BASE}${path}`, {
@@ -15,7 +15,7 @@ async function piFetch(path: string, init: RequestInit = {}) {
     },
   });
   const text = await res.text();
-  let body: unknown;
+  let body: Record<string, unknown> = {};
   try { body = text ? JSON.parse(text) : {}; } catch { body = { raw: text }; }
   if (!res.ok) {
     throw new Error(`Pi API ${path} failed (${res.status}): ${text}`);
