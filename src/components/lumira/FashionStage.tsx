@@ -73,8 +73,19 @@ export function FashionStage() {
           />
 
           {/* brand logo watermark on chest */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 text-2xl font-extrabold tracking-[0.15em] text-foreground/85 text-glow-accent drop-shadow-[0_0_12px_rgba(0,0,0,0.6)]">
+          <div
+            key={`wm-${brand.id}`}
+            className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 text-2xl font-extrabold tracking-[0.15em] text-foreground/85 text-glow-accent drop-shadow-[0_0_12px_rgba(0,0,0,0.6)] animate-fade-in"
+          >
             {brand.name}
+          </div>
+
+          {/* outfit name badge */}
+          <div
+            key={`of-${brand.id}`}
+            className="absolute bottom-12 left-1/2 -translate-x-1/2 rounded-full border border-accent/50 bg-background/70 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-accent backdrop-blur animate-fade-in shadow-[var(--glow-accent)]"
+          >
+            {brand.outfit}
           </div>
 
           {/* AR tag */}
