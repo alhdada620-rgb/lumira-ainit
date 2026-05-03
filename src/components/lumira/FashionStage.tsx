@@ -824,6 +824,42 @@ export function FashionStage() {
           )}
         </div>
 
+        {/* AI Style Advisor */}
+        {(overlay || advisorLoading || advisorTips.length > 0) && (
+          <div className="rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 via-card/40 to-primary/10 p-3 backdrop-blur shadow-[var(--glow-accent)]">
+            <div className="mb-2 flex items-center gap-2">
+              <Lightbulb className="h-3.5 w-3.5 text-accent" />
+              <h4 className="text-[10px] font-medium uppercase tracking-[0.3em] text-accent text-glow-accent">
+                {isAr ? "مستشار الأناقة" : "Style Advisor"}
+              </h4>
+              {overlay && (
+                <span className="ms-auto rounded-full border border-primary/30 bg-background/40 px-2 py-0.5 text-[8px] uppercase tracking-widest text-muted-foreground">
+                  {overlay.fabric}
+                </span>
+              )}
+            </div>
+            {advisorLoading ? (
+              <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                {isAr ? "يحلل الذكاء…" : "AI analysing your look…"}
+              </div>
+            ) : advisorTips.length > 0 ? (
+              <ul className="space-y-1.5">
+                {advisorTips.map((tip, i) => (
+                  <li key={i} className="flex gap-2 text-[11px] leading-snug text-foreground/90">
+                    <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" />
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+                {isAr ? "اختر قطعة ليبدأ المستشار" : "Pick an item to get tips"}
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Brand carousel */}
         <div className="flex items-center justify-between gap-2 overflow-x-auto rounded-lg border border-primary/20 bg-card/40 p-2">
           {BRANDS.map((b, i) => {
