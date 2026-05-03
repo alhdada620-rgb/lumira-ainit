@@ -792,6 +792,41 @@ export function FashionStage() {
                       );
                     })}
                   </div>
+                  <button
+                    onClick={() => setShowLegend((v) => !v)}
+                    title={isAr ? "اختصارات لوحة المفاتيح (؟)" : "Keyboard shortcuts (?)"}
+                    aria-expanded={showLegend}
+                    className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] backdrop-blur transition ${
+                      showLegend
+                        ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                        : "border-primary/30 bg-background/70 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    ?
+                  </button>
+                  {showLegend && (
+                    <div className="animate-fade-in rounded-md border border-primary/40 bg-background/85 p-2 text-end text-[9px] uppercase tracking-widest text-muted-foreground backdrop-blur shadow-[var(--glow-soft)]">
+                      <div className="mb-1 text-[8px] tracking-[0.3em] text-accent">
+                        {isAr ? "اختصارات الواجهة" : "HUD Shortcuts"}
+                      </div>
+                      <div className="flex items-center justify-end gap-2">
+                        <span>{isAr ? "نظيف" : "Clean"}</span>
+                        <kbd className="rounded border border-primary/40 px-1 text-foreground">1</kbd>
+                      </div>
+                      <div className="flex items-center justify-end gap-2">
+                        <span>{isAr ? "تجربة" : "Try-on"}</span>
+                        <kbd className="rounded border border-primary/40 px-1 text-foreground">2</kbd>
+                      </div>
+                      <div className="flex items-center justify-end gap-2">
+                        <span>{isAr ? "تشخيص" : "Debug"}</span>
+                        <kbd className="rounded border border-primary/40 px-1 text-foreground">3</kbd>
+                      </div>
+                      <div className="mt-1 flex items-center justify-end gap-2 border-t border-primary/20 pt-1">
+                        <span>{isAr ? "تبديل القائمة" : "Toggle legend"}</span>
+                        <kbd className="rounded border border-primary/40 px-1 text-foreground">?</kbd>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
