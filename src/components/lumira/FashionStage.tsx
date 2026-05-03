@@ -217,6 +217,21 @@ export function FashionStage() {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  const [showLegend, setShowLegend] = useState(false);
+  // Toggle legend with "?" key
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (e.key === "?" || (e.shiftKey && e.key === "/")) {
+        e.preventDefault();
+        setShowLegend((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, []);
+
   const brand = BRANDS[activeBrandIdx];
 
   useEffect(() => {
