@@ -2,6 +2,7 @@ import { Sparkles, Play, RotateCcw, CheckCircle2, Save, History, Trash2 } from "
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useT } from "./i18n";
+import { useSkin } from "./skin-context";
 import skinScan from "@/assets/skin-scan.jpg";
 
 type ScanRecord = {
