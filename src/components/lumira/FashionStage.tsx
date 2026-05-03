@@ -745,3 +745,21 @@ function GarmentSVG({ category, color, brand }: { category: Category; color: str
     </svg>
   );
 }
+
+function AmazonButton({ href, isAr }: { href: string; isAr: boolean }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={isAr ? "اشترِ من أمازون" : "Buy on Amazon"}
+      className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-md border border-primary/50 bg-white px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#131921] shadow-[0_0_0_1px_var(--primary),0_0_14px_oklch(0.85_0.15_200/0.45)] transition hover:shadow-[0_0_0_1px_var(--primary),0_0_22px_oklch(0.85_0.15_200/0.85)] active:scale-[0.98]"
+    >
+      <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-primary/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+      <span className="text-[9px] tracking-[0.2em] text-[#131921]/80">
+        {isAr ? "اشترِ على" : "Shop on"}
+      </span>
+      <img src={amazonLogo} alt="Amazon" className="h-3.5 w-auto" loading="lazy" />
+    </a>
+  );
+}
