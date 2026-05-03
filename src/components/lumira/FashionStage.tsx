@@ -312,14 +312,18 @@ export function FashionStage() {
                 {/* Glossy floor reflection */}
                 <div className="absolute inset-x-6 bottom-0 h-12 rounded-[50%] bg-gradient-to-t from-accent/20 to-transparent blur-md" />
 
-                {/* SVG avatar */}
+                {/* Photoreal mannequin */}
                 <div
-                  className="absolute bottom-2 left-1/2 -translate-x-1/2 transition-all duration-300 ease-out"
+                  className="absolute bottom-2 left-1/2 -translate-x-1/2 transition-all duration-500 ease-out"
                   style={{ width: avatarWidth, height: avatarHeight }}
                 >
-                  <AvatarSilhouette
-                    gender={profile.gender}
-                    skin={profile.skinTone}
+                  <img
+                    src={profile.gender === "female" ? mannequinFemale : mannequinMale}
+                    alt="3D Mannequin"
+                    className="h-full w-full object-contain"
+                    style={{
+                      filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary))`,
+                    }}
                   />
                 </div>
 
