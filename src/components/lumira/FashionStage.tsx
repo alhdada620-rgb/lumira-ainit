@@ -764,13 +764,15 @@ export function FashionStage() {
                         <button
                           key={p.id}
                           onClick={() => { p.apply(); try { localStorage.setItem("lumira:hudPreset", p.id); } catch { /* ignore */ } }}
-                          className={`rounded px-1.5 py-0.5 text-[9px] uppercase tracking-widest transition ${
+                          title={`${p.label} · ${p.key}`}
+                          className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] uppercase tracking-widest transition ${
                             isActive
                               ? "bg-accent/25 text-accent shadow-[var(--glow-accent)]"
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           {p.label}
+                          <kbd className="rounded border border-current/40 px-1 text-[8px] opacity-70">{p.key}</kbd>
                         </button>
                       );
                     })}
