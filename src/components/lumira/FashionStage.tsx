@@ -727,13 +727,13 @@ export function FashionStage() {
                   >
                     {isAr ? (showAnchors ? "إخفاء النقاط" : "إظهار النقاط") : (showAnchors ? "Hide Anchors" : "Show Anchors")}
                   </button>
-                  {!showAnchors && (
+                  {(!showAnchors || debugZones) && (
                     <button
-                      onClick={() => setShowAnchors(true)}
-                      title={isAr ? "استعادة الإعدادات الافتراضية" : "Restore default anchor visibility"}
+                      onClick={() => { setShowAnchors(true); setDebugZones(false); }}
+                      title={isAr ? "استعادة إعدادات الواجهة الافتراضية" : "Restore default HUD visibility"}
                       className="rounded-md border border-primary/40 bg-background/70 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur transition hover:border-primary hover:shadow-[var(--glow-soft)]"
                     >
-                      {isAr ? "استعادة" : "Reset"}
+                      {isAr ? "استعادة الواجهة" : "Reset HUD"}
                     </button>
                   )}
                 </div>
