@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import {
-  Sparkles, Camera, CameraOff, Loader2, X,
+  Sparkles, Camera, CameraOff, Loader2, X, ShoppingBag,
   Video, User2, Upload, Image as ImageIcon,
 } from "lucide-react";
 import { useCamera } from "./camera-context";
