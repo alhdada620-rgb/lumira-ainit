@@ -216,11 +216,58 @@ export function FashionStage() {
   const amazonUrl = (q: string) =>
     `https://www.amazon.com/s?k=${encodeURIComponent(q)}&tag=${AMAZON_TAG}`;
 
+  const fetchAdvisor = async (outfit: { brand: string; name: string; category: Category; fabric: Fabric }) => {
+    setAdvisorLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("style-advisor", {
+        body: {
+          outfit,
+          profile: {
+            gender: profile.gender, height: profile.height,
+            weight: profile.weight, skinTone: profile.skinTone,
+          },
+          language: isAr ? "ar" : "en",
+        },
+      });
+      if (error) throw error;
+      setAdvisorTips(Array.isArray(data?.tips) ? data.tips : []);
+    } catch (e: any) {
+      console.error("style-advisor", e);
+      setAdvisorTips([]);
+    } finally {
+      setAdvisorLoading(false);
+    }
+  };
+
+  const isolatePhoto = async (dataUrl: string) => {
+    setIsolating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("photo-isolate", {
+        body: { imageUrl: dataUrl },
+      });
+      if (error) throw error;
+      if (data?.imageUrl) {
+        profile.setUploadedPhoto(data.imageUrl);
+        toast.success(isAr ? "تم عزل صورتك بنجاح" : "Background removed");
+      }
+    } catch (e: any) {
+      console.error("photo-isolate", e);
+      toast.error(isAr ? "تعذّر عزل الخلفية" : "Couldn't isolate background");
+    } finally {
+      setIsolating(false);
+    }
+  };
+
   const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => profile.setUploadedPhoto(reader.result as string);
+    reader.onload = () => {
+      const url = reader.result as string;
+      profile.setUploadedPhoto(url);
+      // Run AI background removal for VTON
+      isolatePhoto(url);
+    };
     reader.readAsDataURL(file);
   };
 
