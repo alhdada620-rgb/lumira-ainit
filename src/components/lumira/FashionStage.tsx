@@ -180,6 +180,7 @@ export function FashionStage() {
   const [trying, setTrying] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [debugZones, setDebugZones] = useState(false);
+  const [showAnchors, setShowAnchors] = useState(true);
   const [rotated, setRotated] = useState(false);
   const [isolating, setIsolating] = useState(false);
   const [advisorTips, setAdvisorTips] = useState<string[]>([]);
@@ -633,7 +634,7 @@ export function FashionStage() {
                 )}
 
                 {/* Anchor points — neon snap markers; visible while fitting or in debug */}
-                {(debugZones || trying) && (
+                {showAnchors && (debugZones || trying) && (
                   <div className="pointer-events-none absolute inset-0 z-20">
                     {(Object.keys(ANCHORS) as (keyof typeof ANCHORS)[]).map((key) => {
                       const a = ANCHORS[key];
@@ -706,6 +707,17 @@ export function FashionStage() {
                     }`}
                   >
                     {isAr ? (debugZones ? "إخفاء المناطق" : "إظهار المناطق") : (debugZones ? "Hide Zones" : "Show Zones")}
+                  </button>
+                  <button
+                    onClick={() => setShowAnchors((v) => !v)}
+                    title={isAr ? "نقاط التثبيت" : "Snap anchors"}
+                    className={`rounded-md border px-2 py-1 text-[9px] uppercase tracking-widest backdrop-blur transition ${
+                      showAnchors
+                        ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                        : "border-primary/30 bg-background/70 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {isAr ? (showAnchors ? "إخفاء النقاط" : "إظهار النقاط") : (showAnchors ? "Hide Anchors" : "Show Anchors")}
                   </button>
                 </div>
               </div>
