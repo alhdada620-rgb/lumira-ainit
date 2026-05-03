@@ -634,7 +634,7 @@ export function FashionStage() {
                 )}
 
                 {/* Anchor points — neon snap markers; visible while fitting or in debug */}
-                {(debugZones || trying) && (
+                {showAnchors && (debugZones || trying) && (
                   <div className="pointer-events-none absolute inset-0 z-20">
                     {(Object.keys(ANCHORS) as (keyof typeof ANCHORS)[]).map((key) => {
                       const a = ANCHORS[key];
