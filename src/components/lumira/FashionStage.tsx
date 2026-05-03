@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import {
   Sparkles, Camera, CameraOff, Loader2, X, ShoppingBag,
-  Video, User2, Upload, Image as ImageIcon,
+  Video, User2, Upload, Image as ImageIcon, RotateCw, Wand2, Lightbulb,
 } from "lucide-react";
 import { useCamera } from "./camera-context";
 import { useT } from "./i18n";
 import { useProfile } from "./profile-context";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 import mannequinMale from "@/assets/mannequin-male.png";
 import mannequinFemale from "@/assets/mannequin-female.png";
