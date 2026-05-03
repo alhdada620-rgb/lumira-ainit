@@ -727,15 +727,31 @@ export function FashionStage() {
                   >
                     {isAr ? (showAnchors ? "إخفاء النقاط" : "إظهار النقاط") : (showAnchors ? "Hide Anchors" : "Show Anchors")}
                   </button>
-                  {(!showAnchors || debugZones) && (
-                    <button
-                      onClick={() => { setShowAnchors(true); setDebugZones(false); }}
-                      title={isAr ? "استعادة إعدادات الواجهة الافتراضية" : "Restore default HUD visibility"}
-                      className="rounded-md border border-primary/40 bg-background/70 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur transition hover:border-primary hover:shadow-[var(--glow-soft)]"
-                    >
-                      {isAr ? "استعادة الواجهة" : "Reset HUD"}
-                    </button>
-                  )}
+                  <div className="flex items-center gap-1 rounded-md border border-primary/30 bg-background/70 p-0.5 backdrop-blur" role="group" aria-label="HUD preset">
+                    {([
+                      { id: "clean",  label: isAr ? "نظيف"  : "Clean",  apply: () => { setShowAnchors(false); setDebugZones(false); } },
+                      { id: "tryon",  label: isAr ? "تجربة" : "Try-on", apply: () => { setShowAnchors(true);  setDebugZones(false); } },
+                      { id: "debug",  label: isAr ? "تشخيص" : "Debug",  apply: () => { setShowAnchors(true);  setDebugZones(true);  } },
+                    ] as const).map((p) => {
+                      const isActive =
+                        (p.id === "clean" && !showAnchors && !debugZones) ||
+                        (p.id === "tryon" && showAnchors && !debugZones) ||
+                        (p.id === "debug" && showAnchors && debugZones);
+                      return (
+                        <button
+                          key={p.id}
+                          onClick={() => { p.apply(); try { localStorage.setItem("lumira:hudPreset", p.id); } catch { /* ignore */ } }}
+                          className={`rounded px-1.5 py-0.5 text-[9px] uppercase tracking-widest transition ${
+                            isActive
+                              ? "bg-accent/25 text-accent shadow-[var(--glow-accent)]"
+                              : "text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {p.label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
