@@ -555,13 +555,23 @@ export function FashionStage() {
                   key={item.id}
                   className="group relative overflow-hidden rounded-lg border border-accent/30 bg-card/40 backdrop-blur transition hover:shadow-[var(--glow-soft)]"
                 >
-                  <div className="relative h-28">
+                  <div className="relative h-36 overflow-hidden">
                     <div className="absolute inset-0" style={{ background: item.gradient }} />
-                    <div className="absolute inset-0 hud-grid opacity-30" />
-                    <svg viewBox="0 0 100 120" className="absolute inset-0 mx-auto h-full text-foreground/40">
-                      <circle cx="50" cy="22" r="9" fill="currentColor" opacity="0.4" />
-                      <path d="M30,42 L70,42 L74,92 L60,92 L55,58 L45,58 L40,92 L26,92 Z" fill="currentColor" opacity="0.4" />
-                    </svg>
+                    <div className="absolute inset-0 hud-grid opacity-25" />
+                    {item.image ? (
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        loading="lazy"
+                        className="absolute inset-0 mx-auto h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-105"
+                        style={{ filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.5))" }}
+                      />
+                    ) : (
+                      <svg viewBox="0 0 100 120" className="absolute inset-0 mx-auto h-full text-foreground/40">
+                        <circle cx="50" cy="22" r="9" fill="currentColor" opacity="0.4" />
+                        <path d="M30,42 L70,42 L74,92 L60,92 L55,58 L45,58 L40,92 L26,92 Z" fill="currentColor" opacity="0.4" />
+                      </svg>
+                    )}
                   </div>
                   <div className="space-y-1.5 p-2.5">
                     <p className="truncate text-xs text-foreground">{item.name}</p>
@@ -573,15 +583,7 @@ export function FashionStage() {
                       >
                         <Sparkles className="h-3 w-3" /> {isAr ? "جرّب" : "Try On"}
                       </button>
-                      <a
-                        href={amazonUrl(item.query)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[#FF9900] bg-[#FF9900] px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#131921] transition hover:brightness-110 hover:shadow-[0_0_10px_#FF9900AA]"
-                        title={isAr ? "اشترِ من أمازون" : "Buy on Amazon"}
-                      >
-                        <ShoppingBag className="h-3 w-3" /> {isAr ? "اشترِ من أمازون" : "Buy on Amazon"}
-                      </a>
+                      <AmazonButton href={amazonUrl(item.query)} isAr={isAr} />
                     </div>
                   </div>
                 </article>
