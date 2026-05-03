@@ -84,9 +84,9 @@ const BRANDS: Brand[] = [
     tint: "linear-gradient(135deg, oklch(0.5 0.1 230 / 0.55), oklch(0.3 0.05 230 / 0.45))",
     items: [
       { id: "nike-1", name: "Tech Fleece Hoodie", tag: "Training", category: "top", color: "#1a1f2e", image: imgNikeHoodie, query: "nike tech fleece hoodie", gradient: "linear-gradient(135deg, oklch(0.25 0.02 260 / 0.55), oklch(0.4 0.04 260 / 0.45))" },
-      { id: "nike-2", name: "Aero Run Vest", tag: "Performance", category: "top", color: "#2ec27e", query: "nike aero run vest", gradient: "linear-gradient(135deg, oklch(0.7 0.2 150 / 0.5), oklch(0.55 0.18 170 / 0.4))" },
-      { id: "nike-3", name: "Dri-FIT Tee", tag: "Sport", category: "top", color: "#c0392b", query: "nike dri-fit shirt", gradient: "linear-gradient(135deg, oklch(0.5 0.18 25 / 0.5), oklch(0.4 0.16 20 / 0.4))" },
-      { id: "nike-4", name: "Tech Pack Joggers", tag: "Lifestyle", category: "bottom", color: "#0f1420", query: "nike tech pack joggers", gradient: "linear-gradient(135deg, oklch(0.2 0.02 260 / 0.55), oklch(0.35 0.04 260 / 0.45))" },
+      { id: "nike-2", name: "Aero Run Vest", tag: "Performance", category: "top", color: "#2ec27e", image: imgNikeVest, query: "nike aero run vest", gradient: "linear-gradient(135deg, oklch(0.7 0.2 150 / 0.5), oklch(0.55 0.18 170 / 0.4))" },
+      { id: "nike-3", name: "Dri-FIT Tee", tag: "Sport", category: "top", color: "#c0392b", image: imgNikeTee, query: "nike dri-fit shirt", gradient: "linear-gradient(135deg, oklch(0.5 0.18 25 / 0.5), oklch(0.4 0.16 20 / 0.4))" },
+      { id: "nike-4", name: "Tech Pack Joggers", tag: "Lifestyle", category: "bottom", color: "#0f1420", image: imgNikeJoggers, query: "nike tech pack joggers", gradient: "linear-gradient(135deg, oklch(0.2 0.02 260 / 0.55), oklch(0.35 0.04 260 / 0.45))" },
     ],
   },
   {
