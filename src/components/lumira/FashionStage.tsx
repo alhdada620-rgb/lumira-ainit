@@ -463,20 +463,21 @@ export function FashionStage() {
                 className="pointer-events-none absolute inset-0 transition-opacity duration-700 animate-fade-in"
                 style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.35 }}
               />
-              {/* Garment image positioned per target */}
+              {/* Garment image — calibrated per category & target */}
               <div
                 key={`gar-${overlay.id}`}
-                className="pointer-events-none absolute inset-0 flex items-start justify-center animate-fade-in"
+                className="pointer-events-none absolute left-1/2 -translate-x-1/2 flex items-center justify-center animate-fade-in transition-all duration-500 ease-out"
                 style={{
-                  paddingTop: mode === "avatar" ? "14%" : "18%",
-                  paddingBottom: mode === "avatar" ? "8%" : "14%",
+                  top: `${fit.top}%`,
+                  bottom: `${fit.bottom}%`,
+                  width: `${fit.width}%`,
                 }}
               >
                 {overlay.image ? (
                   <img
                     src={overlay.image}
                     alt={overlay.name}
-                    className="h-full w-auto max-w-[80%] object-contain"
+                    className="h-full w-full object-contain"
                     style={{
                       filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.55)) drop-shadow(0 0 14px var(--accent))",
                       mixBlendMode: mode === "live" || mode === "photo" ? "multiply" : "normal",
