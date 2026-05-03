@@ -2,6 +2,7 @@ import { Mic, MicOff, Sparkles, Camera, Wallet, Shirt } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitVoiceCommand, type VoiceCommand } from "./voice-events";
+import { emitCaption } from "./CaptionsOverlay";
 import { useT } from "./i18n";
 
 // Minimal Web Speech API types (not in lib.dom for all TS configs)
@@ -147,7 +148,11 @@ export function VoiceVisualizer() {
         else interim += text;
       }
       const combined = (finalText || interim).trim();
-      if (combined) setTranscript(combined);
+      if (combined) {
+        setTranscript(combined);
+        // Live caption: interim updates frequently; keep it sticky until next event
+        emitCaption({ kind: "heard", text: combined, ttl: finalText ? 5000 : 0 });
+      }
       const check = finalText || interim;
       // Greeting: "Hello" / "Hello Lumira" / "مرحبا" / "مرحبا لوميرا"
       if (check && /\b(hello|hi|hey)\b|مرحب[اًا]?|أهل[اًا]?|السلام عليكم/i.test(check)) {
@@ -155,6 +160,7 @@ export function VoiceVisualizer() {
           ? "مرحباً بك في مرآتك الذكية، لوميرا. هل أنت مستعد للتصميم؟"
           : "Welcome to your smart mirror, Islam Ali. Ready to style?";
         setFeedback(reply);
+        emitCaption({ kind: "spoken", text: reply, ttl: 6000 });
         try {
           const u = new SpeechSynthesisUtterance(reply);
           u.lang = lang === "ar" ? "ar-SA" : "en-US";

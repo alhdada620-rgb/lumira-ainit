@@ -10,6 +10,7 @@ import { ProfileProvider } from "@/components/lumira/profile-context";
 import { ProfileData } from "@/components/lumira/ProfileData";
 import { LanguageProvider, useT } from "@/components/lumira/i18n";
 import { LanguageToggle } from "@/components/lumira/LanguageToggle";
+import { CaptionsOverlay } from "@/components/lumira/CaptionsOverlay";
 import bgImg from "@/assets/lumira-bg.jpg";
 
 export const Route = createFileRoute("/")({
@@ -42,6 +43,7 @@ function IndexShell() {
 
   return (
     <>
+      <CaptionsOverlay />
       {/* Cinematic luxury background */}
       <div
         className="fixed inset-0 -z-10 bg-cover bg-center animate-bg-zoom"
