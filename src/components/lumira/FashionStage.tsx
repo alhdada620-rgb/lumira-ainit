@@ -32,6 +32,8 @@ interface CatalogItem {
   category: Category;
   /** Primary fabric color (hex or oklch) used by the SVG garment */
   color: string;
+  /** Hi-res transparent PNG of the garment for AR overlay & catalog */
+  image: string;
 }
 
 interface Brand {
