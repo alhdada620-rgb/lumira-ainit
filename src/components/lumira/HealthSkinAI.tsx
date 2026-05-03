@@ -1,4 +1,4 @@
-import { Sparkles, Play, Square } from "lucide-react";
+import { Sparkles, Play, RotateCcw, CheckCircle2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useT } from "./i18n";
@@ -75,6 +75,7 @@ export function HealthSkinAI() {
   const [tone, setTone] = useState(78);
   const [scanPct, setScanPct] = useState(0);
   const [scanning, setScanning] = useState(false);
+  const [scanComplete, setScanComplete] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopScan = () => {
@@ -85,18 +86,37 @@ export function HealthSkinAI() {
     setScanning(false);
   };
 
+  const completeScan = () => {
+    stopScan();
+    setScanPct(100);
+    setScanComplete(true);
+  };
+
   const startScan = () => {
     if (scanning) {
       stopScan();
       return;
     }
     setScanning(true);
+    setScanComplete(false);
     setScanPct(0);
     intervalRef.current = setInterval(() => {
       setHydration((v) => Math.round(jitter(v, 2, 78, 95)));
       setSmoothness((v) => Math.round(jitter(v, 2, 82, 97)));
       setTone((v) => Math.round(jitter(v, 2, 70, 88)));
-      setScanPct((v) => +Math.min(99.4, v + Math.random() * 6 + 2).toFixed(1));
+      setScanPct((v) => {
+        const next = +Math.min(100, v + Math.random() * 6 + 2).toFixed(1);
+        if (next >= 100) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          setScanning(false);
+          setScanComplete(true);
+          return 100;
+        }
+        return next;
+      });
     }, 350);
   };
 
@@ -139,9 +159,19 @@ export function HealthSkinAI() {
             />
           )}
           <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] uppercase tracking-widest">
-            <span className={`text-glow ${scanning ? "text-primary" : "text-muted-foreground"}`}>
+            <span
+              className={`text-glow ${
+                scanning
+                  ? "text-primary"
+                  : scanComplete
+                  ? "text-accent"
+                  : "text-muted-foreground"
+              }`}
+            >
               {scanning
                 ? isAr ? "جارٍ الفحص..." : "Scanning..."
+                : scanComplete
+                ? isAr ? "اكتمل الفحص" : "Scan complete"
                 : isAr ? "في وضع الاستعداد" : "Idle"}
             </span>
             <span className="text-accent tabular-nums">{scanPct.toFixed(1)}%</span>
@@ -150,25 +180,35 @@ export function HealthSkinAI() {
 
         {/* Rings */}
         <div className="flex flex-col items-center justify-between gap-2 py-1">
-          <Ring value={hydration} color="oklch(0.82 0.14 195)" label={isAr ? "ترطيب" : "Hydration"} active={scanning} />
-          <Ring value={smoothness} color="oklch(0.85 0.15 165)" label={isAr ? "نعومة" : "Smoothness"} active={scanning} />
-          <Ring value={tone} color="oklch(0.78 0.12 15)" label={isAr ? "تجانس اللون" : "Tone Evenness"} active={scanning} />
+          <Ring value={hydration} color="oklch(0.82 0.14 195)" label={isAr ? "ترطيب" : "Hydration"} active={scanning || scanComplete} />
+          <Ring value={smoothness} color="oklch(0.85 0.15 165)" label={isAr ? "نعومة" : "Smoothness"} active={scanning || scanComplete} />
+          <Ring value={tone} color="oklch(0.78 0.12 15)" label={isAr ? "تجانس اللون" : "Tone Evenness"} active={scanning || scanComplete} />
         </div>
       </div>
 
-      {/* Start / Stop scan button */}
+      {/* Start / Stop / Restart scan button */}
       <button
-        onClick={startScan}
+        onClick={scanning ? completeScan : startScan}
         aria-pressed={scanning}
         className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl border py-2 text-[10px] uppercase tracking-[0.3em] transition-all ${
           scanning
             ? "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
+            : scanComplete
+            ? "border-accent/40 bg-accent/10 text-accent hover:bg-accent/20"
             : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-[var(--glow-soft)]"
         }`}
       >
-        {scanning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+        {scanning ? (
+          <CheckCircle2 className="h-3 w-3" />
+        ) : scanComplete ? (
+          <RotateCcw className="h-3 w-3" />
+        ) : (
+          <Play className="h-3 w-3" />
+        )}
         {scanning
-          ? isAr ? "إيقاف الفحص" : "Stop scan"
+          ? isAr ? "إنهاء الفحص" : "Finish scan"
+          : scanComplete
+          ? isAr ? "بدء فحص جديد" : "Start new scan"
           : isAr ? "بدء فحص البشرة" : "Start skin scan"}
       </button>
 
