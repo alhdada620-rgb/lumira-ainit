@@ -104,9 +104,9 @@ const BRANDS: Brand[] = [
     tint: "linear-gradient(135deg, oklch(0.6 0.18 320 / 0.5), oklch(0.4 0.12 280 / 0.4))",
     items: [
       { id: "nam-1", name: "Onyx Embroidered Abaya", tag: "Formal", category: "dress", color: "#0d0a1a", image: imgNamshiAbaya, query: "namshi embroidered abaya", gradient: "linear-gradient(135deg, oklch(0.2 0.02 280 / 0.55), oklch(0.4 0.05 280 / 0.45))" },
-      { id: "nam-2", name: "Royal Velvet Kaftan", tag: "Occasion", category: "dress", color: "#5e2a82", query: "namshi velvet kaftan", gradient: "linear-gradient(135deg, oklch(0.35 0.15 280 / 0.5), oklch(0.55 0.18 300 / 0.4))" },
-      { id: "nam-3", name: "Silk Hijab Set", tag: "Daily", category: "accessory", color: "#d8b4d4", query: "namshi silk hijab", gradient: "linear-gradient(135deg, oklch(0.7 0.08 320 / 0.5), oklch(0.55 0.1 300 / 0.4))" },
-      { id: "nam-4", name: "Pearl Detail Jalabiya", tag: "Festive", category: "dress", color: "#ece4cf", query: "namshi pearl jalabiya", gradient: "linear-gradient(135deg, oklch(0.85 0.04 80 / 0.5), oklch(0.7 0.06 60 / 0.4))" },
+      { id: "nam-2", name: "Royal Velvet Kaftan", tag: "Occasion", category: "dress", color: "#5e2a82", image: imgNamshiKaftan, query: "namshi velvet kaftan", gradient: "linear-gradient(135deg, oklch(0.35 0.15 280 / 0.5), oklch(0.55 0.18 300 / 0.4))" },
+      { id: "nam-3", name: "Silk Hijab Set", tag: "Daily", category: "accessory", color: "#d8b4d4", image: imgNamshiHijab, query: "namshi silk hijab", gradient: "linear-gradient(135deg, oklch(0.7 0.08 320 / 0.5), oklch(0.55 0.1 300 / 0.4))" },
+      { id: "nam-4", name: "Pearl Detail Jalabiya", tag: "Festive", category: "dress", color: "#ece4cf", image: imgNamshiJalabiya, query: "namshi pearl jalabiya", gradient: "linear-gradient(135deg, oklch(0.85 0.04 80 / 0.5), oklch(0.7 0.06 60 / 0.4))" },
     ],
   },
   {
