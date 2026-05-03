@@ -477,12 +477,17 @@ export function FashionStage() {
                 {/* Glossy floor reflection */}
                 <div className="absolute inset-x-6 bottom-0 h-12 rounded-[50%] bg-gradient-to-t from-accent/20 to-transparent blur-md" />
 
-                {/* Photoreal mannequin with anatomical body distortion */}
+                {/* Photoreal mannequin with anatomical body distortion + skin-tone tint + 45° rotate */}
                 <div
-                  className="absolute bottom-2 left-1/2 -translate-x-1/2 transition-all duration-500 ease-out"
-                  style={{ width: avatarWidth, height: avatarHeight }}
+                  className="absolute bottom-2 left-1/2 -translate-x-1/2 transition-all duration-700 ease-out"
+                  style={{
+                    width: avatarWidth,
+                    height: avatarHeight,
+                    transform: `translateX(-50%) perspective(900px) rotateY(${rotated ? 45 : 0}deg)`,
+                    transformOrigin: "50% 100%",
+                  }}
                 >
-                  {/* Base full body (head + feet stay anchored) */}
+                  {/* Base full body */}
                   <img
                     src={profile.gender === "female" ? mannequinFemale : mannequinMale}
                     alt="3D Mannequin"
@@ -491,7 +496,22 @@ export function FashionStage() {
                       filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary))`,
                     }}
                   />
-                  {/* Midsection bulge layer — wider with weight */}
+                  {/* Skin-tone tint mask (multiplied over mannequin via mask-image) */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 transition-colors duration-500"
+                    style={{
+                      background: profile.skinTone,
+                      mixBlendMode: "multiply",
+                      opacity: 0.55,
+                      WebkitMaskImage: `url(${profile.gender === "female" ? mannequinFemale : mannequinMale})`,
+                      maskImage: `url(${profile.gender === "female" ? mannequinFemale : mannequinMale})`,
+                      WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+                      WebkitMaskPosition: "center", maskPosition: "center",
+                      WebkitMaskSize: "contain", maskSize: "contain",
+                    }}
+                  />
+                  {/* Midsection bulge layer */}
                   <img
                     src={profile.gender === "female" ? mannequinFemale : mannequinMale}
                     alt=""
