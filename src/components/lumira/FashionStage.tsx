@@ -124,6 +124,7 @@ export function FashionStage() {
   const [progress, setProgress] = useState(0);
   const [trying, setTrying] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [debugZones, setDebugZones] = useState(false);
 
   const brand = BRANDS[activeBrandIdx];
 
