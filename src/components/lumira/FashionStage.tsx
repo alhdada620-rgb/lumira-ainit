@@ -1062,6 +1062,15 @@ export function FashionStage() {
               ? isAr ? `جاري التركيب… ${Math.round(progress)}%` : `Fitting… ${Math.round(progress)}%`
               : isAr ? "جرّب الآن" : "Try On"}
           </button>
+          <button
+            onClick={captureLook}
+            disabled={capturing}
+            title={isAr ? "التقاط الإطلالة" : "Capture Look"}
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-accent/50 bg-accent/10 px-3 py-2.5 text-[10px] uppercase tracking-[0.3em] text-accent transition hover:bg-accent/20 hover:shadow-[var(--glow-accent)] disabled:opacity-60"
+          >
+            {capturing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+            <span className="hidden sm:inline">{isAr ? "التقاط" : "Capture"}</span>
+          </button>
           {overlay && (
             <button
               onClick={() => setOverlay(null)}
