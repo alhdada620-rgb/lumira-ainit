@@ -718,6 +718,7 @@ export function FashionStage() {
                     }`}
                   >
                     {isAr ? (showAnchors ? "إخفاء النقاط" : "إظهار النقاط") : (showAnchors ? "Hide Anchors" : "Show Anchors")}
+                  </button>
                 </div>
               </div>
 
