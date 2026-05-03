@@ -206,24 +206,23 @@ export function HudJump() {
                 onKeyDown={(e) => {
                   if (e.key === "ArrowDown") {
                     e.preventDefault();
-                    setActive((i) => (results.length ? (i + 1) % results.length : 0));
+                    setActive((i) => (totalSelectable ? (i + 1) % totalSelectable : 0));
                   } else if (e.key === "ArrowUp") {
                     e.preventDefault();
-                    setActive((i) => (results.length ? (i - 1 + results.length) % results.length : 0));
+                    setActive((i) => (totalSelectable ? (i - 1 + totalSelectable) % totalSelectable : 0));
                   } else if (e.key === "Home") {
                     e.preventDefault();
                     setActive(0);
                   } else if (e.key === "End") {
                     e.preventDefault();
-                    setActive(Math.max(0, results.length - 1));
-                  } else if (e.key === "Enter" && results[active]) {
+                    setActive(Math.max(0, totalSelectable - 1));
+                  } else if (e.key === "Enter" && activeItem) {
                     e.preventDefault();
-                    jump(results[active].id);
+                    jump(activeItem.id);
                   } else if (e.key === "Escape") {
                     e.preventDefault();
                     setOpen(false);
                   } else if (e.key === "Tab") {
-                    // Keep focus inside the dialog
                     e.preventDefault();
                   }
                 }}
@@ -235,10 +234,10 @@ export function HudJump() {
             {/* Live region announces result count and active option for screen readers */}
             <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
               {resultsCountMessage}
-              {results[active] && `. ${isAr ? "النشط" : "Active"}: ${isAr ? results[active].labelAr : results[active].label}`}
+              {activeItem && `. ${isAr ? "النشط" : "Active"}: ${isAr ? activeItem.labelAr : activeItem.label}`}
             </div>
 
-            {results.length === 0 ? (
+            {totalSelectable === 0 ? (
               <div className="px-4 py-6 text-center text-xs text-muted-foreground">
                 {isAr ? "لا توجد نتائج" : "No matches"}
               </div>
@@ -250,11 +249,37 @@ export function HudJump() {
                 aria-label={isAr ? "نتائج الوحدات" : "Module results"}
                 className="max-h-72 overflow-y-auto py-1"
               >
-                {results.map((m, i) => {
-                  const isActive = i === active;
+                {rows.map((row, i) => {
+                  if (row.kind === "header") {
+                    const isRecent = row.id === "h-recent";
+                    return (
+                      <li
+                        key={row.id}
+                        role="presentation"
+                        className="flex items-center justify-between px-4 pb-1 pt-2 text-[9px] uppercase tracking-[0.3em] text-muted-foreground/70"
+                      >
+                        <span>{row.label}</span>
+                        {isRecent && recent.length > 0 && (
+                          <button
+                            type="button"
+                            tabIndex={-1}
+                            onClick={clearRecent}
+                            className="text-[9px] uppercase tracking-widest text-muted-foreground/60 transition hover:text-accent"
+                            aria-label={isAr ? "مسح المستخدم مؤخراً" : "Clear recent"}
+                          >
+                            {isAr ? "مسح" : "Clear"}
+                          </button>
+                        )}
+                      </li>
+                    );
+                  }
+                  const isActive = i === activeRowIndex;
+                  const m = row.module;
+                  // selectable index for setActive on hover
+                  const selIdx = selectableIndices.indexOf(i);
                   return (
                     <li
-                      key={m.id}
+                      key={row.id}
                       id={`hud-jump-opt-${i}`}
                       role="option"
                       aria-selected={isActive}
@@ -262,7 +287,7 @@ export function HudJump() {
                       <button
                         type="button"
                         tabIndex={-1}
-                        onMouseEnter={() => setActive(i)}
+                        onMouseEnter={() => selIdx >= 0 && setActive(selIdx)}
                         onClick={() => jump(m.id)}
                         className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-start transition ${
                           isActive ? "bg-accent/15 text-accent" : "text-foreground hover:bg-primary/10"
@@ -276,7 +301,9 @@ export function HudJump() {
                             {isAr ? m.hintAr : m.hint}
                           </span>
                         </div>
-                        <span className="text-[9px] uppercase tracking-widest opacity-60" aria-hidden="true">↵</span>
+                        <span className="text-[9px] uppercase tracking-widest opacity-60" aria-hidden="true">
+                          {row.section === "recent" ? "★" : "↵"}
+                        </span>
                       </button>
                     </li>
                   );
