@@ -74,9 +74,9 @@ const BRANDS: Brand[] = [
     tint: "linear-gradient(135deg, oklch(0.55 0.2 25 / 0.55), oklch(0.4 0.15 25 / 0.4))",
     items: [
       { id: "hm-1", name: "Oversized Cotton Tee", tag: "Everyday", category: "top", color: "#e8d9b8", image: imgHmTee, query: "h&m oversized cotton tee", gradient: "linear-gradient(135deg, oklch(0.9 0.02 90 / 0.5), oklch(0.78 0.04 80 / 0.4))" },
-      { id: "hm-2", name: "Relaxed Denim Jacket", tag: "Layering", category: "top", color: "#3a5a82", query: "h&m relaxed denim jacket", gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
-      { id: "hm-3", name: "Linen Blazer", tag: "Smart Casual", category: "top", color: "#c2a878", query: "h&m linen blazer", gradient: "linear-gradient(135deg, oklch(0.7 0.05 70 / 0.5), oklch(0.55 0.06 60 / 0.4))" },
-      { id: "hm-4", name: "Knit Mock-Neck Sweater", tag: "Winter", category: "top", color: "#7a3030", query: "h&m knit mock neck sweater", gradient: "linear-gradient(135deg, oklch(0.5 0.08 25 / 0.5), oklch(0.35 0.1 20 / 0.45))" },
+      { id: "hm-2", name: "Relaxed Denim Jacket", tag: "Layering", category: "top", color: "#3a5a82", image: imgHmDenim, query: "h&m relaxed denim jacket", gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
+      { id: "hm-3", name: "Linen Blazer", tag: "Smart Casual", category: "top", color: "#c2a878", image: imgHmLinen, query: "h&m linen blazer", gradient: "linear-gradient(135deg, oklch(0.7 0.05 70 / 0.5), oklch(0.55 0.06 60 / 0.4))" },
+      { id: "hm-4", name: "Knit Mock-Neck Sweater", tag: "Winter", category: "top", color: "#7a3030", image: imgHmKnit, query: "h&m knit mock neck sweater", gradient: "linear-gradient(135deg, oklch(0.5 0.08 25 / 0.5), oklch(0.35 0.1 20 / 0.45))" },
     ],
   },
   {
