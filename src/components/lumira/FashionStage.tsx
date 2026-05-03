@@ -1,16 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
-import { Sparkles, Camera, CameraOff, Loader2, X, ShoppingBag, ExternalLink } from "lucide-react";
+import {
+  Sparkles, Camera, CameraOff, Loader2, X, ShoppingBag,
+  Video, User2, Upload, Image as ImageIcon,
+} from "lucide-react";
 import { useCamera } from "./camera-context";
 import { useT } from "./i18n";
+import { useProfile } from "./profile-context";
+
+const AMAZON_TAG = "lumiraai-20";
 
 interface CatalogItem {
   id: string;
   name: string;
   tag: string;
-  /** AR overlay tint */
   gradient: string;
-  /** Amazon search query */
   query: string;
 }
 
@@ -27,112 +31,102 @@ const BRANDS: Brand[] = [
     id: "hm", name: "H&M", outfit: "Casual Crew",
     tint: "linear-gradient(135deg, oklch(0.55 0.2 25 / 0.55), oklch(0.4 0.15 25 / 0.4))",
     items: [
-      { id: "hm-1", name: "Oversized Cotton Tee", tag: "Everyday", query: "h&m oversized cotton tee",
-        gradient: "linear-gradient(135deg, oklch(0.9 0.02 90 / 0.5), oklch(0.78 0.04 80 / 0.4))" },
-      { id: "hm-2", name: "Relaxed Denim Jacket", tag: "Layering", query: "h&m relaxed denim jacket",
-        gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
-      { id: "hm-3", name: "Linen Blazer", tag: "Smart Casual", query: "h&m linen blazer",
-        gradient: "linear-gradient(135deg, oklch(0.7 0.05 70 / 0.5), oklch(0.55 0.06 60 / 0.4))" },
-      { id: "hm-4", name: "Knit Mock-Neck Sweater", tag: "Winter", query: "h&m knit mock neck sweater",
-        gradient: "linear-gradient(135deg, oklch(0.5 0.08 25 / 0.5), oklch(0.35 0.1 20 / 0.45))" },
+      { id: "hm-1", name: "Oversized Cotton Tee", tag: "Everyday", query: "h&m oversized cotton tee", gradient: "linear-gradient(135deg, oklch(0.9 0.02 90 / 0.5), oklch(0.78 0.04 80 / 0.4))" },
+      { id: "hm-2", name: "Relaxed Denim Jacket", tag: "Layering", query: "h&m relaxed denim jacket", gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
+      { id: "hm-3", name: "Linen Blazer", tag: "Smart Casual", query: "h&m linen blazer", gradient: "linear-gradient(135deg, oklch(0.7 0.05 70 / 0.5), oklch(0.55 0.06 60 / 0.4))" },
+      { id: "hm-4", name: "Knit Mock-Neck Sweater", tag: "Winter", query: "h&m knit mock neck sweater", gradient: "linear-gradient(135deg, oklch(0.5 0.08 25 / 0.5), oklch(0.35 0.1 20 / 0.45))" },
     ],
   },
   {
     id: "nike", name: "NIKE", outfit: "Sporty Tech Fleece",
     tint: "linear-gradient(135deg, oklch(0.5 0.1 230 / 0.55), oklch(0.3 0.05 230 / 0.45))",
     items: [
-      { id: "nike-1", name: "Tech Fleece Hoodie", tag: "Training", query: "nike tech fleece hoodie",
-        gradient: "linear-gradient(135deg, oklch(0.25 0.02 260 / 0.55), oklch(0.4 0.04 260 / 0.45))" },
-      { id: "nike-2", name: "Aero Run Vest", tag: "Performance", query: "nike aero run vest",
-        gradient: "linear-gradient(135deg, oklch(0.7 0.2 150 / 0.5), oklch(0.55 0.18 170 / 0.4))" },
-      { id: "nike-3", name: "Dri-FIT Tee", tag: "Sport", query: "nike dri-fit shirt",
-        gradient: "linear-gradient(135deg, oklch(0.5 0.18 25 / 0.5), oklch(0.4 0.16 20 / 0.4))" },
-      { id: "nike-4", name: "Tech Pack Joggers", tag: "Lifestyle", query: "nike tech pack joggers",
-        gradient: "linear-gradient(135deg, oklch(0.2 0.02 260 / 0.55), oklch(0.35 0.04 260 / 0.45))" },
+      { id: "nike-1", name: "Tech Fleece Hoodie", tag: "Training", query: "nike tech fleece hoodie", gradient: "linear-gradient(135deg, oklch(0.25 0.02 260 / 0.55), oklch(0.4 0.04 260 / 0.45))" },
+      { id: "nike-2", name: "Aero Run Vest", tag: "Performance", query: "nike aero run vest", gradient: "linear-gradient(135deg, oklch(0.7 0.2 150 / 0.5), oklch(0.55 0.18 170 / 0.4))" },
+      { id: "nike-3", name: "Dri-FIT Tee", tag: "Sport", query: "nike dri-fit shirt", gradient: "linear-gradient(135deg, oklch(0.5 0.18 25 / 0.5), oklch(0.4 0.16 20 / 0.4))" },
+      { id: "nike-4", name: "Tech Pack Joggers", tag: "Lifestyle", query: "nike tech pack joggers", gradient: "linear-gradient(135deg, oklch(0.2 0.02 260 / 0.55), oklch(0.35 0.04 260 / 0.45))" },
     ],
   },
   {
     id: "zara", name: "ZARA", outfit: "Minimal Tailoring",
     tint: "linear-gradient(135deg, oklch(0.35 0.04 60 / 0.55), oklch(0.2 0.02 60 / 0.45))",
     items: [
-      { id: "zara-1", name: "Tailored Wool Blazer", tag: "Smart Casual", query: "zara tailored wool blazer",
-        gradient: "linear-gradient(135deg, oklch(0.3 0.02 260 / 0.55), oklch(0.5 0.04 260 / 0.45))" },
-      { id: "zara-2", name: "Satin Slip Dress", tag: "Evening", query: "zara satin slip dress",
-        gradient: "linear-gradient(135deg, oklch(0.55 0.12 350 / 0.5), oklch(0.7 0.1 320 / 0.4))" },
-      { id: "zara-3", name: "Pleated Wide-Leg Trousers", tag: "Modern", query: "zara pleated wide leg trousers",
-        gradient: "linear-gradient(135deg, oklch(0.4 0.03 80 / 0.55), oklch(0.25 0.02 80 / 0.45))" },
-      { id: "zara-4", name: "Cropped Leather Jacket", tag: "Statement", query: "zara cropped leather jacket",
-        gradient: "linear-gradient(135deg, oklch(0.18 0.02 30 / 0.55), oklch(0.3 0.04 30 / 0.45))" },
+      { id: "zara-1", name: "Tailored Wool Blazer", tag: "Smart Casual", query: "zara tailored wool blazer", gradient: "linear-gradient(135deg, oklch(0.3 0.02 260 / 0.55), oklch(0.5 0.04 260 / 0.45))" },
+      { id: "zara-2", name: "Satin Slip Dress", tag: "Evening", query: "zara satin slip dress", gradient: "linear-gradient(135deg, oklch(0.55 0.12 350 / 0.5), oklch(0.7 0.1 320 / 0.4))" },
+      { id: "zara-3", name: "Pleated Wide-Leg Trousers", tag: "Modern", query: "zara pleated wide leg trousers", gradient: "linear-gradient(135deg, oklch(0.4 0.03 80 / 0.55), oklch(0.25 0.02 80 / 0.45))" },
+      { id: "zara-4", name: "Cropped Leather Jacket", tag: "Statement", query: "zara cropped leather jacket", gradient: "linear-gradient(135deg, oklch(0.18 0.02 30 / 0.55), oklch(0.3 0.04 30 / 0.45))" },
     ],
   },
   {
     id: "namshi", name: "NAMSHI", outfit: "Modern Abaya",
     tint: "linear-gradient(135deg, oklch(0.6 0.18 320 / 0.5), oklch(0.4 0.12 280 / 0.4))",
     items: [
-      { id: "nam-1", name: "Onyx Embroidered Abaya", tag: "Formal", query: "namshi embroidered abaya",
-        gradient: "linear-gradient(135deg, oklch(0.2 0.02 280 / 0.55), oklch(0.4 0.05 280 / 0.45))" },
-      { id: "nam-2", name: "Royal Velvet Kaftan", tag: "Occasion", query: "namshi velvet kaftan",
-        gradient: "linear-gradient(135deg, oklch(0.35 0.15 280 / 0.5), oklch(0.55 0.18 300 / 0.4))" },
-      { id: "nam-3", name: "Silk Hijab Set", tag: "Daily", query: "namshi silk hijab",
-        gradient: "linear-gradient(135deg, oklch(0.7 0.08 320 / 0.5), oklch(0.55 0.1 300 / 0.4))" },
-      { id: "nam-4", name: "Pearl Detail Jalabiya", tag: "Festive", query: "namshi pearl jalabiya",
-        gradient: "linear-gradient(135deg, oklch(0.85 0.04 80 / 0.5), oklch(0.7 0.06 60 / 0.4))" },
+      { id: "nam-1", name: "Onyx Embroidered Abaya", tag: "Formal", query: "namshi embroidered abaya", gradient: "linear-gradient(135deg, oklch(0.2 0.02 280 / 0.55), oklch(0.4 0.05 280 / 0.45))" },
+      { id: "nam-2", name: "Royal Velvet Kaftan", tag: "Occasion", query: "namshi velvet kaftan", gradient: "linear-gradient(135deg, oklch(0.35 0.15 280 / 0.5), oklch(0.55 0.18 300 / 0.4))" },
+      { id: "nam-3", name: "Silk Hijab Set", tag: "Daily", query: "namshi silk hijab", gradient: "linear-gradient(135deg, oklch(0.7 0.08 320 / 0.5), oklch(0.55 0.1 300 / 0.4))" },
+      { id: "nam-4", name: "Pearl Detail Jalabiya", tag: "Festive", query: "namshi pearl jalabiya", gradient: "linear-gradient(135deg, oklch(0.85 0.04 80 / 0.5), oklch(0.7 0.06 60 / 0.4))" },
     ],
   },
   {
     id: "adidas", name: "ADIDAS", outfit: "Track Suit",
     tint: "linear-gradient(135deg, oklch(0.45 0.08 250 / 0.55), oklch(0.25 0.04 250 / 0.45))",
     items: [
-      { id: "adi-1", name: "Originals Track Jacket", tag: "Retro", query: "adidas originals track jacket",
-        gradient: "linear-gradient(135deg, oklch(0.3 0.05 250 / 0.55), oklch(0.5 0.08 250 / 0.45))" },
-      { id: "adi-2", name: "Tiro Training Pants", tag: "Sport", query: "adidas tiro training pants",
-        gradient: "linear-gradient(135deg, oklch(0.2 0.02 260 / 0.55), oklch(0.35 0.04 260 / 0.45))" },
-      { id: "adi-3", name: "Ultraboost Tee", tag: "Run", query: "adidas ultraboost shirt",
-        gradient: "linear-gradient(135deg, oklch(0.7 0.15 200 / 0.5), oklch(0.5 0.18 220 / 0.4))" },
-      { id: "adi-4", name: "Three-Stripe Hoodie", tag: "Lifestyle", query: "adidas three stripe hoodie",
-        gradient: "linear-gradient(135deg, oklch(0.25 0.03 260 / 0.55), oklch(0.4 0.05 260 / 0.45))" },
+      { id: "adi-1", name: "Originals Track Jacket", tag: "Retro", query: "adidas originals track jacket", gradient: "linear-gradient(135deg, oklch(0.3 0.05 250 / 0.55), oklch(0.5 0.08 250 / 0.45))" },
+      { id: "adi-2", name: "Tiro Training Pants", tag: "Sport", query: "adidas tiro training pants", gradient: "linear-gradient(135deg, oklch(0.2 0.02 260 / 0.55), oklch(0.35 0.04 260 / 0.45))" },
+      { id: "adi-3", name: "Ultraboost Tee", tag: "Run", query: "adidas ultraboost shirt", gradient: "linear-gradient(135deg, oklch(0.7 0.15 200 / 0.5), oklch(0.5 0.18 220 / 0.4))" },
+      { id: "adi-4", name: "Three-Stripe Hoodie", tag: "Lifestyle", query: "adidas three stripe hoodie", gradient: "linear-gradient(135deg, oklch(0.25 0.03 260 / 0.55), oklch(0.4 0.05 260 / 0.45))" },
     ],
   },
   {
     id: "sephora", name: "SEPHORA", outfit: "Beauty Glow",
     tint: "linear-gradient(135deg, oklch(0.6 0.2 0 / 0.5), oklch(0.4 0.18 350 / 0.4))",
     items: [
-      { id: "sep-1", name: "Velvet Matte Lipstick", tag: "Bestseller", query: "sephora velvet matte lipstick",
-        gradient: "linear-gradient(135deg, oklch(0.55 0.22 25 / 0.5), oklch(0.4 0.18 15 / 0.4))" },
-      { id: "sep-2", name: "Liquid Glow Highlighter", tag: "New", query: "sephora liquid glow highlighter",
-        gradient: "linear-gradient(135deg, oklch(0.85 0.1 80 / 0.5), oklch(0.7 0.12 60 / 0.4))" },
-      { id: "sep-3", name: "Precision Eyeliner", tag: "Pro", query: "sephora precision eyeliner",
-        gradient: "linear-gradient(135deg, oklch(0.18 0.02 260 / 0.55), oklch(0.3 0.04 260 / 0.45))" },
-      { id: "sep-4", name: "Cloud Blush", tag: "Sheer", query: "sephora cloud blush",
-        gradient: "linear-gradient(135deg, oklch(0.78 0.12 15 / 0.5), oklch(0.65 0.14 10 / 0.4))" },
+      { id: "sep-1", name: "Velvet Matte Lipstick", tag: "Bestseller", query: "sephora velvet matte lipstick", gradient: "linear-gradient(135deg, oklch(0.55 0.22 25 / 0.5), oklch(0.4 0.18 15 / 0.4))" },
+      { id: "sep-2", name: "Liquid Glow Highlighter", tag: "New", query: "sephora liquid glow highlighter", gradient: "linear-gradient(135deg, oklch(0.85 0.1 80 / 0.5), oklch(0.7 0.12 60 / 0.4))" },
+      { id: "sep-3", name: "Precision Eyeliner", tag: "Pro", query: "sephora precision eyeliner", gradient: "linear-gradient(135deg, oklch(0.18 0.02 260 / 0.55), oklch(0.3 0.04 260 / 0.45))" },
+      { id: "sep-4", name: "Cloud Blush", tag: "Sheer", query: "sephora cloud blush", gradient: "linear-gradient(135deg, oklch(0.78 0.12 15 / 0.5), oklch(0.65 0.14 10 / 0.4))" },
     ],
   },
 ];
+
+type Mode = "live" | "avatar" | "photo";
 
 export function FashionStage() {
   const { lang } = useT();
   const isAr = lang === "ar";
   const { stream, active, error, starting, start, stop } = useCamera();
+  const profile = useProfile();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
+  const [mode, setMode] = useState<Mode>("live");
   const [activeBrandIdx, setActiveBrandIdx] = useState(0);
   const [openMall, setOpenMall] = useState<Brand | null>(null);
   const [overlay, setOverlay] = useState<{ id: string; name: string; brand: string; gradient: string } | null>(null);
   const [progress, setProgress] = useState(0);
   const [trying, setTrying] = useState(false);
+  const [scanning, setScanning] = useState(false);
 
   const brand = BRANDS[activeBrandIdx];
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (stream) {
+    if (stream && mode === "live") {
       v.srcObject = stream;
       v.play().catch(() => {});
     } else {
       v.srcObject = null;
     }
-  }, [stream]);
+  }, [stream, mode]);
+
+  // Pulse SCANNING grid when sliders move
+  useEffect(() => {
+    if (mode !== "avatar") return;
+    setScanning(true);
+    const id = setTimeout(() => setScanning(false), 900);
+    return () => clearTimeout(id);
+  }, [profile.weight, profile.height, profile.gender, mode]);
 
   const runProgress = () => {
     setTrying(true);
@@ -159,105 +153,261 @@ export function FashionStage() {
   };
 
   const amazonUrl = (q: string) =>
-    `https://www.amazon.com/s?k=${encodeURIComponent(q)}`;
+    `https://www.amazon.com/s?k=${encodeURIComponent(q)}&tag=${AMAZON_TAG}`;
+
+  const handlePhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => profile.setUploadedPhoto(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  // Avatar dynamic dimensions based on height/weight
+  const baseHeightPct = 92; // % of frame height at 178cm
+  const heightScale = profile.height / 178;
+  const widthScale = 0.55 + (profile.weight - 75) / 200; // wider with weight
+  const avatarHeight = `${Math.min(98, baseHeightPct * heightScale)}%`;
+  const avatarWidth = `${Math.max(28, 42 * widthScale)}%`;
+
+  const tabs: { id: Mode; label: string; labelAr: string; icon: any }[] = [
+    { id: "live", label: "Live Mirror", labelAr: "المرآة المباشرة", icon: Video },
+    { id: "avatar", label: "3D Avatar", labelAr: "أفاتار ثلاثي", icon: User2 },
+    { id: "photo", label: "Photo Upload", labelAr: "صورة", icon: ImageIcon },
+  ];
 
   return (
     <GlassPanel
-      title={isAr ? "المرآة الذكية · واقع معزز" : "Smart Mirror · AR"}
+      title={isAr ? "مختبر التصميم الشخصي" : "Personal Styling Lab"}
       icon={<Sparkles className="h-3.5 w-3.5" />}
       accent
       className="lg:col-span-1"
     >
-      <div className="space-y-4">
-        {/* Live mirror frame */}
+      <div className="space-y-3">
+        {/* Mode tabs */}
+        <div className="grid grid-cols-3 gap-1 rounded-lg border border-primary/25 bg-card/40 p-1 backdrop-blur">
+          {tabs.map((t) => {
+            const Icon = t.icon;
+            const isActive = mode === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setMode(t.id)}
+                className={`flex items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-[10px] font-medium uppercase tracking-[0.18em] transition active:scale-95 ${
+                  isActive
+                    ? "border border-accent/60 bg-accent/15 text-accent shadow-[var(--glow-accent)]"
+                    : "border border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Icon className="h-3 w-3" />
+                <span className="hidden sm:inline">{isAr ? t.labelAr : t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Frame */}
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl border border-accent/30 bg-background/40">
           <div className="pointer-events-none absolute -inset-px rounded-xl shadow-[var(--glow-primary)]" />
           <div className="absolute inset-0 hud-grid opacity-25" />
 
-          {/* Live camera feed */}
-          <video
-            ref={videoRef}
-            playsInline
-            muted
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{
-              transform: "scaleX(-1)",
-              filter: "brightness(1.05) contrast(1.05) saturate(1.1) drop-shadow(0 0 18px var(--primary))",
-              opacity: active ? 1 : 0,
-              transition: "opacity 0.6s ease",
-            }}
-          />
+          {/* LIVE MIRROR */}
+          {mode === "live" && (
+            <>
+              <video
+                ref={videoRef}
+                playsInline
+                muted
+                className="absolute inset-0 h-full w-full object-cover"
+                style={{
+                  transform: "scaleX(-1)",
+                  filter: "brightness(1.05) contrast(1.05) saturate(1.1) drop-shadow(0 0 18px var(--primary))",
+                  opacity: active ? 1 : 0,
+                  transition: "opacity 0.6s ease",
+                }}
+              />
+              {!active && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-6">
+                  <div className="relative h-20 w-20">
+                    <div className="absolute inset-0 animate-ring-rotate rounded-full border border-dashed border-primary/40" />
+                    <div className="absolute inset-3 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 shadow-[var(--glow-soft)]" />
+                    <Camera className="absolute inset-0 m-auto h-8 w-8 text-primary" />
+                  </div>
+                  <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
+                    {isAr ? "المرآة في وضع الاستعداد" : "Mirror Standby"}
+                  </p>
+                  <button
+                    onClick={start}
+                    disabled={starting}
+                    className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-gradient-to-r from-primary/20 to-accent/20 px-4 py-2 text-[11px] uppercase tracking-[0.3em] text-primary shadow-[var(--glow-soft)] hover:shadow-[var(--glow-primary)] disabled:opacity-60"
+                  >
+                    {starting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
+                    {starting ? (isAr ? "جاري التشغيل…" : "Starting…") : (isAr ? "تشغيل الكاميرا" : "Start Mirror")}
+                  </button>
+                  {error && <p className="text-[10px] text-destructive/80">{error}</p>}
+                </div>
+              )}
+              {active && (
+                <button
+                  onClick={stop}
+                  className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-destructive backdrop-blur hover:bg-destructive/15"
+                >
+                  <CameraOff className="h-3 w-3" />
+                  {isAr ? "إيقاف" : "Stop"}
+                </button>
+              )}
+            </>
+          )}
 
-          {/* Idle state */}
-          {!active && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-6">
-              <div className="relative h-20 w-20">
-                <div className="absolute inset-0 animate-ring-rotate rounded-full border border-dashed border-primary/40" />
-                <div className="absolute inset-3 rounded-full bg-gradient-to-br from-primary/40 to-accent/40 shadow-[var(--glow-soft)]" />
-                <Camera className="absolute inset-0 m-auto h-8 w-8 text-primary" />
+          {/* 3D AVATAR */}
+          {mode === "avatar" && (
+            <div className="absolute inset-0 flex flex-col">
+              {/* Gender select */}
+              <div className="absolute left-1/2 top-3 z-20 flex -translate-x-1/2 gap-1 rounded-full border border-primary/30 bg-background/70 p-1 backdrop-blur">
+                {(["male", "female"] as const).map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => profile.setGender(g)}
+                    className={`rounded-full px-3 py-1 text-[9px] uppercase tracking-[0.25em] transition ${
+                      profile.gender === g
+                        ? "bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {g === "male" ? (isAr ? "ذكر" : "Male") : (isAr ? "أنثى" : "Female")}
+                  </button>
+                ))}
               </div>
-              <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
-                {isAr ? "المرآة في وضع الاستعداد" : "Mirror Standby"}
-              </p>
-              <button
-                onClick={start}
-                disabled={starting}
-                className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-gradient-to-r from-primary/20 to-accent/20 px-4 py-2 text-[11px] uppercase tracking-[0.3em] text-primary shadow-[var(--glow-soft)] hover:shadow-[var(--glow-primary)] disabled:opacity-60"
+
+              {/* Avatar stage */}
+              <div className="relative flex-1">
+                {/* Glossy floor reflection */}
+                <div className="absolute inset-x-6 bottom-0 h-12 rounded-[50%] bg-gradient-to-t from-accent/20 to-transparent blur-md" />
+
+                {/* SVG avatar */}
+                <div
+                  className="absolute bottom-2 left-1/2 -translate-x-1/2 transition-all duration-300 ease-out"
+                  style={{ width: avatarWidth, height: avatarHeight }}
+                >
+                  <AvatarSilhouette
+                    gender={profile.gender}
+                    skin={profile.skinTone}
+                  />
+                </div>
+
+                {/* Pulsating scanning grid */}
+                {scanning && (
+                  <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute inset-0 hud-grid opacity-60 animate-pulse" />
+                    <div className="absolute inset-x-0 h-12 animate-scan bg-gradient-to-b from-transparent via-accent/40 to-transparent" />
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-accent/40 bg-background/70 px-3 py-0.5 text-[9px] uppercase tracking-widest text-accent backdrop-blur">
+                      {isAr ? "مسح الذكاء الاصطناعي…" : "Scanning AI…"}
+                    </div>
+                  </div>
+                )}
+
+                {/* Stats badge */}
+                <div className="absolute end-3 top-3 rounded-md border border-primary/30 bg-background/70 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur">
+                  {profile.height}cm · {profile.weight}kg
+                </div>
+              </div>
+
+              {/* Sliders */}
+              <div className="absolute inset-x-3 bottom-3 z-20 space-y-1.5 rounded-lg border border-primary/25 bg-background/70 p-2 backdrop-blur">
+                <SliderRow
+                  label={isAr ? "الوزن" : "Weight"}
+                  value={profile.weight} unit="kg" min={40} max={140}
+                  onChange={profile.setWeight}
+                />
+                <SliderRow
+                  label={isAr ? "الطول" : "Height"}
+                  value={profile.height} unit="cm" min={140} max={210}
+                  onChange={profile.setHeight}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* PHOTO UPLOAD */}
+          {mode === "photo" && (
+            <>
+              {profile.uploadedPhoto ? (
+                <img
+                  src={profile.uploadedPhoto}
+                  alt="uploaded"
+                  className="absolute inset-0 h-full w-full object-cover"
+                  style={{ filter: "drop-shadow(0 0 18px var(--primary))" }}
+                />
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-6">
+                  <div className="relative h-20 w-20">
+                    <div className="absolute inset-0 animate-ring-rotate rounded-full border border-dashed border-primary/40" />
+                    <Upload className="absolute inset-0 m-auto h-8 w-8 text-primary" />
+                  </div>
+                  <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">
+                    {isAr ? "ارفع صورتك للتجربة" : "Upload your photo to try on"}
+                  </p>
+                  <button
+                    onClick={() => fileRef.current?.click()}
+                    className="inline-flex items-center gap-2 rounded-full border border-primary/50 bg-gradient-to-r from-primary/20 to-accent/20 px-4 py-2 text-[11px] uppercase tracking-[0.3em] text-primary shadow-[var(--glow-soft)] hover:shadow-[var(--glow-primary)]"
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    {isAr ? "اختر صورة" : "Choose Image"}
+                  </button>
+                </div>
+              )}
+              {profile.uploadedPhoto && (
+                <button
+                  onClick={() => profile.setUploadedPhoto(null)}
+                  className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-destructive backdrop-blur hover:bg-destructive/15"
+                >
+                  <X className="h-3 w-3" />
+                  {isAr ? "حذف" : "Remove"}
+                </button>
+              )}
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handlePhoto}
+              />
+            </>
+          )}
+
+          {/* AR overlay */}
+          {overlay && (
+            <>
+              <div
+                key={overlay.id}
+                className="pointer-events-none absolute inset-0 transition-opacity duration-700 animate-fade-in"
+                style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.85 }}
+              />
+              <div
+                key={`wm-${overlay.id}`}
+                className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-extrabold tracking-[0.15em] text-foreground/85 text-glow-accent drop-shadow-[0_0_12px_rgba(0,0,0,0.6)] animate-fade-in"
               >
-                {starting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Camera className="h-3.5 w-3.5" />}
-                {starting ? (isAr ? "جاري التشغيل…" : "Starting…") : (isAr ? "تشغيل الكاميرا" : "Start Mirror")}
-              </button>
-              {error && <p className="text-[10px] text-destructive/80">{error}</p>}
-            </div>
+                {overlay.brand}
+              </div>
+              <div
+                key={`of-${overlay.id}`}
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 rounded-full border border-accent/50 bg-background/70 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-accent backdrop-blur animate-fade-in shadow-[var(--glow-accent)]"
+              >
+                {overlay.name}
+              </div>
+            </>
           )}
 
-          {/* AR outfit overlay on live feed */}
-          {overlay && (
-            <div
-              key={overlay.id}
-              className="pointer-events-none absolute inset-0 transition-opacity duration-700 animate-fade-in"
-              style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.85 }}
-            />
-          )}
-
-          {/* AR brand watermark */}
-          {overlay && (
-            <div
-              key={`wm-${overlay.id}`}
-              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 text-2xl font-extrabold tracking-[0.15em] text-foreground/85 text-glow-accent drop-shadow-[0_0_12px_rgba(0,0,0,0.6)] animate-fade-in"
-            >
-              {overlay.brand}
-            </div>
-          )}
-
-          {/* Outfit name badge */}
-          {overlay && (
-            <div
-              key={`of-${overlay.id}`}
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 rounded-full border border-accent/50 bg-background/70 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-accent backdrop-blur animate-fade-in shadow-[var(--glow-accent)]"
-            >
-              {overlay.name}
-            </div>
-          )}
-
-          {/* AR / live tag */}
+          {/* Mode tag */}
           <div className="absolute start-3 top-3 flex items-center gap-1 rounded border border-primary/40 bg-background/60 px-2 py-0.5 text-[9px] uppercase tracking-widest text-primary backdrop-blur">
-            <span className={`h-1 w-1 rounded-full ${active ? "bg-emerald-400 animate-pulse" : "bg-muted-foreground/50"}`} />
-            {active ? (isAr ? "مباشر" : "LIVE") : "AR"}
+            <span className={`h-1 w-1 rounded-full ${
+              (mode === "live" && active) || (mode === "photo" && profile.uploadedPhoto)
+                ? "bg-emerald-400 animate-pulse" : "bg-muted-foreground/50"
+            }`} />
+            {mode === "live" ? (active ? (isAr ? "مباشر" : "LIVE") : "AR") :
+              mode === "avatar" ? "3D" : (isAr ? "صورة" : "PHOTO")}
           </div>
 
-          {/* Stop btn */}
-          {active && (
-            <button
-              onClick={stop}
-              className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-destructive backdrop-blur hover:bg-destructive/15"
-            >
-              <CameraOff className="h-3 w-3" />
-              {isAr ? "إيقاف" : "Stop"}
-            </button>
-          )}
-
-          {/* Scan + progress */}
           {trying && (
             <>
               <div className="pointer-events-none absolute inset-x-0 h-12 animate-scan bg-gradient-to-b from-transparent via-accent/40 to-transparent" />
@@ -294,7 +444,7 @@ export function FashionStage() {
           )}
         </div>
 
-        {/* Brand carousel — clicking opens mall */}
+        {/* Brand carousel */}
         <div className="flex items-center justify-between gap-2 overflow-x-auto rounded-lg border border-primary/20 bg-card/40 p-2">
           {BRANDS.map((b, i) => {
             const isActive = i === activeBrandIdx;
@@ -362,10 +512,10 @@ export function FashionStage() {
                   <div className="space-y-1.5 p-2.5">
                     <p className="truncate text-xs text-foreground">{item.name}</p>
                     <p className="text-[10px] text-muted-foreground">{openMall.name} · {item.tag}</p>
-                    <div className="flex gap-1.5 pt-1">
+                    <div className="flex flex-col gap-1.5 pt-1">
                       <button
-                        onClick={() => { tryItem(openMall, item); setOpenMall(null); if (!active) start(); }}
-                        className="inline-flex flex-1 items-center justify-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1.5 text-[10px] uppercase tracking-widest text-primary transition hover:bg-primary/20 hover:shadow-[var(--glow-soft)]"
+                        onClick={() => { tryItem(openMall, item); setOpenMall(null); if (mode === "live" && !active) start(); }}
+                        className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 py-1.5 text-[10px] uppercase tracking-widest text-primary transition hover:bg-primary/20 hover:shadow-[var(--glow-soft)]"
                       >
                         <Sparkles className="h-3 w-3" /> {isAr ? "جرّب" : "Try On"}
                       </button>
@@ -373,10 +523,10 @@ export function FashionStage() {
                         href={amazonUrl(item.query)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1 rounded-md border border-accent/40 bg-accent/10 px-2 py-1.5 text-[10px] uppercase tracking-widest text-accent transition hover:bg-accent/20"
-                        title={isAr ? "تسوّق على أمازون" : "Shop on Amazon"}
+                        className="inline-flex w-full items-center justify-center gap-1 rounded-md border border-[#FF9900] bg-[#FF9900] px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#131921] transition hover:brightness-110 hover:shadow-[0_0_10px_#FF9900AA]"
+                        title={isAr ? "اشترِ من أمازون" : "Buy on Amazon"}
                       >
-                        <ExternalLink className="h-3 w-3" /> {isAr ? "أمازون" : "Amazon"}
+                        <ShoppingBag className="h-3 w-3" /> {isAr ? "اشترِ من أمازون" : "Buy on Amazon"}
                       </a>
                     </div>
                   </div>
@@ -387,5 +537,78 @@ export function FashionStage() {
         </div>
       )}
     </GlassPanel>
+  );
+}
+
+function SliderRow({
+  label, value, unit, min, max, onChange,
+}: { label: string; value: number; unit: string; min: number; max: number; onChange: (n: number) => void }) {
+  return (
+    <div>
+      <div className="mb-0.5 flex items-center justify-between text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+        <span>{label}</span>
+        <span className="text-primary">{value} {unit}</span>
+      </div>
+      <input
+        type="range" min={min} max={max} value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-full accent-[oklch(0.85_0.15_200)]"
+      />
+    </div>
+  );
+}
+
+function AvatarSilhouette({ gender, skin }: { gender: "male" | "female"; skin: string }) {
+  // Glossy gradient for skin
+  const gradId = `skin-${gender}`;
+  const glossId = `gloss-${gender}`;
+  return (
+    <svg viewBox="0 0 100 220" className="h-full w-full drop-shadow-[0_0_18px_var(--primary)]" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor={skin} stopOpacity="1" />
+          <stop offset="100%" stopColor={skin} stopOpacity="0.55" />
+        </linearGradient>
+        <linearGradient id={glossId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
+          <stop offset="40%" stopColor="#ffffff" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#000000" stopOpacity="0.25" />
+        </linearGradient>
+      </defs>
+      {/* Head */}
+      <ellipse cx="50" cy="22" rx="13" ry="15" fill={`url(#${gradId})`} />
+      <ellipse cx="50" cy="22" rx="13" ry="15" fill={`url(#${glossId})`} />
+      {gender === "female" ? (
+        <>
+          {/* Hair */}
+          <path d="M37,18 Q50,2 63,18 Q66,30 60,32 L40,32 Q34,30 37,18 Z" fill="#1a1a1a" opacity="0.85" />
+          {/* Torso (dress shape) */}
+          <path d="M38,38 L62,38 L66,90 Q50,98 34,90 Z" fill={`url(#${gradId})`} />
+          <path d="M38,38 L62,38 L66,90 Q50,98 34,90 Z" fill={`url(#${glossId})`} />
+          {/* Hips/skirt */}
+          <path d="M34,90 L66,90 L72,140 L28,140 Z" fill={`url(#${gradId})`} opacity="0.9" />
+          <path d="M34,90 L66,90 L72,140 L28,140 Z" fill={`url(#${glossId})`} />
+          {/* Legs */}
+          <rect x="36" y="140" width="11" height="70" rx="5" fill={`url(#${gradId})`} />
+          <rect x="53" y="140" width="11" height="70" rx="5" fill={`url(#${gradId})`} />
+        </>
+      ) : (
+        <>
+          {/* Hair */}
+          <path d="M38,15 Q50,5 62,15 Q63,22 58,24 L42,24 Q37,22 38,15 Z" fill="#1a1a1a" opacity="0.85" />
+          {/* Torso (broader) */}
+          <path d="M34,38 L66,38 L70,98 L30,98 Z" fill={`url(#${gradId})`} />
+          <path d="M34,38 L66,38 L70,98 L30,98 Z" fill={`url(#${glossId})`} />
+          {/* Hips */}
+          <path d="M30,98 L70,98 L66,135 L34,135 Z" fill={`url(#${gradId})`} opacity="0.9" />
+          {/* Legs */}
+          <rect x="34" y="135" width="13" height="75" rx="5" fill={`url(#${gradId})`} />
+          <rect x="53" y="135" width="13" height="75" rx="5" fill={`url(#${gradId})`} />
+        </>
+      )}
+      {/* Arms */}
+      <rect x="22" y="40" width="9" height="60" rx="4" fill={`url(#${gradId})`} />
+      <rect x="69" y="40" width="9" height="60" rx="4" fill={`url(#${gradId})`} />
+    </svg>
   );
 }
