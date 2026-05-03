@@ -632,6 +632,55 @@ export function FashionStage() {
                   </div>
                 )}
 
+                {/* Anchor points — neon snap markers; visible while fitting or in debug */}
+                {(debugZones || trying) && (
+                  <div className="pointer-events-none absolute inset-0 z-20">
+                    {(Object.keys(ANCHORS) as (keyof typeof ANCHORS)[]).map((key) => {
+                      const a = ANCHORS[key];
+                      const top = mannTopPct + a.y * avatarHeightPct;
+                      const halfW = (avatarWidthPct * a.w) / 2;
+                      const isActive =
+                        overlay && (CATEGORY_ANCHORS[overlay.category].from === key
+                          || CATEGORY_ANCHORS[overlay.category].to === key
+                          || CATEGORY_ANCHORS[overlay.category].widthAnchor === key);
+                      return (
+                        <div key={key} className="absolute left-1/2" style={{ top: `${top}%`, transform: "translateX(-50%)" }}>
+                          {/* connecting span */}
+                          <div
+                            className="absolute top-1/2 -translate-y-1/2 rounded-full"
+                            style={{
+                              left: `-${halfW}%`, width: `${halfW * 2}%`, height: 1,
+                              background: isActive ? "var(--accent)" : "var(--primary)",
+                              opacity: isActive ? 0.9 : 0.4,
+                              boxShadow: isActive ? "0 0 8px var(--accent)" : undefined,
+                            }}
+                          />
+                          {/* left + right snap dots */}
+                          {[-halfW, halfW].map((x, i) => (
+                            <span
+                              key={i}
+                              className={`absolute top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full ${isActive ? "animate-pulse" : ""}`}
+                              style={{
+                                left: `${x}%`,
+                                background: isActive ? "var(--accent)" : "var(--primary)",
+                                boxShadow: isActive ? "0 0 10px var(--accent)" : "0 0 6px var(--primary)",
+                              }}
+                            />
+                          ))}
+                          {debugZones && (
+                            <span
+                              className="absolute top-1/2 ms-2 -translate-y-1/2 text-[8px] uppercase tracking-widest"
+                              style={{ left: `${halfW}%`, color: isActive ? "var(--accent)" : "var(--primary)" }}
+                            >
+                              {key}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 {/* Pulsating scanning grid */}
                 {scanning && (
                   <div className="pointer-events-none absolute inset-0">
