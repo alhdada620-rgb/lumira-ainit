@@ -141,7 +141,7 @@ export function VirtualTryOn() {
       const baseGarment = outfit.brand
         ? `${outfit.brand} ${outfit.name} (${outfit.tag})`
         : `${outfit.name} (${outfit.tag})`;
-      const skinHint = skin.completedAt
+      const skinHint = skinTuneActive
         ? `, color-matched to a skin tone profile (hydration ${skin.hydration}, smoothness ${skin.smoothness}, tone evenness ${skin.tone}) — favor a complementary hue around ${skinTint.hue.toFixed(0)}° in OKLCH for flattering contrast`
         : "";
       const res = await generatePhotorealLook({
@@ -187,7 +187,7 @@ export function VirtualTryOn() {
             style={{ background: outfit.color, opacity: active ? 0.45 : 0.6, mixBlendMode: active ? "overlay" : "normal" }}
           />
           {/* Skin-tone driven color match overlay */}
-          {skinTint.tint && (
+          {skinTint.tint && skinTuneActive && (
             <div
               className="pointer-events-none absolute inset-0 transition-opacity"
               style={{
@@ -220,7 +220,7 @@ export function VirtualTryOn() {
               <div className="text-sm text-foreground text-glow-accent">{outfit.name}</div>
             </div>
             <div className="text-end text-[10px] text-muted-foreground">
-              {skin.completedAt ? (
+              {skinTuneActive ? (
                 <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-background/40 px-2 py-0.5 text-accent backdrop-blur">
                   <span className="h-1 w-1 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" />
                   {t("tryon.skinTuned") || "Skin-tuned"}
