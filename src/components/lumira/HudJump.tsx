@@ -33,11 +33,25 @@ export function HudJump() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [active, setActive] = useState(0);
+  const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const listboxId = "hud-jump-listbox";
   const labelId = "hud-jump-label";
+  const RECENT_KEY = "hud-jump-recent";
+  const RECENT_MAX = 4;
+
+  // Load recents from localStorage
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(RECENT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setRecent(parsed.filter((id) => MODULES.some((m) => m.id === id)));
+      }
+    } catch { /* ignore */ }
+  }, []);
 
   // Open with Cmd/Ctrl+K or "/"
   useEffect(() => {
