@@ -1,8 +1,39 @@
-import { Sparkles, Play, RotateCcw, CheckCircle2 } from "lucide-react";
+import { Sparkles, Play, RotateCcw, CheckCircle2, Save, History, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useT } from "./i18n";
 import skinScan from "@/assets/skin-scan.jpg";
+
+type ScanRecord = {
+  id: string;
+  hydration: number;
+  smoothness: number;
+  tone: number;
+  timestamp: number;
+};
+
+const SCAN_STORAGE_KEY = "lumira.skinScans.v1";
+
+function loadScans(): ScanRecord[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(SCAN_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveScans(scans: ScanRecord[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(SCAN_STORAGE_KEY, JSON.stringify(scans));
+  } catch {
+    /* ignore quota errors */
+  }
+}
 
 function jitter(base: number, range = 3, min = 0, max = 100) {
   const v = base + (Math.random() - 0.5) * range * 2;
@@ -76,7 +107,35 @@ export function HealthSkinAI() {
   const [scanPct, setScanPct] = useState(0);
   const [scanning, setScanning] = useState(false);
   const [scanComplete, setScanComplete] = useState(false);
+  const [scans, setScans] = useState<ScanRecord[]>(() => loadScans());
+  const [showHistory, setShowHistory] = useState(false);
+  const [savedId, setSavedId] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    saveScans(scans);
+  }, [scans]);
+
+  const saveScan = () => {
+    const rec: ScanRecord = {
+      id: (typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`),
+      hydration,
+      smoothness,
+      tone,
+      timestamp: Date.now(),
+    };
+    setScans((prev) => [rec, ...prev].slice(0, 50));
+    setSavedId(rec.id);
+    setTimeout(() => setSavedId((id) => (id === rec.id ? null : id)), 1800);
+  };
+
+  const deleteScan = (id: string) => {
+    setScans((prev) => prev.filter((s) => s.id !== id));
+  };
+
+  const clearScans = () => setScans([]);
 
   const stopScan = () => {
     if (intervalRef.current) {
@@ -211,6 +270,90 @@ export function HealthSkinAI() {
           ? isAr ? "بدء فحص جديد" : "Start new scan"
           : isAr ? "بدء فحص البشرة" : "Start skin scan"}
       </button>
+
+      {/* Save + History controls */}
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <button
+          onClick={saveScan}
+          disabled={!scanComplete}
+          className={`flex items-center justify-center gap-1.5 rounded-xl border py-2 text-[10px] uppercase tracking-[0.3em] transition-all ${
+            scanComplete
+              ? savedId
+                ? "border-accent/50 bg-accent/15 text-accent"
+                : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
+              : "cursor-not-allowed border-border/40 bg-muted/10 text-muted-foreground/60"
+          }`}
+        >
+          {savedId ? <CheckCircle2 className="h-3 w-3" /> : <Save className="h-3 w-3" />}
+          {savedId
+            ? isAr ? "تم الحفظ" : "Saved"
+            : isAr ? "حفظ النتيجة" : "Save result"}
+        </button>
+        <button
+          onClick={() => setShowHistory((s) => !s)}
+          className="flex items-center justify-center gap-1.5 rounded-xl border border-border/40 bg-card/40 py-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground transition-all hover:border-primary/40 hover:text-primary"
+        >
+          <History className="h-3 w-3" />
+          {showHistory
+            ? isAr ? "إخفاء السجل" : "Hide history"
+            : `${isAr ? "السجل" : "History"} (${scans.length})`}
+        </button>
+      </div>
+
+      {showHistory && (
+        <div className="mt-2 rounded-xl border border-primary/20 bg-card/60 p-2">
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground">
+              {isAr ? "نتائج محفوظة" : "Saved scans"}
+            </span>
+            {scans.length > 0 && (
+              <button
+                onClick={clearScans}
+                className="text-[9px] uppercase tracking-[0.25em] text-destructive/80 hover:text-destructive"
+              >
+                {isAr ? "مسح الكل" : "Clear all"}
+              </button>
+            )}
+          </div>
+          {scans.length === 0 ? (
+            <p className="py-3 text-center text-[10px] text-muted-foreground">
+              {isAr ? "لا توجد نتائج بعد" : "No saved scans yet"}
+            </p>
+          ) : (
+            <ul className="max-h-40 space-y-1 overflow-y-auto pr-1">
+              {scans.map((s) => (
+                <li
+                  key={s.id}
+                  className="flex items-center justify-between gap-2 rounded-lg border border-border/30 bg-background/30 px-2 py-1.5"
+                >
+                  <div className="flex flex-col">
+                    <span className="text-[9px] uppercase tracking-widest text-muted-foreground">
+                      {new Date(s.timestamp).toLocaleString(isAr ? "ar" : undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    <span className="text-[10px] tabular-nums text-foreground/85">
+                      {isAr ? "ترطيب" : "Hyd"} {s.hydration} ·{" "}
+                      {isAr ? "نعومة" : "Smt"} {s.smoothness} ·{" "}
+                      {isAr ? "لون" : "Tone"} {s.tone}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => deleteScan(s.id)}
+                    aria-label="Delete scan"
+                    className="rounded-md p-1 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <div className="mt-3 rounded-xl border border-accent/30 bg-accent/5 p-3">
         <p className="text-xs text-foreground/85">
