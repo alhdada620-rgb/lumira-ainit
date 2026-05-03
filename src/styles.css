@@ -279,3 +279,13 @@
   background-size: 200% 100%;
   animation: fit-shimmer 1.4s ease-in-out infinite;
 }
+
+@keyframes hud-jump-flash {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; outline-color: transparent; }
+  20%      { box-shadow: 0 0 0 4px var(--accent), 0 0 38px var(--accent); }
+}
+.hud-jump-flash {
+  border-radius: 0.75rem;
+  outline: 2px solid var(--accent);
+  animation: hud-jump-flash 1.4s ease-out;
+}
