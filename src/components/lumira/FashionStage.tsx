@@ -94,9 +94,9 @@ const BRANDS: Brand[] = [
     tint: "linear-gradient(135deg, oklch(0.35 0.04 60 / 0.55), oklch(0.2 0.02 60 / 0.45))",
     items: [
       { id: "zara-1", name: "Tailored Wool Blazer", tag: "Smart Casual", category: "top", color: "#2a2f3d", image: imgZaraBlazer, query: "zara tailored wool blazer", gradient: "linear-gradient(135deg, oklch(0.3 0.02 260 / 0.55), oklch(0.5 0.04 260 / 0.45))" },
-      { id: "zara-2", name: "Satin Slip Dress", tag: "Evening", category: "dress", color: "#a23864", query: "zara satin slip dress", gradient: "linear-gradient(135deg, oklch(0.55 0.12 350 / 0.5), oklch(0.7 0.1 320 / 0.4))" },
-      { id: "zara-3", name: "Pleated Wide-Leg Trousers", tag: "Modern", category: "bottom", color: "#5b513e", query: "zara pleated wide leg trousers", gradient: "linear-gradient(135deg, oklch(0.4 0.03 80 / 0.55), oklch(0.25 0.02 80 / 0.45))" },
-      { id: "zara-4", name: "Cropped Leather Jacket", tag: "Statement", category: "top", color: "#1a0f0a", query: "zara cropped leather jacket", gradient: "linear-gradient(135deg, oklch(0.18 0.02 30 / 0.55), oklch(0.3 0.04 30 / 0.45))" },
+      { id: "zara-2", name: "Satin Slip Dress", tag: "Evening", category: "dress", color: "#a23864", image: imgZaraSlip, query: "zara satin slip dress", gradient: "linear-gradient(135deg, oklch(0.55 0.12 350 / 0.5), oklch(0.7 0.1 320 / 0.4))" },
+      { id: "zara-3", name: "Pleated Wide-Leg Trousers", tag: "Modern", category: "bottom", color: "#5b513e", image: imgZaraTrousers, query: "zara pleated wide leg trousers", gradient: "linear-gradient(135deg, oklch(0.4 0.03 80 / 0.55), oklch(0.25 0.02 80 / 0.45))" },
+      { id: "zara-4", name: "Cropped Leather Jacket", tag: "Statement", category: "top", color: "#1a0f0a", image: imgZaraLeather, query: "zara cropped leather jacket", gradient: "linear-gradient(135deg, oklch(0.18 0.02 30 / 0.55), oklch(0.3 0.04 30 / 0.45))" },
     ],
   },
   {
