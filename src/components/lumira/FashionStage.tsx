@@ -934,6 +934,10 @@ export function FashionStage() {
                         <path d="M30,42 L70,42 L74,92 L60,92 L55,58 L45,58 L40,92 L26,92 Z" fill="currentColor" opacity="0.4" />
                       </svg>
                     )}
+                    {/* Fabric badge */}
+                    <span className="absolute end-1.5 top-1.5 rounded-full border border-accent/40 bg-background/70 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-accent backdrop-blur shadow-[var(--glow-accent)]">
+                      {fabricOf(item)}
+                    </span>
                   </div>
                   <div className="space-y-1.5 p-2.5">
                     <p className="truncate text-xs text-foreground">{item.name}</p>
