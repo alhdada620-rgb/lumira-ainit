@@ -148,12 +148,13 @@ export function FashionStage() {
   };
 
   const tryItem = (b: Brand, item: CatalogItem) => {
-    setOverlay({ id: item.id, name: item.name, brand: b.name, gradient: item.gradient });
+    setOverlay({ id: item.id, name: item.name, brand: b.name, gradient: item.gradient, category: item.category, color: item.color });
     runProgress();
   };
 
   const tryBrandDefault = () => {
-    setOverlay({ id: brand.id, name: brand.outfit, brand: brand.name, gradient: brand.tint });
+    const item = brand.items[0];
+    setOverlay({ id: brand.id, name: brand.outfit, brand: brand.name, gradient: brand.tint, category: item.category, color: item.color });
     runProgress();
   };
 
