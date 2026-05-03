@@ -12,6 +12,10 @@ import { toast } from "sonner";
 
 import mannequinMale from "@/assets/mannequin-male.png";
 import mannequinFemale from "@/assets/mannequin-female.png";
+import avatarMaleThin from "@/assets/avatar/avatar_male_thin.png";
+import avatarMaleHeavy from "@/assets/avatar/avatar_male_heavy.png";
+import avatarFemaleThin from "@/assets/avatar/avatar_female_thin.png";
+import avatarFemaleHeavy from "@/assets/avatar/avatar_female_heavy.png";
 import closetBackdrop from "@/assets/closet-backdrop.jpg";
 import amazonLogo from "@/assets/amazon-logo.png";
 import imgHmTee from "@/assets/garments/hm-tee.png";
@@ -495,66 +499,60 @@ export function FashionStage() {
                 {/* Glossy floor reflection */}
                 <div className="absolute inset-x-6 bottom-0 h-12 rounded-[50%] bg-gradient-to-t from-accent/20 to-transparent blur-md" />
 
-                {/* Photoreal mannequin with anatomical body distortion + skin-tone tint + 45° rotate */}
-                <div
-                  className="absolute bottom-2 left-1/2 -translate-x-1/2 transition-all duration-700 ease-out"
-                  style={{
-                    width: avatarWidth,
-                    height: avatarHeight,
-                    transform: `translateX(-50%) perspective(900px) rotateY(${rotated ? 45 : 0}deg)`,
-                    transformOrigin: "50% 100%",
-                  }}
-                >
-                  {/* Base full body */}
-                  <img
-                    src={profile.gender === "female" ? mannequinFemale : mannequinMale}
-                    alt="3D Mannequin"
-                    className="absolute inset-0 h-full w-full object-contain"
-                    style={{
-                      filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary))`,
-                    }}
-                  />
-                  {/* Skin-tone tint mask (multiplied over mannequin via mask-image) */}
-                  <div
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 transition-colors duration-500"
-                    style={{
-                      background: profile.skinTone,
-                      mixBlendMode: "multiply",
-                      opacity: 0.55,
-                      WebkitMaskImage: `url(${profile.gender === "female" ? mannequinFemale : mannequinMale})`,
-                      maskImage: `url(${profile.gender === "female" ? mannequinFemale : mannequinMale})`,
-                      WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
-                      WebkitMaskPosition: "center", maskPosition: "center",
-                      WebkitMaskSize: "contain", maskSize: "contain",
-                    }}
-                  />
-                  {/* Midsection bulge layer */}
-                  <img
-                    src={profile.gender === "female" ? mannequinFemale : mannequinMale}
-                    alt=""
-                    aria-hidden
-                    className="absolute inset-0 h-full w-full object-contain transition-transform duration-500 ease-out"
-                    style={{
-                      clipPath: "inset(34% 0 28% 0)",
-                      transform: `scaleX(${midBulge})`,
-                      transformOrigin: "50% 55%",
-                      filter: `drop-shadow(0 0 12px var(--primary))`,
-                    }}
-                  />
-                  {/* Limb thickness layer */}
-                  <img
-                    src={profile.gender === "female" ? mannequinFemale : mannequinMale}
-                    alt=""
-                    aria-hidden
-                    className="absolute inset-0 h-full w-full object-contain transition-transform duration-500 ease-out"
-                    style={{
-                      clipPath: "inset(60% 0 2% 0)",
-                      transform: `scaleX(${limbBulge})`,
-                      transformOrigin: "50% 80%",
-                    }}
-                  />
-                </div>
+                {/* Spliced photoreal mannequin — base (thin) cross-fades into heavy as weight increases */}
+                {(() => {
+                  const isFem = profile.gender === "female";
+                  const thinSrc = isFem ? avatarFemaleThin : avatarMaleThin;
+                  const heavySrc = isFem ? avatarFemaleHeavy : avatarMaleHeavy;
+                  // Weight 50 → 0% heavy, 110 → 100% heavy
+                  const heavyMix = Math.max(0, Math.min(1, (profile.weight - 55) / 55));
+                  return (
+                    <div
+                      className="absolute bottom-2 left-1/2 transition-all duration-700 ease-out"
+                      style={{
+                        width: avatarWidth,
+                        height: avatarHeight,
+                        transform: `translateX(-50%) perspective(900px) rotateY(${rotated ? 45 : 0}deg)`,
+                        transformOrigin: "50% 100%",
+                      }}
+                    >
+                      <img
+                        src={thinSrc}
+                        alt="3D Mannequin (thin)"
+                        className="absolute inset-0 h-full w-full object-contain transition-opacity duration-500"
+                        style={{
+                          opacity: 1 - heavyMix * 0.85,
+                          filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary))`,
+                        }}
+                      />
+                      <img
+                        src={heavySrc}
+                        alt="3D Mannequin (heavy)"
+                        aria-hidden
+                        className="absolute inset-0 h-full w-full object-contain transition-opacity duration-500"
+                        style={{
+                          opacity: heavyMix,
+                          filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary))`,
+                        }}
+                      />
+                      {/* Skin-tone tint mask (multiplied) */}
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 transition-colors duration-500"
+                        style={{
+                          background: profile.skinTone,
+                          mixBlendMode: "multiply",
+                          opacity: 0.45,
+                          WebkitMaskImage: `url(${heavyMix > 0.5 ? heavySrc : thinSrc})`,
+                          maskImage: `url(${heavyMix > 0.5 ? heavySrc : thinSrc})`,
+                          WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+                          WebkitMaskPosition: "center", maskPosition: "center",
+                          WebkitMaskSize: "contain", maskSize: "contain",
+                        }}
+                      />
+                    </div>
+                  );
+                })()}
 
                 {/* Debug overlay: mannequin box + anatomical garment zones */}
                 {debugZones && (
