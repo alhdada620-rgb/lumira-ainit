@@ -2,6 +2,7 @@ import { Mic, MicOff, Sparkles, Camera, Wallet, Shirt } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { emitVoiceCommand, type VoiceCommand } from "./voice-events";
+import { emitCaption } from "./CaptionsOverlay";
 import { useT } from "./i18n";
 
 // Minimal Web Speech API types (not in lib.dom for all TS configs)
