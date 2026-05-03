@@ -416,20 +416,32 @@ export function FashionStage() {
                 className="pointer-events-none absolute inset-0 transition-opacity duration-700 animate-fade-in"
                 style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.35 }}
               />
-              {/* Garment shape positioned per target */}
+              {/* Garment image positioned per target */}
               <div
                 key={`gar-${overlay.id}`}
-                className="pointer-events-none absolute inset-0 animate-fade-in"
+                className="pointer-events-none absolute inset-0 flex items-start justify-center animate-fade-in"
                 style={{
-                  // For avatar mode, align garment to the silhouette width/height
-                  padding: mode === "avatar" ? `6% ${(100 - parseFloat(avatarWidth)) / 2}% 2%` : "8% 18% 4%",
+                  paddingTop: mode === "avatar" ? "14%" : "18%",
+                  paddingBottom: mode === "avatar" ? "8%" : "14%",
                 }}
               >
-                <GarmentSVG
-                  category={overlay.category}
-                  color={overlay.color}
-                  brand={overlay.brand}
-                />
+                {overlay.image ? (
+                  <img
+                    src={overlay.image}
+                    alt={overlay.name}
+                    className="h-full w-auto max-w-[80%] object-contain"
+                    style={{
+                      filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.55)) drop-shadow(0 0 14px var(--accent))",
+                      mixBlendMode: mode === "live" || mode === "photo" ? "multiply" : "normal",
+                    }}
+                  />
+                ) : (
+                  <GarmentSVG
+                    category={overlay.category}
+                    color={overlay.color}
+                    brand={overlay.brand}
+                  />
+                )}
               </div>
               <div
                 key={`of-${overlay.id}`}
