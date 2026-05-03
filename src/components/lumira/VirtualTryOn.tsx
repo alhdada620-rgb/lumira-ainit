@@ -1,9 +1,11 @@
-import { Shirt, ChevronLeft, ChevronRight, Camera } from "lucide-react";
+import { Shirt, ChevronLeft, ChevronRight, Camera, Sparkles, X, Download } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
+import { useProfile } from "./profile-context";
 import { onVoiceCommand, onTryOnItem, reportCommandResult } from "./voice-events";
 import { useT } from "./i18n";
+import { generatePhotorealLook } from "@/server/vton.functions";
 
 interface OutfitItem {
   nameKey: string;
@@ -39,7 +41,13 @@ export function VirtualTryOn() {
   const [idx, setIdx] = useState(0);
   const outfit = outfits[Math.min(idx, outfits.length - 1)] ?? outfits[0];
   const { stream, active, start, starting } = useCamera();
+  const { height, weight, gender } = useProfile();
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Photoreal generation state
+  const [generating, setGenerating] = useState(false);
+  const [genError, setGenError] = useState<string | null>(null);
+  const [genImage, setGenImage] = useState<string | null>(null);
 
   // Voice / preset command integration
   useEffect(() => {
@@ -57,7 +65,6 @@ export function VirtualTryOn() {
     });
   }, [outfits, t]);
 
-  // Wardrobe item selection — inject into the carousel and focus it
   useEffect(() => {
     return onTryOnItem((item, source) => {
       const incoming: DynamicOutfit = {
@@ -94,11 +101,65 @@ export function VirtualTryOn() {
     }
   }, [stream]);
 
+  const captureFrame = (): string | null => {
+    const v = videoRef.current;
+    if (!v || !v.videoWidth) return null;
+    const w = Math.min(v.videoWidth, 768);
+    const h = Math.round((v.videoHeight / v.videoWidth) * w);
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    // mirror to match the on-screen preview
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(v, 0, 0, w, h);
+    return canvas.toDataURL("image/jpeg", 0.85);
+  };
+
+  const handleGenerate = async () => {
+    setGenError(null);
+    setGenImage(null);
+    if (!active) {
+      await start();
+    }
+    // small wait for the first frame after starting
+    await new Promise((r) => setTimeout(r, 250));
+    const frame = captureFrame();
+    if (!frame) {
+      setGenError(t("tryon.gen.noFrame") || "Camera frame not ready");
+      return;
+    }
+    setGenerating(true);
+    try {
+      const res = await generatePhotorealLook({
+        data: {
+          userImage: frame,
+          garmentPrompt: outfit.brand
+            ? `${outfit.brand} ${outfit.name} (${outfit.tag})`
+            : `${outfit.name} (${outfit.tag})`,
+          heightCm: height,
+          weightKg: weight,
+          gender,
+        },
+      });
+      if (res.error || !res.image) {
+        setGenError(res.error || "Generation failed");
+      } else {
+        setGenImage(res.image);
+      }
+    } catch (e) {
+      setGenError(e instanceof Error ? e.message : "Generation failed");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <GlassPanel title={t("tryon.title")} icon={<Shirt className="h-3.5 w-3.5" />} accent>
       <div className="space-y-4">
         <div className="relative h-44 overflow-hidden rounded-lg border border-accent/20">
-          {/* Live camera feed */}
           <video
             ref={videoRef}
             playsInline
@@ -112,14 +173,12 @@ export function VirtualTryOn() {
             }}
           />
 
-          {/* Outfit gradient overlay */}
           <div
             className="absolute inset-0 transition-opacity"
             style={{ background: outfit.color, opacity: active ? 0.45 : 0.6, mixBlendMode: active ? "overlay" : "normal" }}
           />
           <div className="absolute inset-0 hud-grid opacity-40" />
 
-          {/* mannequin silhouette - only when no camera */}
           {!active && (
             <svg viewBox="0 0 100 120" className="absolute inset-0 h-full w-full text-foreground/70">
               <circle cx="50" cy="20" r="10" fill="currentColor" opacity="0.5" />
@@ -127,7 +186,6 @@ export function VirtualTryOn() {
             </svg>
           )}
 
-          {/* scan line */}
           <div className="absolute inset-x-0 h-12 animate-scan bg-gradient-to-b from-transparent via-accent/30 to-transparent" />
 
           <div className="absolute start-3 top-3 flex items-center gap-1.5 rounded-full border border-accent/40 bg-background/40 px-2 py-0.5 text-[9px] uppercase tracking-widest text-accent backdrop-blur">
@@ -152,6 +210,15 @@ export function VirtualTryOn() {
               <Camera className="h-3 w-3" /> {starting ? t("tryon.starting") : t("tryon.live.btn")}
             </button>
           )}
+
+          {generating && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/70 backdrop-blur-sm">
+              <Sparkles className="h-5 w-5 animate-pulse text-accent" />
+              <div className="text-[10px] uppercase tracking-widest text-accent">
+                {t("tryon.gen.working") || "Generating photoreal look…"}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
@@ -173,6 +240,54 @@ export function VirtualTryOn() {
             <ChevronRight className="h-4 w-4 rtl:-scale-x-100" />
           </button>
         </div>
+
+        {/* Photoreal CTA */}
+        <button
+          onClick={handleGenerate}
+          disabled={generating}
+          className="group relative w-full overflow-hidden rounded-lg border border-accent/50 bg-gradient-to-r from-primary/20 via-accent/20 to-primary/20 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-foreground backdrop-blur transition hover:shadow-[var(--glow-accent)] disabled:opacity-60"
+        >
+          <span className="inline-flex items-center justify-center gap-2">
+            <Sparkles className="h-3.5 w-3.5 text-accent" />
+            {generating
+              ? (t("tryon.gen.working") || "Generating…")
+              : (t("tryon.gen.cta") || "Generate photoreal look")}
+          </span>
+        </button>
+
+        {genError && (
+          <div className="rounded-md border border-destructive/40 bg-destructive/10 px-2 py-1 text-[10px] text-destructive">
+            {genError}
+          </div>
+        )}
+
+        {genImage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-md">
+            <div className="relative max-h-[90vh] w-full max-w-md overflow-hidden rounded-xl border border-accent/40 bg-card shadow-[var(--glow-accent)]">
+              <img src={genImage} alt={outfit.name} className="h-auto w-full object-contain" />
+              <div className="flex items-center justify-between gap-2 border-t border-accent/20 bg-background/60 p-3">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground truncate">
+                  {outfit.brand ? `${outfit.brand} · ` : ""}{outfit.name}
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    href={genImage}
+                    download={`lumira-tryon-${Date.now()}.png`}
+                    className="inline-flex items-center gap-1 rounded-full border border-primary/40 bg-card/40 px-2 py-1 text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10"
+                  >
+                    <Download className="h-3 w-3" /> Save
+                  </a>
+                  <button
+                    onClick={() => setGenImage(null)}
+                    className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-card/40 px-2 py-1 text-[10px] uppercase tracking-widest text-accent hover:bg-accent/10"
+                  >
+                    <X className="h-3 w-3" /> Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </GlassPanel>
   );
