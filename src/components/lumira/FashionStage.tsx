@@ -107,7 +107,7 @@ export function FashionStage() {
   const [mode, setMode] = useState<Mode>("live");
   const [activeBrandIdx, setActiveBrandIdx] = useState(0);
   const [openMall, setOpenMall] = useState<Brand | null>(null);
-  const [overlay, setOverlay] = useState<{ id: string; name: string; brand: string; gradient: string } | null>(null);
+  const [overlay, setOverlay] = useState<{ id: string; name: string; brand: string; gradient: string; category: Category; color: string } | null>(null);
   const [progress, setProgress] = useState(0);
   const [trying, setTrying] = useState(false);
   const [scanning, setScanning] = useState(false);
