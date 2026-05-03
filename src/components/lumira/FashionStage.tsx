@@ -180,7 +180,15 @@ export function FashionStage() {
   const [trying, setTrying] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [debugZones, setDebugZones] = useState(false);
-  const [showAnchors, setShowAnchors] = useState(true);
+  const [showAnchors, setShowAnchors] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const v = window.localStorage.getItem("lumira:showAnchors");
+    return v === null ? true : v === "1";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("lumira:showAnchors", showAnchors ? "1" : "0");
+  }, [showAnchors]);
   const [rotated, setRotated] = useState(false);
   const [isolating, setIsolating] = useState(false);
   const [advisorTips, setAdvisorTips] = useState<string[]>([]);
