@@ -301,14 +301,17 @@ export function FashionStage() {
     try {
       const dataUrl = await toPng(stageRef.current, {
         cacheBust: true,
-        pixelRatio: 2,
+        pixelRatio: 3,
         backgroundColor: "#0a1220",
+        quality: 1,
+        filter: (node) =>
+          !(node instanceof HTMLElement && node.dataset.captureIgnore === "true"),
       });
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = `lumira-look-${Date.now()}.png`;
+      a.download = `lumira-mirror-${Date.now()}.png`;
       a.click();
-      toast.success(isAr ? "تم حفظ الإطلالة" : "Look captured");
+      toast.success(isAr ? "تم حفظ لقطة المرآة بدقة عالية" : "HD mirror snapshot saved");
     } catch (e) {
       console.error("captureLook", e);
       toast.error(isAr ? "تعذّر الحفظ" : "Couldn't capture look");
@@ -551,6 +554,20 @@ export function FashionStage() {
           <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/60" />
           <div className="pointer-events-none absolute -inset-px rounded-2xl shadow-[var(--glow-primary)]" />
           <div className="absolute inset-0 hud-grid opacity-15" />
+
+          {/* HD Save snapshot button — always visible on the mirror frame */}
+          <button
+            onClick={captureLook}
+            disabled={capturing}
+            title={isAr ? "حفظ لقطة عالية الدقة" : "Save HD snapshot"}
+            data-capture-ignore="true"
+            className="absolute start-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full border border-accent/60 bg-background/55 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-accent shadow-[var(--glow-accent)] backdrop-blur-md transition hover:bg-accent/15 active:scale-[0.97] disabled:opacity-60"
+          >
+            {capturing
+              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              : <Download className="h-3.5 w-3.5" />}
+            <span>{capturing ? (isAr ? "جاري الحفظ…" : "Saving…") : (isAr ? "حفظ HD" : "Save HD")}</span>
+          </button>
 
           {/* LIVE MIRROR */}
           {mode === "live" && (
