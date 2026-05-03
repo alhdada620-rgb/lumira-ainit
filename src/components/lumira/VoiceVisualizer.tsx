@@ -149,11 +149,11 @@ export function VoiceVisualizer() {
       const combined = (finalText || interim).trim();
       if (combined) setTranscript(combined);
       const check = finalText || interim;
-      // Greeting: "Hello Lumira" / "مرحبا لوميرا"
-      if (check && /(hello|hi|hey)[, ]+lumira|مرحب[اًا]?[\s,]+لوميرا|لوميرا[\s,]+مرحب/i.test(check)) {
+      // Greeting: "Hello" / "Hello Lumira" / "مرحبا" / "مرحبا لوميرا"
+      if (check && /\b(hello|hi|hey)\b|مرحب[اًا]?|أهل[اًا]?|السلام عليكم/i.test(check)) {
         const reply = lang === "ar"
-          ? "أهلاً إسلام، كيف يمكنني مساعدتك في إطلالتك اليوم؟"
-          : "Hello Islam, how can I help you with your style today?";
+          ? "مرحباً بك في مرآتك الذكية، لوميرا. هل أنت مستعد للتصميم؟"
+          : "Welcome to your smart mirror, Islam Ali. Ready to style?";
         setFeedback(reply);
         try {
           const u = new SpeechSynthesisUtterance(reply);
