@@ -75,6 +75,7 @@ export function HealthSkinAI() {
   const [tone, setTone] = useState(78);
   const [scanPct, setScanPct] = useState(0);
   const [scanning, setScanning] = useState(false);
+  const [scanComplete, setScanComplete] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const stopScan = () => {
@@ -85,18 +86,37 @@ export function HealthSkinAI() {
     setScanning(false);
   };
 
+  const completeScan = () => {
+    stopScan();
+    setScanPct(100);
+    setScanComplete(true);
+  };
+
   const startScan = () => {
     if (scanning) {
       stopScan();
       return;
     }
     setScanning(true);
+    setScanComplete(false);
     setScanPct(0);
     intervalRef.current = setInterval(() => {
       setHydration((v) => Math.round(jitter(v, 2, 78, 95)));
       setSmoothness((v) => Math.round(jitter(v, 2, 82, 97)));
       setTone((v) => Math.round(jitter(v, 2, 70, 88)));
-      setScanPct((v) => +Math.min(99.4, v + Math.random() * 6 + 2).toFixed(1));
+      setScanPct((v) => {
+        const next = +Math.min(100, v + Math.random() * 6 + 2).toFixed(1);
+        if (next >= 100) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          setScanning(false);
+          setScanComplete(true);
+          return 100;
+        }
+        return next;
+      });
     }, 350);
   };
 
