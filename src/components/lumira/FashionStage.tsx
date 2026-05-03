@@ -536,14 +536,17 @@ export function FashionStage() {
         </div>
 
         {/* Frame */}
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-accent/30 bg-background/40">
-          {/* Luxury closet backdrop */}
+        <div ref={stageRef} className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-accent/30 bg-background/40">
+          {/* Luxury closet backdrop — fades out in live mode so the mirror feels real */}
           <img
             src={closetBackdrop}
             alt=""
             aria-hidden
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ filter: "brightness(0.55) saturate(1.15)" }}
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+            style={{
+              filter: "brightness(0.55) saturate(1.15)",
+              opacity: mode === "live" && active ? 0 : 1,
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/60" />
           <div className="pointer-events-none absolute -inset-px rounded-2xl shadow-[var(--glow-primary)]" />
