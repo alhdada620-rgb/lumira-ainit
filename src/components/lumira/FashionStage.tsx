@@ -381,25 +381,35 @@ export function FashionStage() {
             </>
           )}
 
-          {/* AR overlay */}
+          {/* AR garment overlay */}
           {overlay && (
             <>
+              {/* Subtle scene tint to unify lighting */}
               <div
-                key={overlay.id}
+                key={`tint-${overlay.id}`}
                 className="pointer-events-none absolute inset-0 transition-opacity duration-700 animate-fade-in"
-                style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.85 }}
+                style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.35 }}
               />
+              {/* Garment shape positioned per target */}
               <div
-                key={`wm-${overlay.id}`}
-                className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-2xl font-extrabold tracking-[0.15em] text-foreground/85 text-glow-accent drop-shadow-[0_0_12px_rgba(0,0,0,0.6)] animate-fade-in"
+                key={`gar-${overlay.id}`}
+                className="pointer-events-none absolute inset-0 animate-fade-in"
+                style={{
+                  // For avatar mode, align garment to the silhouette width/height
+                  padding: mode === "avatar" ? `6% ${(100 - parseFloat(avatarWidth)) / 2}% 2%` : "8% 18% 4%",
+                }}
               >
-                {overlay.brand}
+                <GarmentSVG
+                  category={overlay.category}
+                  color={overlay.color}
+                  brand={overlay.brand}
+                />
               </div>
               <div
                 key={`of-${overlay.id}`}
                 className="absolute bottom-12 left-1/2 -translate-x-1/2 rounded-full border border-accent/50 bg-background/70 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-accent backdrop-blur animate-fade-in shadow-[var(--glow-accent)]"
               >
-                {overlay.name}
+                {overlay.brand} · {overlay.name}
               </div>
             </>
           )}
