@@ -301,14 +301,15 @@ export function FashionStage() {
     try {
       const dataUrl = await toPng(stageRef.current, {
         cacheBust: true,
-        pixelRatio: 2,
+        pixelRatio: 3,
         backgroundColor: "#0a1220",
+        quality: 1,
       });
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = `lumira-look-${Date.now()}.png`;
+      a.download = `lumira-mirror-${Date.now()}.png`;
       a.click();
-      toast.success(isAr ? "تم حفظ الإطلالة" : "Look captured");
+      toast.success(isAr ? "تم حفظ لقطة المرآة بدقة عالية" : "HD mirror snapshot saved");
     } catch (e) {
       console.error("captureLook", e);
       toast.error(isAr ? "تعذّر الحفظ" : "Couldn't capture look");
