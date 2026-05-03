@@ -575,15 +575,27 @@ export function FashionStage() {
                 }}
               >
                 {overlay.image ? (
-                  <img
-                    src={overlay.image}
-                    alt={overlay.name}
-                    className="h-full w-full object-contain"
-                    style={{
-                      filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.55)) drop-shadow(0 0 14px var(--accent))",
-                      mixBlendMode: mode === "live" || mode === "photo" ? "multiply" : "normal",
-                    }}
-                  />
+                  <div className="relative h-full w-full">
+                    <img
+                      src={overlay.image}
+                      alt={overlay.name}
+                      className="h-full w-full object-contain"
+                      style={{
+                        filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.55)) drop-shadow(0 0 14px var(--accent))",
+                        mixBlendMode: mode === "live" || mode === "photo" ? "multiply" : "normal",
+                      }}
+                    />
+                    {trying && (
+                      <div
+                        className="pointer-events-none absolute inset-0 animate-fit-shimmer"
+                        style={{
+                          background:
+                            "linear-gradient(115deg, transparent 35%, oklch(0.95 0.05 200 / 0.55) 50%, transparent 65%)",
+                          mixBlendMode: "screen",
+                        }}
+                      />
+                    )}
+                  </div>
                 ) : (
                   <GarmentSVG
                     category={overlay.category}
