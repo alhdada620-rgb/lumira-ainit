@@ -560,7 +560,7 @@ export function FashionStage() {
             onClick={captureLook}
             disabled={capturing}
             title={isAr ? "حفظ لقطة عالية الدقة" : "Save HD snapshot"}
-            data-html2canvas-ignore="true"
+            data-capture-ignore="true"
             className="absolute start-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full border border-accent/60 bg-background/55 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-accent shadow-[var(--glow-accent)] backdrop-blur-md transition hover:bg-accent/15 active:scale-[0.97] disabled:opacity-60"
           >
             {capturing
