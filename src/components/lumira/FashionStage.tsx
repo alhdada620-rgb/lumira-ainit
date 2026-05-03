@@ -153,11 +153,15 @@ export function FashionStage() {
   const [mode, setMode] = useState<Mode>("live");
   const [activeBrandIdx, setActiveBrandIdx] = useState(0);
   const [openMall, setOpenMall] = useState<Brand | null>(null);
-  const [overlay, setOverlay] = useState<{ id: string; name: string; brand: string; gradient: string; category: Category; color: string; image?: string } | null>(null);
+  const [overlay, setOverlay] = useState<{ id: string; name: string; brand: string; gradient: string; category: Category; color: string; image?: string; fabric: Fabric } | null>(null);
   const [progress, setProgress] = useState(0);
   const [trying, setTrying] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [debugZones, setDebugZones] = useState(false);
+  const [rotated, setRotated] = useState(false);
+  const [isolating, setIsolating] = useState(false);
+  const [advisorTips, setAdvisorTips] = useState<string[]>([]);
+  const [advisorLoading, setAdvisorLoading] = useState(false);
 
   const brand = BRANDS[activeBrandIdx];
 
