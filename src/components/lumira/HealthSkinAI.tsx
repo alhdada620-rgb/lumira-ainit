@@ -1,8 +1,39 @@
-import { Sparkles, Play, RotateCcw, CheckCircle2 } from "lucide-react";
+import { Sparkles, Play, RotateCcw, CheckCircle2, Save, History, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useT } from "./i18n";
 import skinScan from "@/assets/skin-scan.jpg";
+
+type ScanRecord = {
+  id: string;
+  hydration: number;
+  smoothness: number;
+  tone: number;
+  timestamp: number;
+};
+
+const SCAN_STORAGE_KEY = "lumira.skinScans.v1";
+
+function loadScans(): ScanRecord[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(SCAN_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveScans(scans: ScanRecord[]) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(SCAN_STORAGE_KEY, JSON.stringify(scans));
+  } catch {
+    /* ignore quota errors */
+  }
+}
 
 function jitter(base: number, range = 3, min = 0, max = 100) {
   const v = base + (Math.random() - 0.5) * range * 2;
