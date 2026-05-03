@@ -688,14 +688,16 @@ export function FashionStage() {
                 className="pointer-events-none absolute inset-0 transition-opacity duration-700 animate-fade-in"
                 style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.35 }}
               />
-              {/* Garment image — calibrated per category & target */}
+              {/* Garment image — calibrated per category & target, with VTON wrap (fold/shadow) */}
               <div
                 key={`gar-${overlay.id}`}
-                className="pointer-events-none absolute left-1/2 -translate-x-1/2 flex items-center justify-center animate-fade-in transition-all duration-500 ease-out"
+                className="pointer-events-none absolute left-1/2 flex items-center justify-center animate-fade-in transition-all duration-500 ease-out"
                 style={{
                   top: `${fit.top}%`,
                   bottom: `${fit.bottom}%`,
                   width: `${fit.width}%`,
+                  transform: `translateX(-50%) perspective(900px) rotateY(${rotated && mode === "avatar" ? 45 : 0}deg)`,
+                  transformOrigin: "50% 100%",
                 }}
               >
                 {overlay.image ? (
@@ -707,6 +709,36 @@ export function FashionStage() {
                       style={{
                         filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.55)) drop-shadow(0 0 14px var(--accent))",
                         mixBlendMode: mode === "live" || mode === "photo" ? "multiply" : "normal",
+                      }}
+                    />
+                    {/* Fabric texture overlay — masked to garment shape for realistic weave */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 transition-opacity duration-500"
+                      style={{
+                        background: FABRIC_TEXTURES[overlay.fabric],
+                        mixBlendMode: "overlay",
+                        opacity: 0.55,
+                        WebkitMaskImage: `url(${overlay.image})`,
+                        maskImage: `url(${overlay.image})`,
+                        WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+                        WebkitMaskPosition: "center", maskPosition: "center",
+                        WebkitMaskSize: "contain", maskSize: "contain",
+                      }}
+                    />
+                    {/* Fold / wrinkle shading — diagonal soft shadows wrap on body */}
+                    <div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0"
+                      style={{
+                        background:
+                          "linear-gradient(100deg, rgba(0,0,0,0.30) 0%, transparent 18%, rgba(255,255,255,0.18) 38%, transparent 60%, rgba(0,0,0,0.28) 92%)",
+                        mixBlendMode: "soft-light",
+                        WebkitMaskImage: `url(${overlay.image})`,
+                        maskImage: `url(${overlay.image})`,
+                        WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+                        WebkitMaskPosition: "center", maskPosition: "center",
+                        WebkitMaskSize: "contain", maskSize: "contain",
                       }}
                     />
                     {trying && (
@@ -733,6 +765,9 @@ export function FashionStage() {
                 className="absolute bottom-12 left-1/2 -translate-x-1/2 rounded-full border border-accent/50 bg-background/70 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-accent backdrop-blur animate-fade-in shadow-[var(--glow-accent)]"
               >
                 {overlay.brand} · {overlay.name}
+                <span className="ms-2 rounded-full border border-primary/40 bg-primary/10 px-1.5 py-0.5 text-[8px] tracking-[0.2em] text-primary">
+                  {overlay.fabric}
+                </span>
               </div>
             </>
           )}
