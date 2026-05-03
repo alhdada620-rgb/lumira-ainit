@@ -708,6 +708,16 @@ export function FashionStage() {
                   >
                     {isAr ? (debugZones ? "إخفاء المناطق" : "إظهار المناطق") : (debugZones ? "Hide Zones" : "Show Zones")}
                   </button>
+                  <button
+                    onClick={() => setShowAnchors((v) => !v)}
+                    title={isAr ? "نقاط التثبيت" : "Snap anchors"}
+                    className={`rounded-md border px-2 py-1 text-[9px] uppercase tracking-widest backdrop-blur transition ${
+                      showAnchors
+                        ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                        : "border-primary/30 bg-background/70 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {isAr ? (showAnchors ? "إخفاء النقاط" : "إظهار النقاط") : (showAnchors ? "Hide Anchors" : "Show Anchors")}
                 </div>
               </div>
 
