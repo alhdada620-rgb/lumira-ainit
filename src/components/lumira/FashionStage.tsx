@@ -124,6 +124,7 @@ export function FashionStage() {
   const [progress, setProgress] = useState(0);
   const [trying, setTrying] = useState(false);
   const [scanning, setScanning] = useState(false);
+  const [debugZones, setDebugZones] = useState(false);
 
   const brand = BRANDS[activeBrandIdx];
 
@@ -191,37 +192,35 @@ export function FashionStage() {
   const avatarHeight = `${avatarHeightPct}%`;
   const avatarWidth = `${avatarWidthPct}%`;
 
+  // Anatomical zones (fractions of mannequin height; w = multiplier on mannequin width)
+  const AVATAR_ZONES: Record<Category, { y0: number; y1: number; w: number }> = {
+    top:       { y0: 0.18, y1: 0.55, w: 1.05 },
+    bottom:    { y0: 0.52, y1: 0.95, w: 0.95 },
+    dress:     { y0: 0.20, y1: 0.85, w: 1.10 },
+    accessory: { y0: 0.05, y1: 0.22, w: 0.70 },
+    lips:      { y0: 0.08, y1: 0.13, w: 0.30 },
+    cheeks:    { y0: 0.07, y1: 0.15, w: 0.45 },
+    eyes:      { y0: 0.06, y1: 0.11, w: 0.40 },
+  };
+
+  const mannBottomPct = 2;
+  const mannTopPct = 100 - (mannBottomPct + avatarHeightPct);
+
   /**
    * Compute garment placement (% of frame) based on the active mode,
    * the garment category, and — for the avatar — the live mannequin box.
-   * Returns inset values: top/bottom/width — centered horizontally.
    */
   const garmentFit = (category: Category | undefined) => {
     if (!category) return { top: 18, bottom: 14, width: 80 };
 
     if (mode === "avatar") {
-      // Mannequin occupies a vertical slab from `bottom: 2%` upward by avatarHeightPct
-      const mannBottom = 2;
-      const mannTop = 100 - (mannBottom + avatarHeightPct); // % from top
-      const mannWidth = avatarWidthPct;
-      // Anatomical zones expressed as fractions of mannequin height (0=head, 1=feet)
-      const zones: Record<Category, { y0: number; y1: number; w: number }> = {
-        top:       { y0: 0.18, y1: 0.55, w: 1.05 }, // chest -> waist
-        bottom:    { y0: 0.52, y1: 0.95, w: 0.95 }, // waist -> ankles
-        dress:     { y0: 0.20, y1: 0.85, w: 1.10 }, // shoulders -> knees
-        accessory: { y0: 0.05, y1: 0.22, w: 0.70 }, // head / scarf
-        lips:      { y0: 0.08, y1: 0.13, w: 0.30 },
-        cheeks:    { y0: 0.07, y1: 0.15, w: 0.45 },
-        eyes:      { y0: 0.06, y1: 0.11, w: 0.40 },
-      };
-      const z = zones[category];
-      const top = mannTop + z.y0 * avatarHeightPct;
-      const bottom = 100 - (mannTop + z.y1 * avatarHeightPct);
-      const width = Math.min(98, mannWidth * z.w);
+      const z = AVATAR_ZONES[category];
+      const top = mannTopPct + z.y0 * avatarHeightPct;
+      const bottom = 100 - (mannTopPct + z.y1 * avatarHeightPct);
+      const width = Math.min(98, avatarWidthPct * z.w);
       return { top, bottom, width };
     }
 
-    // Live mirror & uploaded photo — assume a roughly centered subject
     const zones: Record<Category, { top: number; bottom: number; width: number }> = {
       top:       { top: 26, bottom: 38, width: 72 },
       bottom:    { top: 56, bottom: 6,  width: 62 },
@@ -235,6 +234,17 @@ export function FashionStage() {
   };
 
   const fit = garmentFit(overlay?.category);
+
+  // Color-coded zones for the debug overlay
+  const ZONE_COLORS: Record<Category, string> = {
+    top: "#22d3ee",
+    bottom: "#a78bfa",
+    dress: "#f472b6",
+    accessory: "#facc15",
+    lips: "#fb7185",
+    cheeks: "#fda4af",
+    eyes: "#34d399",
+  };
 
   const tabs: { id: Mode; label: string; labelAr: string; icon: any }[] = [
     { id: "live", label: "Live Mirror", labelAr: "المرآة المباشرة", icon: Video },
@@ -374,6 +384,55 @@ export function FashionStage() {
                   />
                 </div>
 
+                {/* Debug overlay: mannequin box + anatomical garment zones */}
+                {debugZones && (
+                  <div className="pointer-events-none absolute inset-0 z-10">
+                    {/* Mannequin bounding box */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 border border-dashed border-accent/80 transition-all duration-500 ease-out"
+                      style={{
+                        bottom: `${mannBottomPct}%`,
+                        height: `${avatarHeightPct}%`,
+                        width: `${avatarWidthPct}%`,
+                        boxShadow: "0 0 12px oklch(0.78 0.18 320 / 0.5) inset",
+                      }}
+                    >
+                      <span className="absolute -top-4 left-0 rounded bg-accent/80 px-1 text-[8px] font-bold uppercase tracking-widest text-background">
+                        Mannequin {avatarWidthPct.toFixed(0)}×{avatarHeightPct.toFixed(0)}%
+                      </span>
+                    </div>
+                    {/* Anatomical zones */}
+                    {(Object.keys(AVATAR_ZONES) as Category[]).map((cat) => {
+                      const z = AVATAR_ZONES[cat];
+                      const top = mannTopPct + z.y0 * avatarHeightPct;
+                      const bottom = 100 - (mannTopPct + z.y1 * avatarHeightPct);
+                      const width = Math.min(98, avatarWidthPct * z.w);
+                      const color = ZONE_COLORS[cat];
+                      return (
+                        <div
+                          key={cat}
+                          className="absolute left-1/2 -translate-x-1/2 transition-all duration-500 ease-out"
+                          style={{
+                            top: `${top}%`,
+                            bottom: `${bottom}%`,
+                            width: `${width}%`,
+                            border: `1px solid ${color}`,
+                            background: `${color}1f`,
+                            boxShadow: `0 0 6px ${color}80`,
+                          }}
+                        >
+                          <span
+                            className="absolute -top-0.5 left-1 text-[8px] font-bold uppercase tracking-wider"
+                            style={{ color, textShadow: "0 0 4px rgba(0,0,0,0.8)" }}
+                          >
+                            {cat}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
                 {/* Pulsating scanning grid */}
                 {scanning && (
                   <div className="pointer-events-none absolute inset-0">
@@ -385,9 +444,21 @@ export function FashionStage() {
                   </div>
                 )}
 
-                {/* Stats badge */}
-                <div className="absolute end-3 top-3 rounded-md border border-primary/30 bg-background/70 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur">
-                  {profile.height}cm · {profile.weight}kg
+                {/* Stats badge + debug toggle */}
+                <div className="absolute end-3 top-3 z-20 flex flex-col items-end gap-1">
+                  <div className="rounded-md border border-primary/30 bg-background/70 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur">
+                    {profile.height}cm · {profile.weight}kg
+                  </div>
+                  <button
+                    onClick={() => setDebugZones((v) => !v)}
+                    className={`rounded-md border px-2 py-1 text-[9px] uppercase tracking-widest backdrop-blur transition ${
+                      debugZones
+                        ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                        : "border-primary/30 bg-background/70 text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {isAr ? (debugZones ? "إخفاء المناطق" : "إظهار المناطق") : (debugZones ? "Hide Zones" : "Show Zones")}
+                  </button>
                 </div>
               </div>
 
