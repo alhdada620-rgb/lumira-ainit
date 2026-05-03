@@ -93,22 +93,22 @@ function IndexShell() {
 
         {/* Three-column hero layout */}
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
+          {/* Center stage — first on mobile */}
+          <div className="order-1 lg:order-2 lg:col-span-6">
+            <FashionStage />
+          </div>
+
           {/* Left column */}
-          <div className="space-y-5 lg:col-span-3">
+          <div className="order-2 space-y-5 lg:order-1 lg:col-span-3">
             <HealthSkinAI />
             <VoiceVisualizer />
           </div>
 
-          {/* Center stage */}
-          <div className="lg:col-span-6">
-            <FashionStage />
-          </div>
-
-          {/* Right column */}
-          <div className="space-y-5 lg:col-span-3">
+          {/* Right column — Daily Dashboard moved to top */}
+          <div className="order-3 space-y-5 lg:col-span-3">
+            <MiniDashboard />
             <PiPayWallet />
             <ProfileData />
-            <MiniDashboard />
           </div>
         </div>
 
