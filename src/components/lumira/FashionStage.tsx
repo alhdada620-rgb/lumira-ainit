@@ -752,9 +752,9 @@ export function FashionStage() {
                   </button>
                   <div className="flex items-center gap-1 rounded-md border border-primary/30 bg-background/70 p-0.5 backdrop-blur" role="group" aria-label="HUD preset">
                     {([
-                      { id: "clean",  label: isAr ? "نظيف"  : "Clean",  apply: () => { setShowAnchors(false); setDebugZones(false); } },
-                      { id: "tryon",  label: isAr ? "تجربة" : "Try-on", apply: () => { setShowAnchors(true);  setDebugZones(false); } },
-                      { id: "debug",  label: isAr ? "تشخيص" : "Debug",  apply: () => { setShowAnchors(true);  setDebugZones(true);  } },
+                      { id: "clean",  key: "1", label: isAr ? "نظيف"  : "Clean",  apply: () => { setShowAnchors(false); setDebugZones(false); } },
+                      { id: "tryon",  key: "2", label: isAr ? "تجربة" : "Try-on", apply: () => { setShowAnchors(true);  setDebugZones(false); } },
+                      { id: "debug",  key: "3", label: isAr ? "تشخيص" : "Debug",  apply: () => { setShowAnchors(true);  setDebugZones(true);  } },
                     ] as const).map((p) => {
                       const isActive =
                         (p.id === "clean" && !showAnchors && !debugZones) ||
