@@ -263,3 +263,13 @@
 .animate-scan { animation: scan-line 4s linear infinite; }
 .animate-voice-wave { animation: voice-wave 0.8s ease-in-out infinite; }
 .animate-ring-rotate { animation: ring-rotate 20s linear infinite; }
+
+@keyframes fit-shimmer {
+  0% { background-position: -150% 0; opacity: 0; }
+  20% { opacity: 1; }
+  100% { background-position: 150% 0; opacity: 0; }
+}
+.animate-fit-shimmer {
+  background-size: 200% 100%;
+  animation: fit-shimmer 1.4s ease-in-out infinite;
+}
