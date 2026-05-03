@@ -271,6 +271,40 @@ export function VirtualTryOn() {
           </button>
         </div>
 
+        {/* Skin-tuned color overlay toggle */}
+        <div className="flex items-center justify-between rounded-lg border border-primary/20 bg-card/30 px-3 py-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-foreground/85">
+              {t("tryon.skinTune.label") || "Skin-tuned color"}
+            </span>
+            <span className="text-[9px] text-muted-foreground">
+              {!skin.completedAt
+                ? (t("tryon.skinTune.needScan") || "Run a skin scan to enable")
+                : skinTuneEnabled
+                ? (t("tryon.skinTune.on") || "Matching garment to your skin")
+                : (t("tryon.skinTune.off") || "Using original garment color")}
+            </span>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={skinTuneActive}
+            disabled={!skin.completedAt}
+            onClick={() => setSkinTuneEnabled((v) => !v)}
+            className={`relative h-5 w-9 shrink-0 rounded-full border transition-all ${
+              skinTuneActive
+                ? "border-accent/60 bg-accent/30 shadow-[var(--glow-accent)]"
+                : "border-border/40 bg-muted/30"
+            } ${!skin.completedAt ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+          >
+            <span
+              className={`absolute top-0.5 h-4 w-4 rounded-full transition-all ${
+                skinTuneActive ? "start-[18px] bg-accent shadow-[0_0_8px_var(--accent)]" : "start-0.5 bg-muted-foreground"
+              }`}
+            />
+          </button>
+        </div>
+
         {/* Photoreal CTA */}
         <button
           onClick={handleGenerate}
