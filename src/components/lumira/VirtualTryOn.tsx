@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useCamera } from "./camera-context";
 import { useProfile } from "./profile-context";
+import { useSkin, deriveGarmentTint } from "./skin-context";
 import { onVoiceCommand, onTryOnItem, reportCommandResult } from "./voice-events";
 import { useT } from "./i18n";
 import { generatePhotorealLook } from "@/server/vton.functions";
@@ -42,6 +43,8 @@ export function VirtualTryOn() {
   const outfit = outfits[Math.min(idx, outfits.length - 1)] ?? outfits[0];
   const { stream, active, start, starting } = useCamera();
   const { height, weight, gender } = useProfile();
+  const skin = useSkin();
+  const skinTint = useMemo(() => deriveGarmentTint(skin), [skin]);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Photoreal generation state
