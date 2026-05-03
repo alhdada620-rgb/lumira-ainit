@@ -1,1 +1,7 @@
 project_id = "ogcwnpohundbeijyqnss"
+
+[functions.style-advisor]
+verify_jwt = false
+
+[functions.photo-isolate]
+verify_jwt = false
