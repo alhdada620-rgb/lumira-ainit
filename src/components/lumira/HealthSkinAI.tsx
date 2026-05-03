@@ -255,6 +255,41 @@ export function HealthSkinAI() {
         </div>
       </div>
 
+      {/* Live scanning meters — react in real time while scan is running */}
+      <div className="mt-3 space-y-1.5">
+        {[
+          { label: isAr ? "ترطيب" : "Hydration", value: hydration, color: "oklch(0.82 0.14 195)" },
+          { label: isAr ? "نعومة" : "Smoothness", value: smoothness, color: "oklch(0.85 0.15 165)" },
+          { label: isAr ? "تجانس اللون" : "Tone", value: tone, color: "oklch(0.78 0.12 15)" },
+        ].map((m) => (
+          <div key={m.label} className="space-y-0.5">
+            <div className="flex items-center justify-between text-[8px] uppercase tracking-[0.25em] text-muted-foreground">
+              <span>{m.label}</span>
+              <span className="tabular-nums text-foreground/80">{m.value}</span>
+            </div>
+            <div className="relative h-1 overflow-hidden rounded-full bg-muted/30">
+              <div
+                className="h-full rounded-full transition-[width] duration-300 ease-out"
+                style={{
+                  width: `${m.value}%`,
+                  background: `linear-gradient(90deg, ${m.color}, oklch(0.95 0.06 200))`,
+                  boxShadow: scanning ? `0 0 8px ${m.color}` : undefined,
+                }}
+              />
+              {scanning && (
+                <div
+                  className="pointer-events-none absolute inset-y-0 w-1/3"
+                  style={{
+                    background: "linear-gradient(90deg, transparent, oklch(1 0 0 / 0.45), transparent)",
+                    animation: "fit-shimmer 1.4s ease-in-out infinite",
+                  }}
+                />
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* Start / Stop / Restart scan button */}
       <button
         onClick={scanning ? completeScan : startScan}

@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import {
   Sparkles, Camera, CameraOff, Loader2, X, ShoppingBag,
-  Video, User2, Upload, Image as ImageIcon, RotateCw, Wand2, Lightbulb,
+  Video, User2, Upload, Image as ImageIcon, RotateCw, Wand2, Lightbulb, Download,
 } from "lucide-react";
+import { toPng } from "html-to-image";
 import { useCamera } from "./camera-context";
 import { useT } from "./i18n";
 import { useProfile } from "./profile-context";
@@ -171,6 +172,8 @@ export function FashionStage() {
   const profile = useProfile();
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [capturing, setCapturing] = useState(false);
 
   const [mode, setMode] = useState<Mode>("live");
   const [activeBrandIdx, setActiveBrandIdx] = useState(0);
@@ -284,6 +287,35 @@ export function FashionStage() {
 
   const amazonUrl = (q: string) =>
     `https://www.amazon.com/s?k=${encodeURIComponent(q)}&tag=${AMAZON_TAG}`;
+
+  // Auto-start the front camera the moment the user lands on the Live mirror tab.
+  useEffect(() => {
+    if (mode === "live" && !active && !starting && !error) {
+      start();
+    }
+  }, [mode, active, starting, error, start]);
+
+  const captureLook = async () => {
+    if (!stageRef.current || capturing) return;
+    setCapturing(true);
+    try {
+      const dataUrl = await toPng(stageRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+        backgroundColor: "#0a1220",
+      });
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `lumira-look-${Date.now()}.png`;
+      a.click();
+      toast.success(isAr ? "تم حفظ الإطلالة" : "Look captured");
+    } catch (e) {
+      console.error("captureLook", e);
+      toast.error(isAr ? "تعذّر الحفظ" : "Couldn't capture look");
+    } finally {
+      setCapturing(false);
+    }
+  };
 
   const fetchAdvisor = async (outfit: { brand: string; name: string; category: Category; fabric: Fabric }) => {
     setAdvisorLoading(true);
@@ -504,14 +536,17 @@ export function FashionStage() {
         </div>
 
         {/* Frame */}
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-accent/30 bg-background/40">
-          {/* Luxury closet backdrop */}
+        <div ref={stageRef} className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-accent/30 bg-background/40">
+          {/* Luxury closet backdrop — fades out in live mode so the mirror feels real */}
           <img
             src={closetBackdrop}
             alt=""
             aria-hidden
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ filter: "brightness(0.55) saturate(1.15)" }}
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+            style={{
+              filter: "brightness(0.55) saturate(1.15)",
+              opacity: mode === "live" && active ? 0 : 1,
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/60" />
           <div className="pointer-events-none absolute -inset-px rounded-2xl shadow-[var(--glow-primary)]" />
@@ -1026,6 +1061,15 @@ export function FashionStage() {
             {trying
               ? isAr ? `جاري التركيب… ${Math.round(progress)}%` : `Fitting… ${Math.round(progress)}%`
               : isAr ? "جرّب الآن" : "Try On"}
+          </button>
+          <button
+            onClick={captureLook}
+            disabled={capturing}
+            title={isAr ? "التقاط الإطلالة" : "Capture Look"}
+            className="inline-flex items-center justify-center gap-1.5 rounded-full border border-accent/50 bg-accent/10 px-3 py-2.5 text-[10px] uppercase tracking-[0.3em] text-accent transition hover:bg-accent/20 hover:shadow-[var(--glow-accent)] disabled:opacity-60"
+          >
+            {capturing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+            <span className="hidden sm:inline">{isAr ? "التقاط" : "Capture"}</span>
           </button>
           {overlay && (
             <button
