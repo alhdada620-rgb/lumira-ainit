@@ -136,12 +136,16 @@ export function VirtualTryOn() {
     }
     setGenerating(true);
     try {
+      const baseGarment = outfit.brand
+        ? `${outfit.brand} ${outfit.name} (${outfit.tag})`
+        : `${outfit.name} (${outfit.tag})`;
+      const skinHint = skin.completedAt
+        ? `, color-matched to a skin tone profile (hydration ${skin.hydration}, smoothness ${skin.smoothness}, tone evenness ${skin.tone}) — favor a complementary hue around ${skinTint.hue.toFixed(0)}° in OKLCH for flattering contrast`
+        : "";
       const res = await generatePhotorealLook({
         data: {
           userImage: frame,
-          garmentPrompt: outfit.brand
-            ? `${outfit.brand} ${outfit.name} (${outfit.tag})`
-            : `${outfit.name} (${outfit.tag})`,
+          garmentPrompt: `${baseGarment}${skinHint}`,
           heightCm: height,
           weightKg: weight,
           gender,
