@@ -11,6 +11,7 @@ import { ProfileData } from "@/components/lumira/ProfileData";
 import { LanguageProvider, useT } from "@/components/lumira/i18n";
 import { LanguageToggle } from "@/components/lumira/LanguageToggle";
 import { CaptionsOverlay } from "@/components/lumira/CaptionsOverlay";
+import { HudJump } from "@/components/lumira/HudJump";
 import bgImg from "@/assets/lumira-bg.jpg";
 
 export const Route = createFileRoute("/")({
