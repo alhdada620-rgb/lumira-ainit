@@ -186,11 +186,15 @@ export function FashionStage() {
   // Avatar dynamic dimensions based on height/weight
   const baseHeightPct = 92; // % of frame height at 178cm
   const heightScale = profile.height / 178;
-  const widthScale = 0.55 + (profile.weight - 75) / 200; // wider with weight
+  const widthScale = 0.55 + (profile.weight - 75) / 260; // overall widens slightly with weight
   const avatarHeightPct = Math.min(98, baseHeightPct * heightScale);
   const avatarWidthPct = Math.max(28, 42 * widthScale);
   const avatarHeight = `${avatarHeightPct}%`;
   const avatarWidth = `${avatarWidthPct}%`;
+  // Midsection anatomical bulge (independent of overall width) — driven mostly by weight
+  const midBulge = Math.max(0.82, Math.min(1.35, 1 + (profile.weight - 75) / 130));
+  // Limbs slightly thicken with weight too
+  const limbBulge = Math.max(0.9, Math.min(1.18, 1 + (profile.weight - 75) / 240));
 
   // Anatomical zones (fractions of mannequin height; w = multiplier on mannequin width)
   const AVATAR_ZONES: Record<Category, { y0: number; y1: number; w: number }> = {
