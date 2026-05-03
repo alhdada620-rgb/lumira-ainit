@@ -1,12 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import {
-  Sparkles, Camera, CameraOff, Loader2, X, ShoppingBag,
+  Sparkles, Camera, CameraOff, Loader2, X,
   Video, User2, Upload, Image as ImageIcon,
 } from "lucide-react";
 import { useCamera } from "./camera-context";
 import { useT } from "./i18n";
 import { useProfile } from "./profile-context";
+
+import mannequinMale from "@/assets/mannequin-male.png";
+import mannequinFemale from "@/assets/mannequin-female.png";
+import closetBackdrop from "@/assets/closet-backdrop.jpg";
+import amazonLogo from "@/assets/amazon-logo.png";
+import imgHmTee from "@/assets/garments/hm-tee.png";
+import imgNikeHoodie from "@/assets/garments/nike-hoodie.png";
+import imgZaraBlazer from "@/assets/garments/zara-blazer.png";
+import imgNamshiAbaya from "@/assets/garments/namshi-abaya.png";
+import imgAdidasJacket from "@/assets/garments/adidas-jacket.png";
+import imgSephoraLipstick from "@/assets/garments/sephora-lipstick.png";
 
 const AMAZON_TAG = "lumiraai-20";
 
