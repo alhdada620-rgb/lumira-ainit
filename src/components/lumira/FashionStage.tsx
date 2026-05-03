@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import {
   Sparkles, Camera, CameraOff, Loader2, X, ShoppingBag,
-  Video, User2, Upload, Image as ImageIcon, RotateCw, Wand2, Lightbulb,
+  Video, User2, Upload, Image as ImageIcon, RotateCw, Wand2, Lightbulb, Download,
 } from "lucide-react";
+import { toPng } from "html-to-image";
 import { useCamera } from "./camera-context";
 import { useT } from "./i18n";
 import { useProfile } from "./profile-context";
