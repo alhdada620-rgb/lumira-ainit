@@ -2,6 +2,7 @@ import { Sparkles, Play, RotateCcw, CheckCircle2, Save, History, Trash2 } from "
 import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useT } from "./i18n";
+import { useSkin } from "./skin-context";
 import skinScan from "@/assets/skin-scan.jpg";
 
 type ScanRecord = {
@@ -111,6 +112,15 @@ export function HealthSkinAI() {
   const [showHistory, setShowHistory] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { setSkinProfile } = useSkin();
+
+  // Push the latest completed scan into the shared skin profile so other
+  // modules (e.g. Virtual Try-On) can react to tone/hydration/smoothness.
+  useEffect(() => {
+    if (scanComplete) {
+      setSkinProfile({ hydration, smoothness, tone });
+    }
+  }, [scanComplete, hydration, smoothness, tone, setSkinProfile]);
 
   useEffect(() => {
     saveScans(scans);
