@@ -180,6 +180,18 @@ export function VirtualTryOn() {
             className="absolute inset-0 transition-opacity"
             style={{ background: outfit.color, opacity: active ? 0.45 : 0.6, mixBlendMode: active ? "overlay" : "normal" }}
           />
+          {/* Skin-tone driven color match overlay */}
+          {skinTint.tint && (
+            <div
+              className="pointer-events-none absolute inset-0 transition-opacity"
+              style={{
+                background: skinTint.tint,
+                opacity: active ? 0.22 : 0.3,
+                mixBlendMode: "color",
+              }}
+              aria-hidden
+            />
+          )}
           <div className="absolute inset-0 hud-grid opacity-40" />
 
           {!active && (
@@ -201,7 +213,16 @@ export function VirtualTryOn() {
               <div className="text-[10px] uppercase tracking-widest text-foreground/80">{outfit.tag}</div>
               <div className="text-sm text-foreground text-glow-accent">{outfit.name}</div>
             </div>
-            <div className="text-[10px] text-muted-foreground">{t("tryon.match")}</div>
+            <div className="text-end text-[10px] text-muted-foreground">
+              {skin.completedAt ? (
+                <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-background/40 px-2 py-0.5 text-accent backdrop-blur">
+                  <span className="h-1 w-1 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" />
+                  {t("tryon.skinTuned") || "Skin-tuned"}
+                </span>
+              ) : (
+                t("tryon.match")
+              )}
+            </div>
           </div>
 
           {!active && (
