@@ -553,6 +553,20 @@ export function FashionStage() {
           <div className="pointer-events-none absolute -inset-px rounded-2xl shadow-[var(--glow-primary)]" />
           <div className="absolute inset-0 hud-grid opacity-15" />
 
+          {/* HD Save snapshot button — always visible on the mirror frame */}
+          <button
+            onClick={captureLook}
+            disabled={capturing}
+            title={isAr ? "حفظ لقطة عالية الدقة" : "Save HD snapshot"}
+            data-html2canvas-ignore="true"
+            className="absolute start-3 top-3 z-30 inline-flex items-center gap-1.5 rounded-full border border-accent/60 bg-background/55 px-3 py-1.5 text-[10px] uppercase tracking-[0.3em] text-accent shadow-[var(--glow-accent)] backdrop-blur-md transition hover:bg-accent/15 active:scale-[0.97] disabled:opacity-60"
+          >
+            {capturing
+              ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              : <Download className="h-3.5 w-3.5" />}
+            <span>{capturing ? (isAr ? "جاري الحفظ…" : "Saving…") : (isAr ? "حفظ HD" : "Save HD")}</span>
+          </button>
+
           {/* LIVE MIRROR */}
           {mode === "live" && (
             <>
