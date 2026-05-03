@@ -660,14 +660,11 @@ export function FashionStage() {
                   </button>
                 </div>
               )}
-              {profile.uploadedPhoto && (
-                <button
-                  onClick={() => profile.setUploadedPhoto(null)}
-                  className="absolute end-3 top-3 inline-flex items-center gap-1 rounded-full border border-destructive/40 bg-background/60 px-2 py-1 text-[9px] uppercase tracking-widest text-destructive backdrop-blur hover:bg-destructive/15"
-                >
-                  <X className="h-3 w-3" />
-                  {isAr ? "حذف" : "Remove"}
-                </button>
+              {isolating && (
+                <div className="absolute inset-x-0 bottom-3 mx-auto flex w-fit items-center gap-2 rounded-full border border-accent/40 bg-background/70 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-accent backdrop-blur">
+                  <Wand2 className="h-3 w-3 animate-pulse" />
+                  {isAr ? "عزل الخلفية بالذكاء…" : "AI removing background…"}
+                </div>
               )}
               <input
                 ref={fileRef}
