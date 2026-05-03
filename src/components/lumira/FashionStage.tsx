@@ -306,32 +306,61 @@ export function FashionStage() {
   // Limbs slightly thicken with weight too
   const limbBulge = Math.max(0.9, Math.min(1.18, 1 + (profile.weight - 75) / 240));
 
-  // Anatomical zones (fractions of mannequin height; w = multiplier on mannequin width)
-  const AVATAR_ZONES: Record<Category, { y0: number; y1: number; w: number }> = {
-    top:       { y0: 0.18, y1: 0.55, w: 1.05 },
-    bottom:    { y0: 0.52, y1: 0.95, w: 0.95 },
-    dress:     { y0: 0.20, y1: 0.85, w: 1.10 },
-    accessory: { y0: 0.05, y1: 0.22, w: 0.70 },
-    lips:      { y0: 0.08, y1: 0.13, w: 0.30 },
-    cheeks:    { y0: 0.07, y1: 0.15, w: 0.45 },
-    eyes:      { y0: 0.06, y1: 0.11, w: 0.40 },
+  // Anatomical ANCHOR POINTS on the mannequin (y = fraction of mannequin height from top, w = fraction of mannequin width).
+  // These are the snap targets garments align & scale to — like garment hooks on the body.
+  const ANCHORS = {
+    head:      { y: 0.08, w: 0.30 },
+    shoulders: { y: 0.20, w: 1.05 },
+    chest:     { y: 0.30, w: 0.95 },
+    waist:     { y: 0.52, w: 0.78 * midBulge },
+    hips:      { y: 0.60, w: 0.92 * midBulge },
+    knees:     { y: 0.78, w: 0.62 * limbBulge },
+    ankles:    { y: 0.95, w: 0.50 * limbBulge },
+    lips:      { y: 0.105, w: 0.18 },
+    eyes:      { y: 0.085, w: 0.26 },
+    cheeks:    { y: 0.105, w: 0.34 },
+  } as const;
+
+  // Each garment category snaps between two anchors and uses the wider one for scaling.
+  const CATEGORY_ANCHORS: Record<Category, { from: keyof typeof ANCHORS; to: keyof typeof ANCHORS; widthAnchor: keyof typeof ANCHORS }> = {
+    top:       { from: "shoulders", to: "hips",   widthAnchor: "shoulders" },
+    bottom:    { from: "waist",     to: "ankles", widthAnchor: "hips" },
+    dress:     { from: "shoulders", to: "knees",  widthAnchor: "hips" },
+    accessory: { from: "head",      to: "shoulders", widthAnchor: "shoulders" },
+    lips:      { from: "lips",      to: "lips",   widthAnchor: "lips" },
+    cheeks:    { from: "cheeks",    to: "cheeks", widthAnchor: "cheeks" },
+    eyes:      { from: "eyes",      to: "eyes",   widthAnchor: "eyes" },
   };
 
   const mannBottomPct = 2;
   const mannTopPct = 100 - (mannBottomPct + avatarHeightPct);
 
+  // Back-compat zones (used elsewhere, debug renderer)
+  const AVATAR_ZONES: Record<Category, { y0: number; y1: number; w: number }> = (() => {
+    const out = {} as Record<Category, { y0: number; y1: number; w: number }>;
+    (Object.keys(CATEGORY_ANCHORS) as Category[]).forEach((cat) => {
+      const a = CATEGORY_ANCHORS[cat];
+      const y0 = ANCHORS[a.from].y;
+      const y1 = Math.max(y0 + 0.04, ANCHORS[a.to].y);
+      out[cat] = { y0, y1, w: ANCHORS[a.widthAnchor].w };
+    });
+    return out;
+  })();
+
   /**
-   * Compute garment placement (% of frame) based on the active mode,
-   * the garment category, and — for the avatar — the live mannequin box.
+   * Compute garment placement (% of frame) by SNAPPING to the named anchor points
+   * on the live mannequin. The garment auto-scales to the width of its anchor.
    */
   const garmentFit = (category: Category | undefined) => {
     if (!category) return { top: 18, bottom: 14, width: 80 };
 
     if (mode === "avatar") {
-      const z = AVATAR_ZONES[category];
-      const top = mannTopPct + z.y0 * avatarHeightPct;
-      const bottom = 100 - (mannTopPct + z.y1 * avatarHeightPct);
-      const width = Math.min(98, avatarWidthPct * z.w);
+      const a = CATEGORY_ANCHORS[category];
+      const y0 = ANCHORS[a.from].y;
+      const y1 = Math.max(y0 + 0.04, ANCHORS[a.to].y);
+      const top = mannTopPct + y0 * avatarHeightPct;
+      const bottom = 100 - (mannTopPct + y1 * avatarHeightPct);
+      const width = Math.min(98, avatarWidthPct * ANCHORS[a.widthAnchor].w);
       return { top, bottom, width };
     }
 
