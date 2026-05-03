@@ -26,9 +26,11 @@ function Index() {
   return (
     <LanguageProvider>
       <WalletProvider>
-        <CameraProvider>
-          <IndexShell />
-        </CameraProvider>
+        <ProfileProvider>
+          <CameraProvider>
+            <IndexShell />
+          </CameraProvider>
+        </ProfileProvider>
       </WalletProvider>
     </LanguageProvider>
   );
