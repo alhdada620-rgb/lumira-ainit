@@ -1,5 +1,5 @@
-import { Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Sparkles, Play, Square } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useT } from "./i18n";
 import skinScan from "@/assets/skin-scan.jpg";
@@ -13,10 +13,12 @@ function Ring({
   value,
   color,
   label,
+  active,
 }: {
   value: number;
   color: string;
   label: string;
+  active: boolean;
 }) {
   const radius = 32;
   const circ = 2 * Math.PI * radius;
@@ -47,6 +49,7 @@ function Ring({
             style={{
               filter: `drop-shadow(0 0 8px ${color})`,
               transition: "stroke-dashoffset 1s ease",
+              opacity: active ? 1 : 0.55,
             }}
           />
         </svg>
@@ -70,16 +73,37 @@ export function HealthSkinAI() {
   const [hydration, setHydration] = useState(87);
   const [smoothness, setSmoothness] = useState(92);
   const [tone, setTone] = useState(78);
-  const [scanPct, setScanPct] = useState(98.2);
+  const [scanPct, setScanPct] = useState(0);
+  const [scanning, setScanning] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    const id = setInterval(() => {
+  const stopScan = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    setScanning(false);
+  };
+
+  const startScan = () => {
+    if (scanning) {
+      stopScan();
+      return;
+    }
+    setScanning(true);
+    setScanPct(0);
+    intervalRef.current = setInterval(() => {
       setHydration((v) => Math.round(jitter(v, 2, 78, 95)));
       setSmoothness((v) => Math.round(jitter(v, 2, 82, 97)));
       setTone((v) => Math.round(jitter(v, 2, 70, 88)));
-      setScanPct((v) => +jitter(v, 0.4, 96.5, 99.4).toFixed(1));
-    }, 2200);
-    return () => clearInterval(id);
+      setScanPct((v) => +Math.min(99.4, v + Math.random() * 6 + 2).toFixed(1));
+    }, 350);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
 
   return (
@@ -103,44 +127,52 @@ export function HealthSkinAI() {
             className="h-56 w-full object-cover opacity-90"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
-          {/* scan line */}
-          <div
-            className="pointer-events-none absolute inset-x-0 h-px bg-primary/80"
-            style={{
-              top: "50%",
-              boxShadow: "0 0 14px var(--primary)",
-              animation: "scan-line 3.6s linear infinite",
-            }}
-          />
+          {/* scan line — only while scanning */}
+          {scanning && (
+            <div
+              className="pointer-events-none absolute inset-x-0 h-px bg-primary/80"
+              style={{
+                top: "50%",
+                boxShadow: "0 0 14px var(--primary)",
+                animation: "scan-line 3.6s linear infinite",
+              }}
+            />
+          )}
           <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] uppercase tracking-widest">
-            <span className="text-primary text-glow">
-              {isAr ? "جارٍ الفحص..." : "Scanning..."}
+            <span className={`text-glow ${scanning ? "text-primary" : "text-muted-foreground"}`}>
+              {scanning
+                ? isAr ? "جارٍ الفحص..." : "Scanning..."
+                : isAr ? "في وضع الاستعداد" : "Idle"}
             </span>
-            <span className="text-accent tabular-nums">{scanPct}%</span>
+            <span className="text-accent tabular-nums">{scanPct.toFixed(1)}%</span>
           </div>
         </div>
 
         {/* Rings */}
         <div className="flex flex-col items-center justify-between gap-2 py-1">
-          <Ring
-            value={hydration}
-            color="oklch(0.82 0.14 195)"
-            label={isAr ? "ترطيب" : "Hydration"}
-          />
-          <Ring
-            value={smoothness}
-            color="oklch(0.85 0.15 165)"
-            label={isAr ? "نعومة" : "Smoothness"}
-          />
-          <Ring
-            value={tone}
-            color="oklch(0.78 0.12 15)"
-            label={isAr ? "تجانس اللون" : "Tone Evenness"}
-          />
+          <Ring value={hydration} color="oklch(0.82 0.14 195)" label={isAr ? "ترطيب" : "Hydration"} active={scanning} />
+          <Ring value={smoothness} color="oklch(0.85 0.15 165)" label={isAr ? "نعومة" : "Smoothness"} active={scanning} />
+          <Ring value={tone} color="oklch(0.78 0.12 15)" label={isAr ? "تجانس اللون" : "Tone Evenness"} active={scanning} />
         </div>
       </div>
 
-      <div className="mt-4 rounded-xl border border-accent/30 bg-accent/5 p-3">
+      {/* Start / Stop scan button */}
+      <button
+        onClick={startScan}
+        aria-pressed={scanning}
+        className={`mt-3 flex w-full items-center justify-center gap-2 rounded-xl border py-2 text-[10px] uppercase tracking-[0.3em] transition-all ${
+          scanning
+            ? "border-destructive/40 bg-destructive/10 text-destructive hover:bg-destructive/20"
+            : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-[var(--glow-soft)]"
+        }`}
+      >
+        {scanning ? <Square className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+        {scanning
+          ? isAr ? "إيقاف الفحص" : "Stop scan"
+          : isAr ? "بدء فحص البشرة" : "Start skin scan"}
+      </button>
+
+      <div className="mt-3 rounded-xl border border-accent/30 bg-accent/5 p-3">
         <p className="text-xs text-foreground/85">
           <span className="font-semibold text-accent">
             {isAr ? "توصية:" : "Recommendation:"}
