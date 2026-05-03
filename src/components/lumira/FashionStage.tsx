@@ -545,12 +545,29 @@ export function FashionStage() {
             src={closetBackdrop}
             alt=""
             aria-hidden
-            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+            className="absolute inset-0 h-full w-full object-cover transition-all duration-700"
             style={{
-              filter: "brightness(0.55) saturate(1.15)",
-              opacity: mode === "live" && active ? 0 : 1,
+              filter:
+                mode === "live" && active
+                  ? "brightness(0.18) saturate(1.35) blur(14px)"
+                  : "brightness(0.55) saturate(1.15)",
+              opacity: mode === "live" && active ? 0.35 : 1,
+              transform: mode === "live" && active ? "scale(1.08)" : "scale(1)",
             }}
           />
+          {/* Soft glass veil that deepens the live mirror feel */}
+          {mode === "live" && active && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+              style={{
+                background:
+                  "radial-gradient(120% 90% at 50% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 55%), radial-gradient(140% 100% at 50% 100%, color-mix(in oklab, var(--accent) 18%, transparent) 0%, transparent 60%), linear-gradient(180deg, rgba(8,12,22,0.55) 0%, rgba(8,12,22,0.15) 40%, rgba(8,12,22,0.7) 100%)",
+                backdropFilter: "blur(2px) saturate(1.2)",
+                WebkitBackdropFilter: "blur(2px) saturate(1.2)",
+              }}
+            />
+          )}
           <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-transparent to-background/60" />
           <div className="pointer-events-none absolute -inset-px rounded-2xl shadow-[var(--glow-primary)]" />
           <div className="absolute inset-0 hud-grid opacity-15" />
@@ -578,12 +595,27 @@ export function FashionStage() {
                 muted
                 className="absolute inset-0 h-full w-full object-cover"
                 style={{
-                  transform: "scaleX(-1)",
-                  filter: "brightness(1.05) contrast(1.05) saturate(1.1) drop-shadow(0 0 18px var(--primary))",
+                  transform: "scaleX(-1) scale(1.02)",
+                  filter:
+                    "brightness(1.12) contrast(1.18) saturate(1.25) drop-shadow(0 0 24px color-mix(in oklab, var(--primary) 55%, transparent))",
                   opacity: active ? 1 : 0,
-                  transition: "opacity 0.6s ease",
+                  transition: "opacity 0.6s ease, filter 0.6s ease",
+                  mixBlendMode: "screen",
                 }}
               />
+              {/* Subtle inner glass reflection on top of the video */}
+              {active && (
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(115deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.05) 100%)",
+                    boxShadow:
+                      "inset 0 0 80px color-mix(in oklab, var(--primary) 25%, transparent), inset 0 0 0 1px rgba(255,255,255,0.06)",
+                  }}
+                />
+              )}
               {!active && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-6">
                   <div className="relative h-20 w-20">
