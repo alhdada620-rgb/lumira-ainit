@@ -113,6 +113,33 @@ const BRANDS: Brand[] = [
   },
 ];
 
+// Lookup table — id → fabric/material (for texture badges + AI advisor context)
+const FABRIC_BY_ID: Record<string, Fabric> = {
+  "hm-1": "Cotton", "hm-2": "Denim", "hm-3": "Linen", "hm-4": "Knit",
+  "nike-1": "Tech", "nike-2": "Tech", "nike-3": "Cotton", "nike-4": "Tech",
+  "zara-1": "Wool", "zara-2": "Satin", "zara-3": "Wool", "zara-4": "Leather",
+  "nam-1": "Silk", "nam-2": "Velvet", "nam-3": "Silk", "nam-4": "Satin",
+  "adi-1": "Tech", "adi-2": "Tech", "adi-3": "Cotton", "adi-4": "Knit",
+  "sep-1": "Beauty", "sep-2": "Beauty", "sep-3": "Beauty", "sep-4": "Beauty",
+};
+const fabricOf = (item: { id: string; fabric?: Fabric; category: Category }): Fabric =>
+  item.fabric ?? FABRIC_BY_ID[item.id] ?? (item.category === "lips" || item.category === "eyes" || item.category === "cheeks" ? "Beauty" : "Cotton");
+
+// CSS background patterns per fabric — composited over the garment for realistic texture
+const FABRIC_TEXTURES: Record<Fabric, string> = {
+  Cotton: "repeating-linear-gradient(45deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 4px), repeating-linear-gradient(-45deg, rgba(0,0,0,0.06) 0 1px, transparent 1px 4px)",
+  Silk:   "linear-gradient(115deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.25) 55%, rgba(255,255,255,0.05) 80%)",
+  Denim:  "repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 3px), repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0 1px, transparent 1px 3px)",
+  Wool:   "radial-gradient(rgba(0,0,0,0.18) 0.5px, transparent 1px) 0 0/3px 3px",
+  Linen:  "repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 5px), repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 1px, transparent 1px 5px)",
+  Leather:"radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), transparent 60%), radial-gradient(circle at 70% 70%, rgba(0,0,0,0.35), transparent 70%)",
+  Velvet: "radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1.5px) 0 0/4px 4px",
+  Satin:  "linear-gradient(110deg, rgba(255,255,255,0.5), rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.4) 70%)",
+  Tech:   "repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 6px)",
+  Knit:   "radial-gradient(rgba(255,255,255,0.15) 0.5px, transparent 1.5px) 0 0/4px 4px",
+  Beauty: "linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.05) 60%)",
+};
+
 type Mode = "live" | "avatar" | "photo";
 
 export function FashionStage() {
