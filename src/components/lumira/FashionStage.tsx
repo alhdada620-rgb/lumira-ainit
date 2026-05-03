@@ -186,8 +186,55 @@ export function FashionStage() {
   const baseHeightPct = 92; // % of frame height at 178cm
   const heightScale = profile.height / 178;
   const widthScale = 0.55 + (profile.weight - 75) / 200; // wider with weight
-  const avatarHeight = `${Math.min(98, baseHeightPct * heightScale)}%`;
-  const avatarWidth = `${Math.max(28, 42 * widthScale)}%`;
+  const avatarHeightPct = Math.min(98, baseHeightPct * heightScale);
+  const avatarWidthPct = Math.max(28, 42 * widthScale);
+  const avatarHeight = `${avatarHeightPct}%`;
+  const avatarWidth = `${avatarWidthPct}%`;
+
+  /**
+   * Compute garment placement (% of frame) based on the active mode,
+   * the garment category, and — for the avatar — the live mannequin box.
+   * Returns inset values: top/bottom/width — centered horizontally.
+   */
+  const garmentFit = (category: Category | undefined) => {
+    if (!category) return { top: 18, bottom: 14, width: 80 };
+
+    if (mode === "avatar") {
+      // Mannequin occupies a vertical slab from `bottom: 2%` upward by avatarHeightPct
+      const mannBottom = 2;
+      const mannTop = 100 - (mannBottom + avatarHeightPct); // % from top
+      const mannWidth = avatarWidthPct;
+      // Anatomical zones expressed as fractions of mannequin height (0=head, 1=feet)
+      const zones: Record<Category, { y0: number; y1: number; w: number }> = {
+        top:       { y0: 0.18, y1: 0.55, w: 1.05 }, // chest -> waist
+        bottom:    { y0: 0.52, y1: 0.95, w: 0.95 }, // waist -> ankles
+        dress:     { y0: 0.20, y1: 0.85, w: 1.10 }, // shoulders -> knees
+        accessory: { y0: 0.05, y1: 0.22, w: 0.70 }, // head / scarf
+        lips:      { y0: 0.08, y1: 0.13, w: 0.30 },
+        cheeks:    { y0: 0.07, y1: 0.15, w: 0.45 },
+        eyes:      { y0: 0.06, y1: 0.11, w: 0.40 },
+      };
+      const z = zones[category];
+      const top = mannTop + z.y0 * avatarHeightPct;
+      const bottom = 100 - (mannTop + z.y1 * avatarHeightPct);
+      const width = Math.min(98, mannWidth * z.w);
+      return { top, bottom, width };
+    }
+
+    // Live mirror & uploaded photo — assume a roughly centered subject
+    const zones: Record<Category, { top: number; bottom: number; width: number }> = {
+      top:       { top: 26, bottom: 38, width: 72 },
+      bottom:    { top: 56, bottom: 6,  width: 62 },
+      dress:     { top: 24, bottom: 8,  width: 76 },
+      accessory: { top: 8,  bottom: 70, width: 48 },
+      lips:      { top: 22, bottom: 70, width: 18 },
+      cheeks:    { top: 18, bottom: 66, width: 32 },
+      eyes:      { top: 16, bottom: 72, width: 28 },
+    };
+    return zones[category];
+  };
+
+  const fit = garmentFit(overlay?.category);
 
   const tabs: { id: Mode; label: string; labelAr: string; icon: any }[] = [
     { id: "live", label: "Live Mirror", labelAr: "المرآة المباشرة", icon: Video },
@@ -416,20 +463,21 @@ export function FashionStage() {
                 className="pointer-events-none absolute inset-0 transition-opacity duration-700 animate-fade-in"
                 style={{ background: overlay.gradient, mixBlendMode: "overlay", opacity: 0.35 }}
               />
-              {/* Garment image positioned per target */}
+              {/* Garment image — calibrated per category & target */}
               <div
                 key={`gar-${overlay.id}`}
-                className="pointer-events-none absolute inset-0 flex items-start justify-center animate-fade-in"
+                className="pointer-events-none absolute left-1/2 -translate-x-1/2 flex items-center justify-center animate-fade-in transition-all duration-500 ease-out"
                 style={{
-                  paddingTop: mode === "avatar" ? "14%" : "18%",
-                  paddingBottom: mode === "avatar" ? "8%" : "14%",
+                  top: `${fit.top}%`,
+                  bottom: `${fit.bottom}%`,
+                  width: `${fit.width}%`,
                 }}
               >
                 {overlay.image ? (
                   <img
                     src={overlay.image}
                     alt={overlay.name}
-                    className="h-full w-auto max-w-[80%] object-contain"
+                    className="h-full w-full object-contain"
                     style={{
                       filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.55)) drop-shadow(0 0 14px var(--accent))",
                       mixBlendMode: mode === "live" || mode === "photo" ? "multiply" : "normal",
