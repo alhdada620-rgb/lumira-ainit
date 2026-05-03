@@ -25,6 +25,8 @@ const AMAZON_TAG = "lumiraai-20";
 
 type Category = "top" | "bottom" | "dress" | "accessory" | "lips" | "cheeks" | "eyes";
 
+type Fabric = "Cotton" | "Silk" | "Denim" | "Wool" | "Linen" | "Leather" | "Velvet" | "Satin" | "Tech" | "Knit" | "Beauty";
+
 interface CatalogItem {
   id: string;
   name: string;
@@ -36,6 +38,8 @@ interface CatalogItem {
   color: string;
   /** Hi-res transparent PNG of the garment for AR overlay & catalog */
   image?: string;
+  /** Fabric / material — drives texture overlay on the garment */
+  fabric?: Fabric;
 }
 
 interface Brand {
