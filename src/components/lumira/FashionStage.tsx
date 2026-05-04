@@ -564,9 +564,9 @@ export function FashionStage() {
             style={{
               filter:
                 mode === "live" && active
-                  ? "brightness(0.18) saturate(1.35) blur(14px)"
+                  ? `brightness(${refl.bgBrightness}) saturate(1.35) blur(${refl.bgBlur}px)`
                   : "brightness(0.55) saturate(1.15)",
-              opacity: mode === "live" && active ? 0.35 : 1,
+              opacity: mode === "live" && active ? refl.bgOpacity : 1,
               transform: mode === "live" && active ? "scale(1.08)" : "scale(1)",
             }}
           />
@@ -578,8 +578,9 @@ export function FashionStage() {
               style={{
                 background:
                   "radial-gradient(120% 90% at 50% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 55%), radial-gradient(140% 100% at 50% 100%, color-mix(in oklab, var(--accent) 18%, transparent) 0%, transparent 60%), linear-gradient(180deg, rgba(8,12,22,0.55) 0%, rgba(8,12,22,0.15) 40%, rgba(8,12,22,0.7) 100%)",
-                backdropFilter: "blur(2px) saturate(1.2)",
-                WebkitBackdropFilter: "blur(2px) saturate(1.2)",
+                backdropFilter: `blur(${Math.max(1, refl.bgBlur / 7)}px) saturate(1.2)`,
+                WebkitBackdropFilter: `blur(${Math.max(1, refl.bgBlur / 7)}px) saturate(1.2)`,
+                opacity: refl.veilAlpha,
               }}
             />
           )}
