@@ -9,6 +9,7 @@ import { WalletProvider } from "@/components/lumira/wallet-context";
 import { ProfileProvider } from "@/components/lumira/profile-context";
 import { SkinProvider } from "@/components/lumira/skin-context";
 import { ProfileData } from "@/components/lumira/ProfileData";
+import { SmartShopping } from "@/components/lumira/SmartShopping";
 import { LanguageProvider, useT } from "@/components/lumira/i18n";
 import { LanguageToggle } from "@/components/lumira/LanguageToggle";
 import { CaptionsOverlay } from "@/components/lumira/CaptionsOverlay";
@@ -107,8 +108,9 @@ function IndexShell() {
         {/* Three-column hero layout */}
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
           {/* Center stage — first on mobile */}
-          <div id="mod-tryon" className="order-1 lg:order-2 lg:col-span-6 scroll-mt-24">
+          <div id="mod-tryon" className="order-1 lg:order-2 lg:col-span-6 scroll-mt-24 space-y-5">
             <FashionStage />
+            <div id="mod-shopping" className="scroll-mt-24"><SmartShopping /></div>
           </div>
 
           {/* Left column */}
