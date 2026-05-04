@@ -613,10 +613,10 @@ export function FashionStage() {
                 style={{
                   transform: "scaleX(-1) scale(1.02)",
                   filter:
-                    "brightness(1.12) contrast(1.18) saturate(1.25) drop-shadow(0 0 24px color-mix(in oklab, var(--primary) 55%, transparent))",
+                    `brightness(${refl.videoBrightness}) contrast(1.18) saturate(1.25) drop-shadow(0 0 24px color-mix(in oklab, var(--primary) 55%, transparent))`,
                   opacity: active ? 1 : 0,
                   transition: "opacity 0.6s ease, filter 0.6s ease",
-                  mixBlendMode: "screen",
+                  mixBlendMode: refl.videoBlend,
                 }}
               />
               {/* Subtle inner glass reflection on top of the video */}
