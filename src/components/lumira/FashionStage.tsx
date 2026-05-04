@@ -553,6 +553,30 @@ export function FashionStage() {
           </button>
         </div>
 
+        {/* Glass reflection intensity — only relevant in Live Mirror */}
+        {mode === "live" && (
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-card/30 p-1.5 backdrop-blur">
+            <span className="ps-1 text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+              {isAr ? "انعكاس الزجاج" : "Glass Reflection"}
+            </span>
+            <div className="flex gap-1">
+              {(["light", "medium", "strong"] as const).map((lvl) => (
+                <button
+                  key={lvl}
+                  onClick={() => setReflection(lvl)}
+                  className={`rounded-full px-3 py-1 text-[9px] uppercase tracking-[0.25em] transition ${
+                    reflection === lvl
+                      ? "bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {lvl === "light" ? (isAr ? "خفيف" : "Light") : lvl === "medium" ? (isAr ? "متوسط" : "Medium") : (isAr ? "قوي" : "Strong")}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Frame */}
         <div ref={stageRef} className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-accent/30 bg-background/40">
           {/* Luxury closet backdrop — fades out in live mode so the mirror feels real */}
