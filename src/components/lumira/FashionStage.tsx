@@ -193,6 +193,21 @@ export function FashionStage() {
     window.localStorage.setItem("lumira:showAnchors", showAnchors ? "1" : "0");
   }, [showAnchors]);
   const [rotated, setRotated] = useState(false);
+  const [reflection, setReflection] = useState<"light" | "medium" | "strong">(() => {
+    if (typeof window === "undefined") return "medium";
+    const v = window.localStorage.getItem("lumira:reflection");
+    return v === "light" || v === "strong" ? v : "medium";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("lumira:reflection", reflection);
+  }, [reflection]);
+  const REFLECTION_PRESETS = {
+    light:  { bgBrightness: 0.42, bgBlur: 6,  bgOpacity: 0.6,  veilAlpha: 0.45, videoBlend: "normal" as const, innerGlow: 40,  videoBrightness: 1.05 },
+    medium: { bgBrightness: 0.18, bgBlur: 14, bgOpacity: 0.35, veilAlpha: 1.0,  videoBlend: "screen" as const, innerGlow: 80,  videoBrightness: 1.12 },
+    strong: { bgBrightness: 0.08, bgBlur: 22, bgOpacity: 0.22, veilAlpha: 1.35, videoBlend: "screen" as const, innerGlow: 120, videoBrightness: 1.18 },
+  };
+  const refl = REFLECTION_PRESETS[reflection];
   const [isolating, setIsolating] = useState(false);
   const [advisorTips, setAdvisorTips] = useState<string[]>([]);
   const [advisorLoading, setAdvisorLoading] = useState(false);
@@ -538,6 +553,30 @@ export function FashionStage() {
           </button>
         </div>
 
+        {/* Glass reflection intensity — only relevant in Live Mirror */}
+        {mode === "live" && (
+          <div className="flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-card/30 p-1.5 backdrop-blur">
+            <span className="ps-1 text-[9px] uppercase tracking-[0.25em] text-muted-foreground">
+              {isAr ? "انعكاس الزجاج" : "Glass Reflection"}
+            </span>
+            <div className="flex gap-1">
+              {(["light", "medium", "strong"] as const).map((lvl) => (
+                <button
+                  key={lvl}
+                  onClick={() => setReflection(lvl)}
+                  className={`rounded-full px-3 py-1 text-[9px] uppercase tracking-[0.25em] transition ${
+                    reflection === lvl
+                      ? "bg-accent/20 text-accent shadow-[var(--glow-accent)]"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {lvl === "light" ? (isAr ? "خفيف" : "Light") : lvl === "medium" ? (isAr ? "متوسط" : "Medium") : (isAr ? "قوي" : "Strong")}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Frame */}
         <div ref={stageRef} className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-accent/30 bg-background/40">
           {/* Luxury closet backdrop — fades out in live mode so the mirror feels real */}
@@ -549,9 +588,9 @@ export function FashionStage() {
             style={{
               filter:
                 mode === "live" && active
-                  ? "brightness(0.18) saturate(1.35) blur(14px)"
+                  ? `brightness(${refl.bgBrightness}) saturate(1.35) blur(${refl.bgBlur}px)`
                   : "brightness(0.55) saturate(1.15)",
-              opacity: mode === "live" && active ? 0.35 : 1,
+              opacity: mode === "live" && active ? refl.bgOpacity : 1,
               transform: mode === "live" && active ? "scale(1.08)" : "scale(1)",
             }}
           />
@@ -563,8 +602,9 @@ export function FashionStage() {
               style={{
                 background:
                   "radial-gradient(120% 90% at 50% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 55%), radial-gradient(140% 100% at 50% 100%, color-mix(in oklab, var(--accent) 18%, transparent) 0%, transparent 60%), linear-gradient(180deg, rgba(8,12,22,0.55) 0%, rgba(8,12,22,0.15) 40%, rgba(8,12,22,0.7) 100%)",
-                backdropFilter: "blur(2px) saturate(1.2)",
-                WebkitBackdropFilter: "blur(2px) saturate(1.2)",
+                backdropFilter: `blur(${Math.max(1, refl.bgBlur / 7)}px) saturate(1.2)`,
+                WebkitBackdropFilter: `blur(${Math.max(1, refl.bgBlur / 7)}px) saturate(1.2)`,
+                opacity: refl.veilAlpha,
               }}
             />
           )}
@@ -597,10 +637,10 @@ export function FashionStage() {
                 style={{
                   transform: "scaleX(-1) scale(1.02)",
                   filter:
-                    "brightness(1.12) contrast(1.18) saturate(1.25) drop-shadow(0 0 24px color-mix(in oklab, var(--primary) 55%, transparent))",
+                    `brightness(${refl.videoBrightness}) contrast(1.18) saturate(1.25) drop-shadow(0 0 24px color-mix(in oklab, var(--primary) 55%, transparent))`,
                   opacity: active ? 1 : 0,
                   transition: "opacity 0.6s ease, filter 0.6s ease",
-                  mixBlendMode: "screen",
+                  mixBlendMode: refl.videoBlend,
                 }}
               />
               {/* Subtle inner glass reflection on top of the video */}
@@ -612,7 +652,7 @@ export function FashionStage() {
                     background:
                       "linear-gradient(115deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 35%, rgba(255,255,255,0) 65%, rgba(255,255,255,0.05) 100%)",
                     boxShadow:
-                      "inset 0 0 80px color-mix(in oklab, var(--primary) 25%, transparent), inset 0 0 0 1px rgba(255,255,255,0.06)",
+                      `inset 0 0 ${refl.innerGlow}px color-mix(in oklab, var(--primary) 25%, transparent), inset 0 0 0 1px rgba(255,255,255,0.06)`,
                   }}
                 />
               )}
