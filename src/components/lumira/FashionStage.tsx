@@ -193,6 +193,21 @@ export function FashionStage() {
     window.localStorage.setItem("lumira:showAnchors", showAnchors ? "1" : "0");
   }, [showAnchors]);
   const [rotated, setRotated] = useState(false);
+  const [reflection, setReflection] = useState<"light" | "medium" | "strong">(() => {
+    if (typeof window === "undefined") return "medium";
+    const v = window.localStorage.getItem("lumira:reflection");
+    return v === "light" || v === "strong" ? v : "medium";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("lumira:reflection", reflection);
+  }, [reflection]);
+  const REFLECTION_PRESETS = {
+    light:  { bgBrightness: 0.42, bgBlur: 6,  bgOpacity: 0.6,  veilAlpha: 0.45, videoBlend: "normal" as const, innerGlow: 40,  videoBrightness: 1.05 },
+    medium: { bgBrightness: 0.18, bgBlur: 14, bgOpacity: 0.35, veilAlpha: 1.0,  videoBlend: "screen" as const, innerGlow: 80,  videoBrightness: 1.12 },
+    strong: { bgBrightness: 0.08, bgBlur: 22, bgOpacity: 0.22, veilAlpha: 1.35, videoBlend: "screen" as const, innerGlow: 120, videoBrightness: 1.18 },
+  };
+  const refl = REFLECTION_PRESETS[reflection];
   const [isolating, setIsolating] = useState(false);
   const [advisorTips, setAdvisorTips] = useState<string[]>([]);
   const [advisorLoading, setAdvisorLoading] = useState(false);
