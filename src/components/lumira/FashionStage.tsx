@@ -687,26 +687,21 @@ export function FashionStage() {
             </>
           )}
 
-          {/* 3D AVATAR */}
+          {/* PHOTOREAL HUMAN MODEL with vertical pro-sliders */}
           {mode === "avatar" && (
             <div className="absolute inset-0 flex flex-col">
-              {/* gender toggle is now in the global header above the stage */}
-
               {/* Avatar stage */}
               <div className="relative flex-1">
                 {/* Glossy floor reflection */}
-                <div className="absolute inset-x-6 bottom-0 h-12 rounded-[50%] bg-gradient-to-t from-accent/20 to-transparent blur-md" />
+                <div className="absolute inset-x-6 bottom-16 h-12 rounded-[50%] bg-gradient-to-t from-accent/25 to-transparent blur-md" />
 
-                {/* Spliced photoreal mannequin — base (thin) cross-fades into heavy as weight increases */}
+                {/* Photoreal human (replaces metallic statue) */}
                 {(() => {
                   const isFem = profile.gender === "female";
-                  const thinSrc = isFem ? avatarFemaleThin : avatarMaleThin;
-                  const heavySrc = isFem ? avatarFemaleHeavy : avatarMaleHeavy;
-                  // Weight 50 → 0% heavy, 110 → 100% heavy
-                  const heavyMix = Math.max(0, Math.min(1, (profile.weight - 55) / 55));
+                  const src = profile.uploadedPhoto ?? (isFem ? humanFemale : humanMale);
                   return (
                     <div
-                      className="absolute bottom-2 left-1/2 transition-all duration-700 ease-out"
+                      className="absolute bottom-16 left-1/2 transition-all duration-700 ease-out"
                       style={{
                         width: avatarWidth,
                         height: avatarHeight,
@@ -715,22 +710,11 @@ export function FashionStage() {
                       }}
                     >
                       <img
-                        src={thinSrc}
-                        alt="3D Mannequin (thin)"
-                        className="absolute inset-0 h-full w-full object-contain transition-opacity duration-500"
+                        src={src}
+                        alt={isFem ? "Female human model" : "Male human model"}
+                        className="absolute inset-0 h-full w-full object-contain"
                         style={{
-                          opacity: 1 - heavyMix * 0.85,
-                          filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary))`,
-                        }}
-                      />
-                      <img
-                        src={heavySrc}
-                        alt="3D Mannequin (heavy)"
-                        aria-hidden
-                        className="absolute inset-0 h-full w-full object-contain transition-opacity duration-500"
-                        style={{
-                          opacity: heavyMix,
-                          filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary))`,
+                          filter: `drop-shadow(0 24px 30px rgba(0,0,0,0.55)) drop-shadow(0 0 22px var(--primary)) saturate(1.05)`,
                         }}
                       />
                       {/* Skin-tone tint mask (multiplied) */}
@@ -740,229 +724,103 @@ export function FashionStage() {
                         style={{
                           background: profile.skinTone,
                           mixBlendMode: "multiply",
-                          opacity: 0.45,
-                          WebkitMaskImage: `url(${heavyMix > 0.5 ? heavySrc : thinSrc})`,
-                          maskImage: `url(${heavyMix > 0.5 ? heavySrc : thinSrc})`,
+                          opacity: 0.28,
+                          WebkitMaskImage: `url(${src})`,
+                          maskImage: `url(${src})`,
                           WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
                           WebkitMaskPosition: "center", maskPosition: "center",
                           WebkitMaskSize: "contain", maskSize: "contain",
+                        }}
+                      />
+                      {/* Hair color tint — biased to the top of the figure */}
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-0 top-0 h-[22%] transition-colors duration-500"
+                        style={{
+                          background: profile.hairColor,
+                          mixBlendMode: "color",
+                          opacity: 0.55,
+                          WebkitMaskImage: `url(${src})`,
+                          maskImage: `url(${src})`,
+                          WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+                          WebkitMaskPosition: "center top", maskPosition: "center top",
+                          WebkitMaskSize: `100% ${avatarHeightPct}%`, maskSize: `100% ${avatarHeightPct}%`,
                         }}
                       />
                     </div>
                   );
                 })()}
 
-                {/* Debug overlay: mannequin box + anatomical garment zones */}
-                {debugZones && (
-                  <div className="pointer-events-none absolute inset-0 z-10">
-                    {/* Mannequin bounding box */}
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 border border-dashed border-accent/80 transition-all duration-500 ease-out"
-                      style={{
-                        bottom: `${mannBottomPct}%`,
-                        height: `${avatarHeightPct}%`,
-                        width: `${avatarWidthPct}%`,
-                        boxShadow: "0 0 12px oklch(0.78 0.18 320 / 0.5) inset",
-                      }}
-                    >
-                      <span className="absolute -top-4 left-0 rounded bg-accent/80 px-1 text-[8px] font-bold uppercase tracking-widest text-background">
-                        Mannequin {avatarWidthPct.toFixed(0)}×{avatarHeightPct.toFixed(0)}%
-                      </span>
-                    </div>
-                    {/* Anatomical zones */}
-                    {(Object.keys(AVATAR_ZONES) as Category[]).map((cat) => {
-                      const z = AVATAR_ZONES[cat];
-                      const top = mannTopPct + z.y0 * avatarHeightPct;
-                      const bottom = 100 - (mannTopPct + z.y1 * avatarHeightPct);
-                      const width = Math.min(98, avatarWidthPct * z.w);
-                      const color = ZONE_COLORS[cat];
-                      return (
-                        <div
-                          key={cat}
-                          className="absolute left-1/2 -translate-x-1/2 transition-all duration-500 ease-out"
-                          style={{
-                            top: `${top}%`,
-                            bottom: `${bottom}%`,
-                            width: `${width}%`,
-                            border: `1px solid ${color}`,
-                            background: `${color}1f`,
-                            boxShadow: `0 0 6px ${color}80`,
-                          }}
-                        >
-                          <span
-                            className="absolute -top-0.5 left-1 text-[8px] font-bold uppercase tracking-wider"
-                            style={{ color, textShadow: "0 0 4px rgba(0,0,0,0.8)" }}
-                          >
-                            {cat}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Anchor points — neon snap markers; visible while fitting or in debug */}
-                {showAnchors && (debugZones || trying) && (
-                  <div className="pointer-events-none absolute inset-0 z-20">
-                    {(Object.keys(ANCHORS) as (keyof typeof ANCHORS)[]).map((key) => {
-                      const a = ANCHORS[key];
-                      const top = mannTopPct + a.y * avatarHeightPct;
-                      const halfW = (avatarWidthPct * a.w) / 2;
-                      const isActive =
-                        overlay && (CATEGORY_ANCHORS[overlay.category].from === key
-                          || CATEGORY_ANCHORS[overlay.category].to === key
-                          || CATEGORY_ANCHORS[overlay.category].widthAnchor === key);
-                      return (
-                        <div key={key} className="absolute left-1/2" style={{ top: `${top}%`, transform: "translateX(-50%)" }}>
-                          {/* connecting span */}
-                          <div
-                            className="absolute top-1/2 -translate-y-1/2 rounded-full"
-                            style={{
-                              left: `-${halfW}%`, width: `${halfW * 2}%`, height: 1,
-                              background: isActive ? "var(--accent)" : "var(--primary)",
-                              opacity: isActive ? 0.9 : 0.4,
-                              boxShadow: isActive ? "0 0 8px var(--accent)" : undefined,
-                            }}
-                          />
-                          {/* left + right snap dots */}
-                          {[-halfW, halfW].map((x, i) => (
-                            <span
-                              key={i}
-                              className={`absolute top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full ${isActive ? "animate-pulse" : ""}`}
-                              style={{
-                                left: `${x}%`,
-                                background: isActive ? "var(--accent)" : "var(--primary)",
-                                boxShadow: isActive ? "0 0 10px var(--accent)" : "0 0 6px var(--primary)",
-                              }}
-                            />
-                          ))}
-                          {debugZones && (
-                            <span
-                              className="absolute top-1/2 ms-2 -translate-y-1/2 text-[8px] uppercase tracking-widest"
-                              style={{ left: `${halfW}%`, color: isActive ? "var(--accent)" : "var(--primary)" }}
-                            >
-                              {key}
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* Pulsating scanning grid */}
+                {/* Scanning grid pulse */}
                 {scanning && (
                   <div className="pointer-events-none absolute inset-0">
                     <div className="absolute inset-0 hud-grid opacity-60 animate-pulse" />
                     <div className="absolute inset-x-0 h-12 animate-scan bg-gradient-to-b from-transparent via-accent/40 to-transparent" />
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-accent/40 bg-background/70 px-3 py-0.5 text-[9px] uppercase tracking-widest text-accent backdrop-blur">
-                      {isAr ? "مسح الذكاء الاصطناعي…" : "Scanning AI…"}
-                    </div>
                   </div>
                 )}
 
-                {/* Stats badge + debug toggle */}
-                <div className="absolute end-3 top-3 z-20 flex flex-col items-end gap-1">
+                {/* LEFT vertical sliders — Skin Tone, Hair Color */}
+                <div className="absolute left-2 top-6 bottom-24 z-20 flex flex-col items-center justify-around gap-3">
+                  <VerticalColorSlider
+                    label={isAr ? "لون البشرة" : "Skin Tone"}
+                    value={profile.skinTone}
+                    onChange={profile.setSkinTone}
+                    palette={["#f1d4b5", "#e3b893", "#d9a37a", "#b07c54", "#7a4a2a", "#4a2a18"]}
+                    isAr={isAr}
+                  />
+                  <VerticalColorSlider
+                    label={isAr ? "لون الشعر" : "Hair Color"}
+                    value={profile.hairColor}
+                    onChange={profile.setHairColor}
+                    palette={["#f0d28a", "#a0703a", "#5a3a20", "#2a1a10", "#0a0a0a", "#8a8a8a"]}
+                    isAr={isAr}
+                  />
+                </div>
+
+                {/* RIGHT vertical sliders — Eye Color, Height, Weight */}
+                <div className="absolute right-2 top-6 bottom-24 z-20 flex flex-col items-center justify-around gap-3">
+                  <VerticalColorSlider
+                    label={isAr ? "لون العين" : "Eye Color"}
+                    value={profile.eyeColor}
+                    onChange={profile.setEyeColor}
+                    palette={["#5a3a22", "#7a4a18", "#3a8a4a", "#2a6aa0", "#5a5a5a", "#1a1a1a"]}
+                    isAr={isAr}
+                  />
+                  <VerticalRangeSlider
+                    label={isAr ? "الطول" : "Height"}
+                    value={profile.height} min={140} max={210} unit="cm"
+                    onChange={profile.setHeight}
+                  />
+                  <VerticalRangeSlider
+                    label={isAr ? "الوزن" : "Weight"}
+                    value={profile.weight} min={40} max={140} unit="kg"
+                    onChange={profile.setWeight}
+                  />
+                </div>
+
+                {/* Stats badge */}
+                <div className="absolute end-2 top-2 z-20 hidden">
                   <div className="rounded-md border border-primary/30 bg-background/70 px-2 py-1 text-[9px] uppercase tracking-widest text-primary backdrop-blur">
                     {profile.height}cm · {profile.weight}kg
                   </div>
-                  <button
-                    onClick={() => setDebugZones((v) => !v)}
-                    className={`rounded-md border px-2 py-1 text-[9px] uppercase tracking-widest backdrop-blur transition ${
-                      debugZones
-                        ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-accent)]"
-                        : "border-primary/30 bg-background/70 text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {isAr ? (debugZones ? "إخفاء المناطق" : "إظهار المناطق") : (debugZones ? "Hide Zones" : "Show Zones")}
-                  </button>
-                  <button
-                    onClick={() => setShowAnchors((v) => !v)}
-                    title={isAr ? "نقاط التثبيت" : "Snap anchors"}
-                    className={`rounded-md border px-2 py-1 text-[9px] uppercase tracking-widest backdrop-blur transition ${
-                      showAnchors
-                        ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-accent)]"
-                        : "border-primary/30 bg-background/70 text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    {isAr ? (showAnchors ? "إخفاء النقاط" : "إظهار النقاط") : (showAnchors ? "Hide Anchors" : "Show Anchors")}
-                  </button>
-                  <div className="flex items-center gap-1 rounded-md border border-primary/30 bg-background/70 p-0.5 backdrop-blur" role="group" aria-label="HUD preset">
-                    {([
-                      { id: "clean",  key: "1", label: isAr ? "نظيف"  : "Clean",  apply: () => { setShowAnchors(false); setDebugZones(false); } },
-                      { id: "tryon",  key: "2", label: isAr ? "تجربة" : "Try-on", apply: () => { setShowAnchors(true);  setDebugZones(false); } },
-                      { id: "debug",  key: "3", label: isAr ? "تشخيص" : "Debug",  apply: () => { setShowAnchors(true);  setDebugZones(true);  } },
-                    ] as const).map((p) => {
-                      const isActive =
-                        (p.id === "clean" && !showAnchors && !debugZones) ||
-                        (p.id === "tryon" && showAnchors && !debugZones) ||
-                        (p.id === "debug" && showAnchors && debugZones);
-                      return (
-                        <button
-                          key={p.id}
-                          onClick={() => { p.apply(); try { localStorage.setItem("lumira:hudPreset", p.id); } catch { /* ignore */ } }}
-                          title={`${p.label} · ${p.key}`}
-                          className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] uppercase tracking-widest transition ${
-                            isActive
-                              ? "bg-accent/25 text-accent shadow-[var(--glow-accent)]"
-                              : "text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          {p.label}
-                          <kbd className="rounded border border-current/40 px-1 text-[8px] opacity-70">{p.key}</kbd>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <button
-                    onClick={() => setShowLegend((v) => !v)}
-                    title={isAr ? "اختصارات لوحة المفاتيح (؟)" : "Keyboard shortcuts (?)"}
-                    aria-expanded={showLegend}
-                    className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] backdrop-blur transition ${
-                      showLegend
-                        ? "border-accent/60 bg-accent/20 text-accent shadow-[var(--glow-accent)]"
-                        : "border-primary/30 bg-background/70 text-muted-foreground hover:text-foreground"
-                    }`}
-                  >
-                    ?
-                  </button>
-                  {showLegend && (
-                    <div className="animate-fade-in rounded-md border border-primary/40 bg-background/85 p-2 text-end text-[9px] uppercase tracking-widest text-muted-foreground backdrop-blur shadow-[var(--glow-soft)]">
-                      <div className="mb-1 text-[8px] tracking-[0.3em] text-accent">
-                        {isAr ? "اختصارات الواجهة" : "HUD Shortcuts"}
-                      </div>
-                      <div className="flex items-center justify-end gap-2">
-                        <span>{isAr ? "نظيف" : "Clean"}</span>
-                        <kbd className="rounded border border-primary/40 px-1 text-foreground">1</kbd>
-                      </div>
-                      <div className="flex items-center justify-end gap-2">
-                        <span>{isAr ? "تجربة" : "Try-on"}</span>
-                        <kbd className="rounded border border-primary/40 px-1 text-foreground">2</kbd>
-                      </div>
-                      <div className="flex items-center justify-end gap-2">
-                        <span>{isAr ? "تشخيص" : "Debug"}</span>
-                        <kbd className="rounded border border-primary/40 px-1 text-foreground">3</kbd>
-                      </div>
-                      <div className="mt-1 flex items-center justify-end gap-2 border-t border-primary/20 pt-1">
-                        <span>{isAr ? "تبديل القائمة" : "Toggle legend"}</span>
-                        <kbd className="rounded border border-primary/40 px-1 text-foreground">?</kbd>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* Sliders */}
-              <div className="absolute inset-x-3 bottom-3 z-20 space-y-1.5 rounded-lg border border-primary/25 bg-background/70 p-2 backdrop-blur">
-                <SliderRow
-                  label={isAr ? "الوزن" : "Weight"}
-                  value={profile.weight} unit="kg" min={40} max={140}
-                  onChange={profile.setWeight}
-                />
-                <SliderRow
-                  label={isAr ? "الطول" : "Height"}
-                  value={profile.height} unit="cm" min={140} max={210}
-                  onChange={profile.setHeight}
+              {/* Bottom — Upload Photo CTA */}
+              <div className="absolute inset-x-3 bottom-3 z-20">
+                <button
+                  onClick={() => fileRef.current?.click()}
+                  className="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-full border border-accent/60 bg-gradient-to-r from-primary/25 via-accent/25 to-primary/25 px-4 py-2.5 text-[11px] uppercase tracking-[0.35em] text-foreground shadow-[var(--glow-accent)] backdrop-blur-md transition hover:shadow-[var(--glow-primary)] active:scale-[0.98]"
+                >
+                  <Upload className="h-3.5 w-3.5 text-accent" />
+                  {isAr ? "تحميل صورة" : "Upload Photo"}
+                </button>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhoto}
                 />
               </div>
             </div>
