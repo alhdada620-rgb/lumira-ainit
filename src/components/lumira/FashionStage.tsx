@@ -305,12 +305,8 @@ export function FashionStage() {
   const amazonUrl = (q: string) =>
     `https://www.amazon.com/s?k=${encodeURIComponent(q)}&tag=${AMAZON_TAG}`;
 
-  // Auto-start the front camera the moment the user lands on the Live mirror tab.
-  useEffect(() => {
-    if (mode === "live" && !active && !starting && !error) {
-      start();
-    }
-  }, [mode, active, starting, error, start]);
+  // Camera is OPT-IN. The user must explicitly switch to Live Mirror tab AND click the start button.
+  // (No auto-start on page load — see product spec.)
 
   const captureLook = async () => {
     if (!stageRef.current || capturing) return;
