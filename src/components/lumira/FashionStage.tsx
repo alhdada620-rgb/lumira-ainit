@@ -17,6 +17,8 @@ import avatarMaleThin from "@/assets/avatar/avatar_male_thin.png";
 import avatarMaleHeavy from "@/assets/avatar/avatar_male_heavy.png";
 import avatarFemaleThin from "@/assets/avatar/avatar_female_thin.png";
 import avatarFemaleHeavy from "@/assets/avatar/avatar_female_heavy.png";
+import humanMale from "@/assets/avatar/human_male.png";
+import humanFemale from "@/assets/avatar/human_female.png";
 import closetBackdrop from "@/assets/closet-backdrop.jpg";
 import amazonLogo from "@/assets/amazon-logo.png";
 import imgHmTee from "@/assets/garments/hm-tee.png";
