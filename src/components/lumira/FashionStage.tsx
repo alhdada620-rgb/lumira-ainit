@@ -806,6 +806,17 @@ export function FashionStage() {
                 </div>
               </div>
 
+              {/* Quick Presets */}
+              <div className="absolute inset-x-3 bottom-16 z-20">
+                <PresetBar isAr={isAr} onApply={(p) => {
+                  if (p.skinTone) profile.setSkinTone(p.skinTone);
+                  if (p.hairColor) profile.setHairColor(p.hairColor);
+                  if (p.eyeColor) profile.setEyeColor(p.eyeColor);
+                  if (p.height) profile.setHeight(p.height);
+                  if (p.weight) profile.setWeight(p.weight);
+                }} />
+              </div>
+
               {/* Bottom — Upload Photo CTA */}
               <div className="absolute inset-x-3 bottom-3 z-20">
                 <button
