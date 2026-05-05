@@ -1194,6 +1194,44 @@ function SliderRow({
   );
 }
 
+interface PresetValues {
+  skinTone?: string;
+  hairColor?: string;
+  eyeColor?: string;
+  height?: number;
+  weight?: number;
+}
+
+const QUICK_PRESETS: { id: string; ar: string; en: string; values: PresetValues }[] = [
+  { id: "default", ar: "افتراضي", en: "Default", values: { skinTone: "#d9a37a", hairColor: "#2a1a10", eyeColor: "#5a3a22", height: 178, weight: 75 } },
+  { id: "athletic", ar: "رياضي", en: "Athletic", values: { skinTone: "#c98c5a", hairColor: "#2a1a10", eyeColor: "#5a3a22", height: 184, weight: 82 } },
+  { id: "slim", ar: "نحيف", en: "Slim", values: { skinTone: "#e3b893", hairColor: "#5a3a20", eyeColor: "#3a8a4a", height: 180, weight: 65 } },
+  { id: "darkHair", ar: "شعر داكن", en: "Dark Hair", values: { hairColor: "#0a0a0a" } },
+  { id: "lightSkin", ar: "بشرة فاتحة", en: "Light Skin", values: { skinTone: "#f1d4b5" } },
+  { id: "tan", ar: "بشرة سمراء", en: "Tan", values: { skinTone: "#7a4a2a" } },
+];
+
+function PresetBar({ isAr, onApply }: { isAr: boolean; onApply: (p: PresetValues) => void }) {
+  return (
+    <div className="rounded-full border border-accent/30 bg-background/55 px-2 py-1.5 backdrop-blur-md shadow-[var(--glow-soft)]">
+      <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+        <span className="px-1.5 text-[9px] uppercase tracking-[0.25em] text-accent/90 whitespace-nowrap">
+          {isAr ? "أنماط سريعة" : "Quick Presets"}
+        </span>
+        {QUICK_PRESETS.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => onApply(p.values)}
+            className="shrink-0 rounded-full border border-primary/30 bg-gradient-to-r from-primary/15 to-accent/15 px-2.5 py-1 text-[9px] uppercase tracking-[0.18em] text-foreground/90 transition hover:border-accent/60 hover:text-accent active:scale-95"
+          >
+            {isAr ? p.ar : p.en}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function VerticalRangeSlider({
   label, value, unit, min, max, onChange,
 }: { label: string; value: number; unit: string; min: number; max: number; onChange: (n: number) => void }) {
