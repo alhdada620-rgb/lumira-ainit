@@ -177,7 +177,7 @@ export function FashionStage() {
   const stageRef = useRef<HTMLDivElement>(null);
   const [capturing, setCapturing] = useState(false);
 
-  const [mode, setMode] = useState<Mode>("live");
+  const [mode, setMode] = useState<Mode>("avatar");
   const [activeBrandIdx, setActiveBrandIdx] = useState(0);
   const [openMall, setOpenMall] = useState<Brand | null>(null);
   const [overlay, setOverlay] = useState<{ id: string; name: string; brand: string; gradient: string; category: Category; color: string; image?: string; fabric: Fabric } | null>(null);
