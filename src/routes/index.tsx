@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+»import { createFileRoute, Link } from "@tanstack/react-router";
 import { HealthSkinAI } from "@/components/lumira/HealthSkinAI";
 import { FashionStage } from "@/components/lumira/FashionStage";
 import { PiPayWallet } from "@/components/lumira/PiPayWallet";
