@@ -66,7 +66,14 @@ function IndexShell() {
         aria-hidden
       />
 
-      <main className="relative z-10 min-h-screen overflow-x-hidden px-3 pb-24 pt-6 sm:px-4 md:px-8 md:py-8">
+      <main
+        className="relative z-10 min-h-screen overflow-x-hidden px-3 pt-6 sm:px-4 md:px-8 md:py-8"
+        style={{
+          paddingBottom: "calc(6rem + env(safe-area-inset-bottom))",
+          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
+          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+        }}
+      >
         <header className="mb-6 flex flex-col items-center justify-center gap-2">
           <div className="flex items-center gap-3">
             <div className="relative h-9 w-9 shrink-0">
