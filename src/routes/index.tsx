@@ -66,7 +66,14 @@ function IndexShell() {
         aria-hidden
       />
 
-      <main className="relative z-10 min-h-screen overflow-x-hidden px-3 pb-24 pt-6 sm:px-4 md:px-8 md:py-8">
+      <main
+        className="relative z-10 min-h-screen overflow-x-hidden px-3 pt-6 sm:px-4 md:px-8 md:py-8"
+        style={{
+          paddingBottom: "calc(6rem + env(safe-area-inset-bottom))",
+          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
+          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+        }}
+      >
         <header className="mb-6 flex flex-col items-center justify-center gap-2">
           <div className="flex items-center gap-3">
             <div className="relative h-9 w-9 shrink-0">
@@ -122,7 +129,13 @@ function IndexShell() {
         </div>
       </main>
 
-      <footer className="fixed bottom-3 end-4 z-20 flex items-center gap-2 rounded-full border border-primary/20 bg-background/40 px-3 py-1.5 backdrop-blur-md">
+      <footer
+        className="fixed z-20 flex items-center gap-2 rounded-full border border-primary/20 bg-background/40 px-3 py-1.5 backdrop-blur-md"
+        style={{
+          bottom: "calc(0.75rem + env(safe-area-inset-bottom))",
+          insetInlineEnd: "calc(1rem + env(safe-area-inset-right))",
+        }}
+      >
         <span className="h-1 w-1 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" />
         <p
           className="text-[10px] tracking-[0.2em] text-foreground/85 text-glow"
