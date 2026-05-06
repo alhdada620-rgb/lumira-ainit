@@ -103,18 +103,18 @@ function IndexShell() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
-          <div id="mod-tryon" className="order-1 lg:order-2 lg:col-span-6 scroll-mt-24 space-y-5">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 lg:grid-cols-12 lg:gap-5">
+          <div id="mod-tryon" className="order-1 lg:order-2 lg:col-span-6 scroll-mt-24 space-y-4 sm:space-y-5 md:space-y-6">
             <FashionStage />
             <div id="mod-shopping" className="scroll-mt-24"><SmartShopping /></div>
           </div>
 
-          <div className="order-2 space-y-5 lg:order-1 lg:col-span-3">
+          <div className="order-2 space-y-4 sm:space-y-5 md:space-y-6 lg:order-1 lg:col-span-3">
             <div id="mod-skin" className="scroll-mt-24"><HealthSkinAI /></div>
             <div id="mod-vitals" className="scroll-mt-24"><VoiceVisualizer /></div>
           </div>
 
-          <div className="order-3 space-y-5 lg:col-span-3">
+          <div className="order-3 space-y-4 sm:space-y-5 md:space-y-6 lg:col-span-3">
             <div id="mod-daily" className="scroll-mt-24"><MiniDashboard /></div>
             <div id="mod-wallet" className="scroll-mt-24"><PiPayWallet /></div>
             <div id="mod-profile" className="scroll-mt-24"><ProfileData /></div>
