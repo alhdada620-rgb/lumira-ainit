@@ -53,7 +53,7 @@ function IndexShell() {
         className="fixed inset-0 -z-10 bg-cover bg-center animate-bg-zoom"
         style={{
           backgroundImage: `url(${bgImg})`,
-          filter: "blur(8px) brightness(0.55) saturate(1.1)",
+          filter: "blur(2px) brightness(0.85) saturate(1.15)",
         }}
         aria-hidden
       />
@@ -61,7 +61,7 @@ function IndexShell() {
         className="fixed inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(ellipse at center, oklch(0.15 0.03 230 / 0.55) 0%, oklch(0.08 0.02 235 / 0.85) 100%)",
+            "radial-gradient(ellipse at center, oklch(0.15 0.03 230 / 0.25) 0%, oklch(0.08 0.02 235 / 0.55) 100%)",
         }}
         aria-hidden
       />
