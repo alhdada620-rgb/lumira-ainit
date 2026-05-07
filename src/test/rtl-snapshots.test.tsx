@@ -82,6 +82,8 @@ describe("Direction snapshots — LTR (en)", () => {
 
 describe("Direction snapshots — RTL (ar)", () => {
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-07T12:34:00Z"));
     document.documentElement.removeAttribute("dir");
     document.documentElement.removeAttribute("lang");
   });
