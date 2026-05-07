@@ -1,0 +1,1939 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Direction snapshots — LTR (en) > FashionStage matches LTR snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6 lg:col-span-1"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        Style Lab | Lumira
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-primary shadow-[0_0_12px_var(--primary)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-4"
+    >
+      <div
+        class="grid grid-cols-3 gap-1 bg-card/40 p-1 rounded-xl border border-primary/20"
+      >
+        <button
+          class="py-2 text-[9px] font-bold rounded-lg transition text-muted-foreground"
+        >
+          LIVE
+        </button>
+        <button
+          class="py-2 text-[9px] font-bold rounded-lg transition bg-accent/20 text-accent shadow-sm"
+        >
+          AVATAR
+        </button>
+        <button
+          class="py-2 text-[9px] font-bold rounded-lg transition text-muted-foreground"
+        >
+          PHOTO
+        </button>
+      </div>
+      <div
+        class="relative aspect-[9/16] w-full rounded-[2.5rem] overflow-hidden border border-accent/30 bg-background shadow-2xl"
+      >
+        <img
+          class="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm"
+          src="https://images.unsplash.com/photo-1558997519-83ec9902981c?q=80&w=1000&auto=format&fit=crop"
+        />
+        <div
+          class="absolute inset-0 flex items-center justify-center transition-transform duration-500"
+          style="transform: none;"
+        >
+          <img
+            class="h-[90%] object-contain drop-shadow-2xl"
+            src="https://i.ibb.co/vzYgT9N/male-model.png"
+          />
+        </div>
+        <button
+          class="absolute top-4 right-4 z-40 p-2 bg-background/60 backdrop-blur-md rounded-full border border-accent/40 text-accent"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-download h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 15V3"
+            />
+            <path
+              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+            />
+            <path
+              d="m7 10 5 5 5-5"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="flex justify-between items-center bg-card/30 p-2 rounded-xl border border-white/5"
+      >
+        <button
+          class="flex items-center gap-2 text-[10px] font-bold text-primary"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-rotate-cw h-3.5 w-3.5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"
+            />
+            <path
+              d="M21 3v5h-5"
+            />
+          </svg>
+           
+          3D ROTATE
+        </button>
+        <div
+          class="flex gap-2"
+        >
+          <button
+            class="px-3 py-1 rounded-full text-[10px] bg-primary text-white"
+          >
+            M
+          </button>
+          <button
+            class="px-3 py-1 rounded-full text-[10px] bg-white/5"
+          >
+            F
+          </button>
+        </div>
+      </div>
+      <div
+        class="space-y-3"
+      >
+        <div
+          class="flex gap-2 overflow-x-auto no-scrollbar pb-2"
+        >
+          <button
+            class="shrink-0 px-4 py-2 rounded-xl text-[10px] font-bold border transition border-accent bg-accent/10 text-accent"
+          >
+            H&M
+          </button>
+          <button
+            class="shrink-0 px-4 py-2 rounded-xl text-[10px] font-bold border transition border-white/10 text-muted-foreground"
+          >
+            NIKE
+          </button>
+          <button
+            class="shrink-0 px-4 py-2 rounded-xl text-[10px] font-bold border transition border-white/10 text-muted-foreground"
+          >
+            ZARA
+          </button>
+        </div>
+        <div
+          class="grid grid-cols-2 gap-2"
+        >
+          <button
+            class="p-2 bg-white/5 border border-white/10 rounded-xl hover:border-accent/50 transition-all"
+          >
+            <img
+              class="h-20 w-full object-contain mb-2"
+              src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400"
+            />
+            <p
+              class="text-[9px] font-bold truncate"
+            >
+              Oversized Tee
+            </p>
+          </button>
+          <button
+            class="p-2 bg-white/5 border border-white/10 rounded-xl hover:border-accent/50 transition-all"
+          >
+            <img
+              class="h-20 w-full object-contain mb-2"
+              src="https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400"
+            />
+            <p
+              class="text-[9px] font-bold truncate"
+            >
+              Denim Jacket
+            </p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — LTR (en) > HealthSkinAI matches LTR snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="text-primary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-sparkles h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+          />
+          <path
+            d="M20 2v4"
+          />
+          <path
+            d="M22 4h-4"
+          />
+          <circle
+            cx="4"
+            cy="20"
+            r="2"
+          />
+        </svg>
+      </span>
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        AI Skin Analysis
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-accent shadow-[0_0_12px_var(--accent)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="flex justify-around"
+    >
+      <button
+        aria-label="Simulate new Hydration reading. Current value 87"
+        class="group flex flex-col items-center gap-2 rounded-lg p-1 transition hover:bg-accent/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/40"
+        title="Tap to simulate a new Hydration reading"
+        type="button"
+      >
+        <div
+          class="relative h-20 w-20"
+        >
+          <svg
+            class="h-full w-full -rotate-90"
+            viewBox="0 0 80 80"
+          >
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.3 0.04 230 / 0.4)"
+              stroke-width="4"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.8 0.15 200)"
+              stroke-dasharray="201.06192982974676"
+              stroke-dashoffset="26.138050877867073"
+              stroke-linecap="round"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 6px oklch(0.8 0.15 200)); transition: stroke-dashoffset 0.8s ease-out;"
+            />
+          </svg>
+          <div
+            class="absolute inset-0 flex items-center justify-center"
+          >
+            <span
+              class="text-lg font-light text-foreground text-glow transition group-hover:scale-110"
+            >
+              87
+            </span>
+          </div>
+        </div>
+        <span
+          class="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-accent"
+        >
+          Hydration
+        </span>
+      </button>
+      <button
+        aria-label="Simulate new Smoothness reading. Current value 92"
+        class="group flex flex-col items-center gap-2 rounded-lg p-1 transition hover:bg-accent/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/40"
+        title="Tap to simulate a new Smoothness reading"
+        type="button"
+      >
+        <div
+          class="relative h-20 w-20"
+        >
+          <svg
+            class="h-full w-full -rotate-90"
+            viewBox="0 0 80 80"
+          >
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.3 0.04 230 / 0.4)"
+              stroke-width="4"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.8 0.18 160)"
+              stroke-dasharray="201.06192982974676"
+              stroke-dashoffset="16.084954386379735"
+              stroke-linecap="round"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 6px oklch(0.8 0.18 160)); transition: stroke-dashoffset 0.8s ease-out;"
+            />
+          </svg>
+          <div
+            class="absolute inset-0 flex items-center justify-center"
+          >
+            <span
+              class="text-lg font-light text-foreground text-glow transition group-hover:scale-110"
+            >
+              92
+            </span>
+          </div>
+        </div>
+        <span
+          class="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-accent"
+        >
+          Smoothness
+        </span>
+      </button>
+      <button
+        aria-label="Simulate new Skin Tone reading. Current value 78"
+        class="group flex flex-col items-center gap-2 rounded-lg p-1 transition hover:bg-accent/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/40"
+        title="Tap to simulate a new Skin Tone reading"
+        type="button"
+      >
+        <div
+          class="relative h-20 w-20"
+        >
+          <svg
+            class="h-full w-full -rotate-90"
+            viewBox="0 0 80 80"
+          >
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.3 0.04 230 / 0.4)"
+              stroke-width="4"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.78 0.18 320)"
+              stroke-dasharray="201.06192982974676"
+              stroke-dashoffset="44.23362456254429"
+              stroke-linecap="round"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 6px oklch(0.78 0.18 320)); transition: stroke-dashoffset 0.8s ease-out;"
+            />
+          </svg>
+          <div
+            class="absolute inset-0 flex items-center justify-center"
+          >
+            <span
+              class="text-lg font-light text-foreground text-glow transition group-hover:scale-110"
+            >
+              78
+            </span>
+          </div>
+        </div>
+        <span
+          class="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-accent"
+        >
+          Skin Tone
+        </span>
+      </button>
+    </div>
+    <p
+      class="mt-2 text-center text-[9px] uppercase tracking-widest text-muted-foreground/60"
+    >
+      Tap a gauge to simulate a new reading
+    </p>
+    <div
+      class="mt-5 rounded-md border border-accent/20 bg-accent/5 p-3"
+    >
+      <div
+        class="flex items-start justify-between gap-2"
+      >
+        <p
+          class="text-xs leading-relaxed text-muted-foreground"
+        >
+          <span
+            class="text-accent"
+          >
+            AI Insight:
+          </span>
+           
+          Analyzing your skin profile…
+        </p>
+        <button
+          aria-label="Refresh insight"
+          class="shrink-0 rounded-full p-1 text-accent/70 transition hover:bg-accent/10 hover:text-accent disabled:opacity-40"
+          title="Refresh insight"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-refresh-cw h-3 w-3"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
+            />
+            <path
+              d="M21 3v5h-5"
+            />
+            <path
+              d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
+            />
+            <path
+              d="M8 16H3v5"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — LTR (en) > MiniDashboard matches LTR snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        Daily Dashboard
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-primary shadow-[0_0_12px_var(--primary)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-4"
+    >
+      <div>
+        <div
+          class="text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          Local Time
+        </div>
+        <div
+          class="mt-1 font-light text-4xl tabular-nums text-foreground text-glow tracking-tight"
+        >
+          12:27 AM
+        </div>
+        <div
+          class="mt-1 text-[11px] text-muted-foreground"
+        >
+          Thursday, May 7, 2026
+        </div>
+      </div>
+      <div
+        class="flex items-center justify-between rounded-lg border border-primary/15 bg-card/40 p-3"
+      >
+        <div>
+          <div
+            class="text-[10px] uppercase tracking-widest text-muted-foreground"
+          >
+            CAIRO
+          </div>
+          <div
+            class="text-lg font-light text-glow"
+          >
+            22°C
+          </div>
+          <div
+            class="text-[10px] text-muted-foreground"
+          >
+            Mostly Sunny
+          </div>
+          <div
+            class="text-[10px] text-muted-foreground"
+          >
+            Humidity 54%
+          </div>
+        </div>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-cloud h-10 w-10 text-primary animate-float-slow"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          style="filter: drop-shadow(0 0 12px var(--primary));"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — LTR (en) > PiPayWallet matches LTR snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="text-primary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-wallet h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
+          />
+          <path
+            d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"
+          />
+        </svg>
+      </span>
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        Pi Network Wallet
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-accent shadow-[0_0_12px_var(--accent)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-4"
+    >
+      <div
+        class="relative overflow-hidden rounded-xl border border-accent/30 p-4"
+        style="background: var(--gradient-aurora);"
+      >
+        <div
+          class="absolute inset-0 hud-grid opacity-30"
+        />
+        <div
+          class="relative"
+        >
+          <div
+            class="text-[9px] uppercase tracking-[0.35em] text-foreground/70"
+          >
+            Balance
+          </div>
+          <div
+            class="mt-1 flex items-baseline gap-1.5"
+          >
+            <span
+              class="text-2xl font-light text-glow-accent"
+            >
+              π
+            </span>
+            <span
+              class="text-3xl font-light text-foreground text-glow-accent tabular-nums"
+            >
+              1,247.83
+            </span>
+          </div>
+          <div
+            class="mt-1 flex items-center gap-2 text-[10px]"
+          >
+            <span
+              class="uppercase tracking-widest text-emerald-400"
+            >
+              +
+              12.40
+               
+              TODAY
+            </span>
+            <span
+              class="text-muted-foreground"
+            >
+              ≈ $
+              419.27
+               USD
+            </span>
+          </div>
+          <div
+            class="mt-3 flex items-center justify-between rounded-md border border-primary/20 bg-background/40 px-2.5 py-1.5"
+          >
+            <span
+              class="text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+            >
+              GCV-Pi Value
+            </span>
+            <span
+              class="text-[11px] font-medium text-primary text-glow tabular-nums"
+            >
+              $314,159
+            </span>
+          </div>
+        </div>
+      </div>
+      <button
+        class="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-full border border-accent/60 bg-gradient-to-r from-accent/30 via-primary/20 to-accent/30 px-5 py-3 text-xs uppercase tracking-[0.35em] text-foreground shadow-[var(--glow-accent)] transition hover:shadow-[var(--glow-primary)] active:scale-[0.98] disabled:opacity-80"
+      >
+        <span
+          class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-foreground/15 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+        />
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-wallet h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
+          />
+          <path
+            d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"
+          />
+        </svg>
+        Pay with Pi
+      </button>
+      <button
+        class="flex w-full items-center justify-center gap-2 rounded-full border border-primary/40 bg-background/40 px-5 py-2 text-[10px] uppercase tracking-[0.35em] text-primary transition hover:border-primary/70 hover:shadow-[var(--glow-soft)] active:scale-[0.98]"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-share2 lucide-share-2 h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="18"
+            cy="5"
+            r="3"
+          />
+          <circle
+            cx="6"
+            cy="12"
+            r="3"
+          />
+          <circle
+            cx="18"
+            cy="19"
+            r="3"
+          />
+          <line
+            x1="8.59"
+            x2="15.42"
+            y1="13.51"
+            y2="17.49"
+          />
+          <line
+            x1="15.41"
+            x2="8.59"
+            y1="6.51"
+            y2="10.49"
+          />
+        </svg>
+        Share to Pi Chat
+      </button>
+      <p
+        class="text-[10px] leading-relaxed text-muted-foreground"
+      >
+        Pi SDK · Sandbox (Testnet) — Pi.createPayment()
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — LTR (en) > ProfileData matches LTR snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="text-primary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="12"
+            cy="7"
+            r="4"
+          />
+        </svg>
+      </span>
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        Profile Data
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-accent shadow-[0_0_12px_var(--accent)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-3"
+    >
+      <div>
+        <label
+          class="mb-1 block text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          Name
+        </label>
+        <input
+          class="w-full rounded-md border border-primary/30 bg-background/40 px-2.5 py-1.5 text-xs text-foreground backdrop-blur focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+          value="Islam Ali"
+        />
+      </div>
+      <div>
+        <label
+          class="mb-1 block text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          Skin Tone
+        </label>
+        <div
+          class="flex items-center gap-2"
+        >
+          <button
+            aria-label="#f5d6b8"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(245, 214, 184);"
+          />
+          <button
+            aria-label="#e6b48a"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(230, 180, 138);"
+          />
+          <button
+            aria-label="#d9a37a"
+            class="h-6 w-6 rounded-full border transition border-accent shadow-[var(--glow-accent)] scale-110"
+            style="background: rgb(217, 163, 122);"
+          />
+          <button
+            aria-label="#b8835a"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(184, 131, 90);"
+          />
+          <button
+            aria-label="#8a5a3a"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(138, 90, 58);"
+          />
+          <button
+            aria-label="#5a3820"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(90, 56, 32);"
+          />
+          <input
+            aria-label="custom skin tone"
+            class="ms-1 h-6 w-6 cursor-pointer rounded-full border border-primary/30 bg-transparent"
+            type="color"
+            value="#d9a37a"
+          />
+        </div>
+      </div>
+      <div>
+        <div
+          class="mb-1 flex items-center justify-between text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          <span>
+            Weight
+          </span>
+          <span
+            class="text-primary"
+          >
+            75
+             kg
+          </span>
+        </div>
+        <input
+          class="w-full accent-[oklch(0.85_0.15_200)]"
+          max="140"
+          min="40"
+          type="range"
+          value="75"
+        />
+      </div>
+      <div>
+        <div
+          class="mb-1 flex items-center justify-between text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          <span>
+            Height
+          </span>
+          <span
+            class="text-primary"
+          >
+            178
+             cm
+          </span>
+        </div>
+        <input
+          class="w-full accent-[oklch(0.85_0.15_200)]"
+          max="210"
+          min="140"
+          type="range"
+          value="178"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — RTL (ar) > FashionStage matches RTL snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6 lg:col-span-1"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        مختبر التصميم | لوميرا
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-primary shadow-[0_0_12px_var(--primary)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-4"
+    >
+      <div
+        class="grid grid-cols-3 gap-1 bg-card/40 p-1 rounded-xl border border-primary/20"
+      >
+        <button
+          class="py-2 text-[9px] font-bold rounded-lg transition text-muted-foreground"
+        >
+          LIVE
+        </button>
+        <button
+          class="py-2 text-[9px] font-bold rounded-lg transition bg-accent/20 text-accent shadow-sm"
+        >
+          AVATAR
+        </button>
+        <button
+          class="py-2 text-[9px] font-bold rounded-lg transition text-muted-foreground"
+        >
+          PHOTO
+        </button>
+      </div>
+      <div
+        class="relative aspect-[9/16] w-full rounded-[2.5rem] overflow-hidden border border-accent/30 bg-background shadow-2xl"
+      >
+        <img
+          class="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm"
+          src="https://images.unsplash.com/photo-1558997519-83ec9902981c?q=80&w=1000&auto=format&fit=crop"
+        />
+        <div
+          class="absolute inset-0 flex items-center justify-center transition-transform duration-500"
+          style="transform: none;"
+        >
+          <img
+            class="h-[90%] object-contain drop-shadow-2xl"
+            src="https://i.ibb.co/vzYgT9N/male-model.png"
+          />
+        </div>
+        <button
+          class="absolute top-4 right-4 z-40 p-2 bg-background/60 backdrop-blur-md rounded-full border border-accent/40 text-accent"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-download h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 15V3"
+            />
+            <path
+              d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+            />
+            <path
+              d="m7 10 5 5 5-5"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="flex justify-between items-center bg-card/30 p-2 rounded-xl border border-white/5"
+      >
+        <button
+          class="flex items-center gap-2 text-[10px] font-bold text-primary"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-rotate-cw h-3.5 w-3.5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"
+            />
+            <path
+              d="M21 3v5h-5"
+            />
+          </svg>
+           
+          تدوير 3D
+        </button>
+        <div
+          class="flex gap-2"
+        >
+          <button
+            class="px-3 py-1 rounded-full text-[10px] bg-primary text-white"
+          >
+            M
+          </button>
+          <button
+            class="px-3 py-1 rounded-full text-[10px] bg-white/5"
+          >
+            F
+          </button>
+        </div>
+      </div>
+      <div
+        class="space-y-3"
+      >
+        <div
+          class="flex gap-2 overflow-x-auto no-scrollbar pb-2"
+        >
+          <button
+            class="shrink-0 px-4 py-2 rounded-xl text-[10px] font-bold border transition border-accent bg-accent/10 text-accent"
+          >
+            H&M
+          </button>
+          <button
+            class="shrink-0 px-4 py-2 rounded-xl text-[10px] font-bold border transition border-white/10 text-muted-foreground"
+          >
+            NIKE
+          </button>
+          <button
+            class="shrink-0 px-4 py-2 rounded-xl text-[10px] font-bold border transition border-white/10 text-muted-foreground"
+          >
+            ZARA
+          </button>
+        </div>
+        <div
+          class="grid grid-cols-2 gap-2"
+        >
+          <button
+            class="p-2 bg-white/5 border border-white/10 rounded-xl hover:border-accent/50 transition-all"
+          >
+            <img
+              class="h-20 w-full object-contain mb-2"
+              src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400"
+            />
+            <p
+              class="text-[9px] font-bold truncate"
+            >
+              Oversized Tee
+            </p>
+          </button>
+          <button
+            class="p-2 bg-white/5 border border-white/10 rounded-xl hover:border-accent/50 transition-all"
+          >
+            <img
+              class="h-20 w-full object-contain mb-2"
+              src="https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400"
+            />
+            <p
+              class="text-[9px] font-bold truncate"
+            >
+              Denim Jacket
+            </p>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — RTL (ar) > HealthSkinAI matches RTL snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="text-primary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-sparkles h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+          />
+          <path
+            d="M20 2v4"
+          />
+          <path
+            d="M22 4h-4"
+          />
+          <circle
+            cx="4"
+            cy="20"
+            r="2"
+          />
+        </svg>
+      </span>
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        تحليل البشرة بالذكاء الاصطناعي
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-accent shadow-[0_0_12px_var(--accent)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="flex justify-around"
+    >
+      <button
+        aria-label="محاكاة قراءة الترطيب جديدة. القيمة الحالية 87"
+        class="group flex flex-col items-center gap-2 rounded-lg p-1 transition hover:bg-accent/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/40"
+        title="انقر لمحاكاة قراءة الترطيب جديدة"
+        type="button"
+      >
+        <div
+          class="relative h-20 w-20"
+        >
+          <svg
+            class="h-full w-full -rotate-90"
+            viewBox="0 0 80 80"
+          >
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.3 0.04 230 / 0.4)"
+              stroke-width="4"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.8 0.15 200)"
+              stroke-dasharray="201.06192982974676"
+              stroke-dashoffset="26.138050877867073"
+              stroke-linecap="round"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 6px oklch(0.8 0.15 200)); transition: stroke-dashoffset 0.8s ease-out;"
+            />
+          </svg>
+          <div
+            class="absolute inset-0 flex items-center justify-center"
+          >
+            <span
+              class="text-lg font-light text-foreground text-glow transition group-hover:scale-110"
+            >
+              87
+            </span>
+          </div>
+        </div>
+        <span
+          class="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-accent"
+        >
+          الترطيب
+        </span>
+      </button>
+      <button
+        aria-label="محاكاة قراءة النعومة جديدة. القيمة الحالية 92"
+        class="group flex flex-col items-center gap-2 rounded-lg p-1 transition hover:bg-accent/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/40"
+        title="انقر لمحاكاة قراءة النعومة جديدة"
+        type="button"
+      >
+        <div
+          class="relative h-20 w-20"
+        >
+          <svg
+            class="h-full w-full -rotate-90"
+            viewBox="0 0 80 80"
+          >
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.3 0.04 230 / 0.4)"
+              stroke-width="4"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.8 0.18 160)"
+              stroke-dasharray="201.06192982974676"
+              stroke-dashoffset="16.084954386379735"
+              stroke-linecap="round"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 6px oklch(0.8 0.18 160)); transition: stroke-dashoffset 0.8s ease-out;"
+            />
+          </svg>
+          <div
+            class="absolute inset-0 flex items-center justify-center"
+          >
+            <span
+              class="text-lg font-light text-foreground text-glow transition group-hover:scale-110"
+            >
+              92
+            </span>
+          </div>
+        </div>
+        <span
+          class="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-accent"
+        >
+          النعومة
+        </span>
+      </button>
+      <button
+        aria-label="محاكاة قراءة لون البشرة جديدة. القيمة الحالية 78"
+        class="group flex flex-col items-center gap-2 rounded-lg p-1 transition hover:bg-accent/5 focus:outline-none focus-visible:ring-1 focus-visible:ring-accent/40"
+        title="انقر لمحاكاة قراءة لون البشرة جديدة"
+        type="button"
+      >
+        <div
+          class="relative h-20 w-20"
+        >
+          <svg
+            class="h-full w-full -rotate-90"
+            viewBox="0 0 80 80"
+          >
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.3 0.04 230 / 0.4)"
+              stroke-width="4"
+            />
+            <circle
+              cx="40"
+              cy="40"
+              fill="none"
+              r="32"
+              stroke="oklch(0.78 0.18 320)"
+              stroke-dasharray="201.06192982974676"
+              stroke-dashoffset="44.23362456254429"
+              stroke-linecap="round"
+              stroke-width="4"
+              style="filter: drop-shadow(0 0 6px oklch(0.78 0.18 320)); transition: stroke-dashoffset 0.8s ease-out;"
+            />
+          </svg>
+          <div
+            class="absolute inset-0 flex items-center justify-center"
+          >
+            <span
+              class="text-lg font-light text-foreground text-glow transition group-hover:scale-110"
+            >
+              78
+            </span>
+          </div>
+        </div>
+        <span
+          class="text-[10px] uppercase tracking-widest text-muted-foreground group-hover:text-accent"
+        >
+          لون البشرة
+        </span>
+      </button>
+    </div>
+    <p
+      class="mt-2 text-center text-[9px] uppercase tracking-widest text-muted-foreground/60"
+    >
+      انقر على المؤشر لمحاكاة قراءة جديدة
+    </p>
+    <div
+      class="mt-5 rounded-md border border-accent/20 bg-accent/5 p-3"
+    >
+      <div
+        class="flex items-start justify-between gap-2"
+      >
+        <p
+          class="text-xs leading-relaxed text-muted-foreground"
+        >
+          <span
+            class="text-accent"
+          >
+            ملاحظة الذكاء الاصطناعي:
+          </span>
+           
+          Analyzing your skin profile…
+        </p>
+        <button
+          aria-label="تحديث التحليل"
+          class="shrink-0 rounded-full p-1 text-accent/70 transition hover:bg-accent/10 hover:text-accent disabled:opacity-40"
+          title="تحديث التحليل"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-refresh-cw h-3 w-3"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
+            />
+            <path
+              d="M21 3v5h-5"
+            />
+            <path
+              d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
+            />
+            <path
+              d="M8 16H3v5"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — RTL (ar) > MiniDashboard matches RTL snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        اللوحة اليومية
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-primary shadow-[0_0_12px_var(--primary)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-4"
+    >
+      <div>
+        <div
+          class="text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          الوقت المحلي
+        </div>
+        <div
+          class="mt-1 font-light text-4xl tabular-nums text-foreground text-glow tracking-tight"
+        >
+          12:27 AM
+        </div>
+        <div
+          class="mt-1 text-[11px] text-muted-foreground"
+        >
+          الخميس، ٧ مايو ٢٠٢٦
+        </div>
+      </div>
+      <div
+        class="flex items-center justify-between rounded-lg border border-primary/15 bg-card/40 p-3"
+      >
+        <div>
+          <div
+            class="text-[10px] uppercase tracking-widest text-muted-foreground"
+          >
+            القاهرة
+          </div>
+          <div
+            class="text-lg font-light text-glow"
+          >
+            22°C
+          </div>
+          <div
+            class="text-[10px] text-muted-foreground"
+          >
+            غائم جزئيًا
+          </div>
+          <div
+            class="text-[10px] text-muted-foreground"
+          >
+            الرطوبة 54%
+          </div>
+        </div>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-cloud h-10 w-10 text-primary animate-float-slow"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          style="filter: drop-shadow(0 0 12px var(--primary));"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — RTL (ar) > PiPayWallet matches RTL snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="text-primary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-wallet h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
+          />
+          <path
+            d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"
+          />
+        </svg>
+      </span>
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        محفظة شبكة Pi
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-accent shadow-[0_0_12px_var(--accent)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-4"
+    >
+      <div
+        class="relative overflow-hidden rounded-xl border border-accent/30 p-4"
+        style="background: var(--gradient-aurora);"
+      >
+        <div
+          class="absolute inset-0 hud-grid opacity-30"
+        />
+        <div
+          class="relative"
+        >
+          <div
+            class="text-[9px] uppercase tracking-[0.35em] text-foreground/70"
+          >
+            الرصيد
+          </div>
+          <div
+            class="mt-1 flex items-baseline gap-1.5"
+          >
+            <span
+              class="text-2xl font-light text-glow-accent"
+            >
+              π
+            </span>
+            <span
+              class="text-3xl font-light text-foreground text-glow-accent tabular-nums"
+            >
+              1,247.83
+            </span>
+          </div>
+          <div
+            class="mt-1 flex items-center gap-2 text-[10px]"
+          >
+            <span
+              class="uppercase tracking-widest text-emerald-400"
+            >
+              +
+              12.40
+               
+              اليوم
+            </span>
+            <span
+              class="text-muted-foreground"
+            >
+              ≈ $
+              419.27
+               USD
+            </span>
+          </div>
+          <div
+            class="mt-3 flex items-center justify-between rounded-md border border-primary/20 bg-background/40 px-2.5 py-1.5"
+          >
+            <span
+              class="text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+            >
+              قيمة GCV-Pi
+            </span>
+            <span
+              class="text-[11px] font-medium text-primary text-glow tabular-nums"
+            >
+              $314,159
+            </span>
+          </div>
+        </div>
+      </div>
+      <button
+        class="group relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-full border border-accent/60 bg-gradient-to-r from-accent/30 via-primary/20 to-accent/30 px-5 py-3 text-xs uppercase tracking-[0.35em] text-foreground shadow-[var(--glow-accent)] transition hover:shadow-[var(--glow-primary)] active:scale-[0.98] disabled:opacity-80"
+      >
+        <span
+          class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-foreground/15 to-transparent transition-transform duration-700 group-hover:translate-x-full"
+        />
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-wallet h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
+          />
+          <path
+            d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"
+          />
+        </svg>
+        ادفع بـ Pi
+      </button>
+      <button
+        class="flex w-full items-center justify-center gap-2 rounded-full border border-primary/40 bg-background/40 px-5 py-2 text-[10px] uppercase tracking-[0.35em] text-primary transition hover:border-primary/70 hover:shadow-[var(--glow-soft)] active:scale-[0.98]"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-share2 lucide-share-2 h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="18"
+            cy="5"
+            r="3"
+          />
+          <circle
+            cx="6"
+            cy="12"
+            r="3"
+          />
+          <circle
+            cx="18"
+            cy="19"
+            r="3"
+          />
+          <line
+            x1="8.59"
+            x2="15.42"
+            y1="13.51"
+            y2="17.49"
+          />
+          <line
+            x1="15.41"
+            x2="8.59"
+            y1="6.51"
+            y2="10.49"
+          />
+        </svg>
+        شارك على Pi Chat
+      </button>
+      <p
+        class="text-[10px] leading-relaxed text-muted-foreground"
+      >
+        Pi SDK · الوضع الاختباري — Pi.createPayment()
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Direction snapshots — RTL (ar) > ProfileData matches RTL snapshot 1`] = `
+<div
+  class="glass-panel glass-panel-hover relative overflow-hidden p-6"
+>
+  <span
+    class="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60"
+  />
+  <span
+    class="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60"
+  />
+  <div
+    class="mb-4 flex items-center justify-between border-b border-primary/15 pb-3"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="text-primary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user h-3.5 w-3.5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="12"
+            cy="7"
+            r="4"
+          />
+        </svg>
+      </span>
+      <h3
+        class="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground"
+      >
+        بيانات الملف
+      </h3>
+    </div>
+    <span
+      class="h-2 w-2 rounded-full animate-pulse-glow bg-accent shadow-[0_0_12px_var(--accent)]"
+    />
+  </div>
+  <div
+    class="relative z-10"
+  >
+    <div
+      class="space-y-3"
+    >
+      <div>
+        <label
+          class="mb-1 block text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          الاسم
+        </label>
+        <input
+          class="w-full rounded-md border border-primary/30 bg-background/40 px-2.5 py-1.5 text-xs text-foreground backdrop-blur focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+          value="Islam Ali"
+        />
+      </div>
+      <div>
+        <label
+          class="mb-1 block text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          لون البشرة
+        </label>
+        <div
+          class="flex items-center gap-2"
+        >
+          <button
+            aria-label="#f5d6b8"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(245, 214, 184);"
+          />
+          <button
+            aria-label="#e6b48a"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(230, 180, 138);"
+          />
+          <button
+            aria-label="#d9a37a"
+            class="h-6 w-6 rounded-full border transition border-accent shadow-[var(--glow-accent)] scale-110"
+            style="background: rgb(217, 163, 122);"
+          />
+          <button
+            aria-label="#b8835a"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(184, 131, 90);"
+          />
+          <button
+            aria-label="#8a5a3a"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(138, 90, 58);"
+          />
+          <button
+            aria-label="#5a3820"
+            class="h-6 w-6 rounded-full border transition border-primary/30 hover:border-primary/60"
+            style="background: rgb(90, 56, 32);"
+          />
+          <input
+            aria-label="custom skin tone"
+            class="ms-1 h-6 w-6 cursor-pointer rounded-full border border-primary/30 bg-transparent"
+            type="color"
+            value="#d9a37a"
+          />
+        </div>
+      </div>
+      <div>
+        <div
+          class="mb-1 flex items-center justify-between text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          <span>
+            الوزن
+          </span>
+          <span
+            class="text-primary"
+          >
+            75
+             kg
+          </span>
+        </div>
+        <input
+          class="w-full accent-[oklch(0.85_0.15_200)]"
+          max="140"
+          min="40"
+          type="range"
+          value="75"
+        />
+      </div>
+      <div>
+        <div
+          class="mb-1 flex items-center justify-between text-[9px] uppercase tracking-[0.3em] text-muted-foreground"
+        >
+          <span>
+            الطول
+          </span>
+          <span
+            class="text-primary"
+          >
+            178
+             cm
+          </span>
+        </div>
+        <input
+          class="w-full accent-[oklch(0.85_0.15_200)]"
+          max="210"
+          min="140"
+          type="range"
+          value="178"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
