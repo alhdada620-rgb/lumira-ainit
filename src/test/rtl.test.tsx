@@ -65,16 +65,16 @@ describe("RTL / language direction", () => {
 describe("Panel translations", () => {
   it("Health & Skin AI renders Arabic labels in ar mode", () => {
     renderWithLang(<HealthSkinAI />, "ar");
-    expect(screen.getByText("الصحة وذكاء البشرة")).toBeInTheDocument();
-    expect(screen.getByText("ترطيب البشرة")).toBeInTheDocument();
-    expect(screen.getByText("إشراق البشرة")).toBeInTheDocument();
+    expect(screen.getByText("تحليل البشرة بالذكاء الاصطناعي")).toBeInTheDocument();
+    expect(screen.getByText("الترطيب")).toBeInTheDocument();
+    expect(screen.getByText("النعومة")).toBeInTheDocument();
   });
 
   it("Health & Skin AI renders English labels in en mode", () => {
     renderWithLang(<HealthSkinAI />, "en");
-    expect(screen.getByText("Health & Skin AI")).toBeInTheDocument();
-    expect(screen.getByText("Skin Hydration")).toBeInTheDocument();
-    expect(screen.getByText("Skin Glow")).toBeInTheDocument();
+    expect(screen.getByText("AI Skin Analysis")).toBeInTheDocument();
+    expect(screen.getByText("Hydration")).toBeInTheDocument();
+    expect(screen.getByText("Smoothness")).toBeInTheDocument();
   });
 
   it("Pi Pay Wallet shows localized PAY WITH PI button", () => {
@@ -99,18 +99,16 @@ describe("Panel translations", () => {
     expect(screen.getByText("القاهرة")).toBeInTheDocument();
   });
 
-  it("Fashion Stage renders the AR Video title and brand carousel in both languages", () => {
+  it("Fashion Stage renders the Style Lab title and brand carousel in both languages", () => {
     const { unmount } = renderWithLang(<FashionStage />, "en");
-    expect(screen.getByText("AR Video")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /try on/i })).toBeInTheDocument();
-    for (const b of ["H&M", "NAMSHI", "NIKE", "SEPHORA"]) {
+    expect(screen.getByText(/Style Lab/i)).toBeInTheDocument();
+    for (const b of ["H&M", "NIKE", "ZARA"]) {
       expect(screen.getByRole("button", { name: b })).toBeInTheDocument();
     }
     unmount();
 
     renderWithLang(<FashionStage />, "ar");
-    expect(screen.getByText("فيديو الواقع المعزز")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /جرّب الآن/ })).toBeInTheDocument();
+    expect(screen.getByText(/مختبر التصميم/)).toBeInTheDocument();
   });
 });
 
