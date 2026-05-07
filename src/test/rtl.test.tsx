@@ -4,6 +4,7 @@ import { useEffect, type ReactNode } from "react";
 import { LanguageProvider, useT } from "@/components/lumira/i18n";
 import { WalletProvider } from "@/components/lumira/wallet-context";
 import { CameraProvider } from "@/components/lumira/camera-context";
+import { ProfileProvider } from "@/components/lumira/profile-context";
 import { HealthSkinAI } from "@/components/lumira/HealthSkinAI";
 import { PiPayWallet } from "@/components/lumira/PiPayWallet";
 import { MiniDashboard } from "@/components/lumira/MiniDashboard";
@@ -17,7 +18,9 @@ function Providers({ children }: { children: ReactNode }) {
   return (
     <LanguageProvider>
       <WalletProvider>
-        <CameraProvider>{children}</CameraProvider>
+        <ProfileProvider>
+          <CameraProvider>{children}</CameraProvider>
+        </ProfileProvider>
       </WalletProvider>
     </LanguageProvider>
   );
