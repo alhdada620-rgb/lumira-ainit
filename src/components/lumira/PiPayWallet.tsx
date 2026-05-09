@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
 import { useWallet } from "./wallet-context";
 import { useT } from "./i18n";
-import { approvePiPayment, completePiPayment } from "@/server/pi.functions";
+import { approvePiPayment, completePiPayment } from "@/lib/pi.functions";
 
 type PayState = "idle" | "auth" | "creating" | "approved" | "completed" | "error";
 
