@@ -5,6 +5,7 @@ const PANELS = [
   { id: "health-skin", titleEn: /AI Skin Analysis|Health.*Skin/i, titleAr: /تحليل البشرة/ },
   { id: "pi-pay", titleEn: /Pi Network Wallet|Pi Pay/i, titleAr: /محفظة شبكة Pi/ },
   { id: "mini-dashboard", titleEn: /Daily Dashboard/i, titleAr: /اللوحة اليومية/ },
+  { id: "virtual-tryon", titleEn: /Virtual Try-?On.*AR/i, titleAr: /تجربة افتراضية.*واقع معزز/ },
 ] as const;
 
 async function setLang(page: Page, lang: "en" | "ar") {
