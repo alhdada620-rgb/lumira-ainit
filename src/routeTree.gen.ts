@@ -9,15 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VercelSetupRouteImport } from './routes/vercel-setup'
 import { Route as MallRouteImport } from './routes/mall'
 import { Route as IndexRouteImport } from './routes/index'
 
-const VercelSetupRoute = VercelSetupRouteImport.update({
-  id: '/vercel-setup',
-  path: '/vercel-setup',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const MallRoute = MallRouteImport.update({
   id: '/mall',
   path: '/mall',
@@ -32,42 +26,31 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/mall': typeof MallRoute
-  '/vercel-setup': typeof VercelSetupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/mall': typeof MallRoute
-  '/vercel-setup': typeof VercelSetupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/mall': typeof MallRoute
-  '/vercel-setup': typeof VercelSetupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/mall' | '/vercel-setup'
+  fullPaths: '/' | '/mall'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/mall' | '/vercel-setup'
-  id: '__root__' | '/' | '/mall' | '/vercel-setup'
+  to: '/' | '/mall'
+  id: '__root__' | '/' | '/mall'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MallRoute: typeof MallRoute
-  VercelSetupRoute: typeof VercelSetupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vercel-setup': {
-      id: '/vercel-setup'
-      path: '/vercel-setup'
-      fullPath: '/vercel-setup'
-      preLoaderRoute: typeof VercelSetupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/mall': {
       id: '/mall'
       path: '/mall'
@@ -88,8 +71,16 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MallRoute: MallRoute,
-  VercelSetupRoute: VercelSetupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
