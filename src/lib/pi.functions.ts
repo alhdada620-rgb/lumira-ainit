@@ -33,6 +33,7 @@ export const approvePiPayment = createServerFn({ method: "POST" })
   });
 
 export const completePiPayment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data) =>
     z.object({ paymentId: z.string().min(1), txid: z.string().min(1) }).parse(data),
   )
