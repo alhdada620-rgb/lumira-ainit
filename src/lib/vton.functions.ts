@@ -14,6 +14,7 @@ const InputSchema = z.object({
 });
 
 export const generatePhotorealLook = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input) => InputSchema.parse(input))
   .handler(async ({ data }) => {
     const apiKey = process.env.LOVABLE_API_KEY;
