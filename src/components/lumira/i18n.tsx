@@ -24,7 +24,7 @@ const en: Dict = {
 
   // Footer
   "footer.developedBy": "Developed & Designed by",
-  "footer.copyright": "© {year} · LUMIRA SMART MIRROR",
+  "footer.copyright": "© eybs 2026 · LUMIRA SMART MIRROR",
 
   // Daily dashboard
   "dashboard.localTime": "Local Time",
@@ -268,7 +268,7 @@ const ar: Dict = {
 
   // Footer
   "footer.developedBy": "تصميم وتطوير",
-  "footer.copyright": "© {year} · مرآة لوميرا الذكية",
+  "footer.copyright": "© eybs 2026 · مرآة لوميرا الذكية",
 
   // Daily dashboard
   "dashboard.localTime": "الوقت المحلي",
