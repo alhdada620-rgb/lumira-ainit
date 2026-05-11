@@ -268,7 +268,7 @@ const ar: Dict = {
 
   // Footer
   "footer.developedBy": "تصميم وتطوير",
-  "footer.copyright": "© {year} · مرآة لوميرا الذكية",
+  "footer.copyright": "© eybs 2026 · مرآة لوميرا الذكية",
 
   // Daily dashboard
   "dashboard.localTime": "الوقت المحلي",
