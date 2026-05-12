@@ -78,7 +78,7 @@ function IndexShell() {
           paddingRight: "max(0.75rem, env(safe-area-inset-right))",
         }}
       >
-        <header className="mb-6 flex flex-col items-center justify-center gap-2">
+        <header className="mb-10 sm:mb-14 flex flex-col items-center justify-center gap-5">
           <div className="flex items-center gap-3">
             <div className="relative h-9 w-9 shrink-0">
               <div className="absolute inset-0 animate-ring-rotate rounded-full border border-dashed border-primary/60" />
@@ -96,37 +96,37 @@ function IndexShell() {
               {isAr ? "لوميرا — صحة وأناقة" : "LUMIRA — HEALTH & ELEGANCE"}
             </h1>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="hidden md:inline-flex items-center gap-2 rounded-full border border-primary/20 bg-card/40 px-3 py-1 backdrop-blur">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-              <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="hidden md:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_8px_oklch(0.75_0.18_150)]" />
+              <span className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
                 {t("header.systemOnline")}
               </span>
             </span>
             <Link
               to="/mall"
-              className="inline-flex items-center gap-2 rounded-full border border-accent/50 bg-card/40 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-accent backdrop-blur transition hover:shadow-[var(--glow-accent)]"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-accent backdrop-blur transition hover:border-accent/40 hover:shadow-[var(--glow-accent)]"
             >
               {isAr ? "متجر" : "Mall"}
             </Link>
             <HudJump />
-            <PiSignInButton />
             <LanguageToggle />
           </div>
+          <PiSignInButton />
         </header>
 
-        <div className="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 lg:grid-cols-12 lg:gap-5">
-          <div id="mod-tryon" className="order-1 lg:order-2 lg:col-span-6 scroll-mt-24 space-y-4 sm:space-y-5 md:space-y-6">
+        <div className="grid grid-cols-1 gap-6 sm:gap-8 md:gap-10 lg:grid-cols-12 lg:gap-8">
+          <div id="mod-tryon" className="order-1 lg:order-2 lg:col-span-6 scroll-mt-24 space-y-6 sm:space-y-8">
             <FashionStage />
             <div id="mod-shopping" className="scroll-mt-24"><SmartShopping /></div>
           </div>
 
-          <div className="order-2 space-y-4 sm:space-y-5 md:space-y-6 lg:order-1 lg:col-span-3">
+          <div className="order-2 space-y-6 sm:space-y-8 lg:order-1 lg:col-span-3">
             <div id="mod-skin" className="scroll-mt-24"><HealthSkinAI /></div>
             <div id="mod-vitals" className="scroll-mt-24"><VoiceVisualizer /></div>
           </div>
 
-          <div className="order-3 space-y-4 sm:space-y-5 md:space-y-6 lg:col-span-3">
+          <div className="order-3 space-y-6 sm:space-y-8 lg:col-span-3">
             <div id="mod-daily" className="scroll-mt-24"><MiniDashboard /></div>
             <div id="mod-wallet" className="scroll-mt-24"><PiPayWallet /></div>
             <div id="mod-profile" className="scroll-mt-24"><ProfileData /></div>
