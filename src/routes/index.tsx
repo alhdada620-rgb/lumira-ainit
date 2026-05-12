@@ -12,6 +12,8 @@ import { ProfileData } from "@/components/lumira/ProfileData";
 import { SmartShopping } from "@/components/lumira/SmartShopping";
 import { LanguageProvider, useT } from "@/components/lumira/i18n";
 import { LanguageToggle } from "@/components/lumira/LanguageToggle";
+import { PiAuthProvider } from "@/components/lumira/pi-auth-context";
+import { PiSignInButton } from "@/components/lumira/PiSignInButton";
 import { CaptionsOverlay } from "@/components/lumira/CaptionsOverlay";
 import { HudJump } from "@/components/lumira/HudJump";
 import bgImg from "@/assets/lumira-bg.jpg";
@@ -29,15 +31,17 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <LanguageProvider>
-      <WalletProvider>
-        <ProfileProvider>
-          <SkinProvider>
-            <CameraProvider>
-              <IndexShell />
-            </CameraProvider>
-          </SkinProvider>
-        </ProfileProvider>
-      </WalletProvider>
+      <PiAuthProvider>
+        <WalletProvider>
+          <ProfileProvider>
+            <SkinProvider>
+              <CameraProvider>
+                <IndexShell />
+              </CameraProvider>
+            </SkinProvider>
+          </ProfileProvider>
+        </WalletProvider>
+      </PiAuthProvider>
     </LanguageProvider>
   );
 }
@@ -106,6 +110,7 @@ function IndexShell() {
               {isAr ? "متجر" : "Mall"}
             </Link>
             <HudJump />
+            <PiSignInButton />
             <LanguageToggle />
           </div>
         </header>
