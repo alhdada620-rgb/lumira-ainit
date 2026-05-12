@@ -33,12 +33,8 @@ interface PiSDK {
   init(opts: { version: "2.0"; sandbox?: boolean }): unknown;
   authenticate(
     scopes: string[],
-    onIncompletePaymentFound: (p: unknown) => void,
+    onIncompletePaymentFound: (p: { identifier: string; transaction?: { txid: string } }) => void,
   ): Promise<PiAuthResult>;
-}
-
-declare global {
-  interface Window { Pi?: PiSDK }
 }
 
 const Ctx = createContext<PiAuthCtx | null>(null);
