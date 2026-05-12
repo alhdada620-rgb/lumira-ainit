@@ -11,12 +11,10 @@ interface GlassPanelProps {
 
 export function GlassPanel({ children, className, title, icon, accent }: GlassPanelProps) {
   return (
-    <div className={cn("glass-panel glass-panel-hover relative overflow-hidden p-6", className)}>
-      {/* corner brackets */}
-      <span className="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-primary/60" />
-      <span className="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-primary/60" />
-      <span className="pointer-events-none absolute bottom-2 left-2 h-3 w-3 border-b border-l border-primary/60" />
-      <span className="pointer-events-none absolute bottom-2 right-2 h-3 w-3 border-b border-r border-primary/60" />
+    <div className={cn("glass-panel glass-panel-hover relative overflow-hidden p-6 sm:p-7", className)}>
+      {/* subtle ambient glow */}
+      <span aria-hidden className="pointer-events-none absolute -top-16 -left-16 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+      <span aria-hidden className="pointer-events-none absolute -bottom-16 -right-16 h-40 w-40 rounded-full bg-accent/10 blur-3xl" />
 
       {title && (
         <div className="mb-4 flex items-center justify-between border-b border-primary/15 pb-3">
