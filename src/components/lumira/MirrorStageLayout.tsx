@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import {
   ArrowLeft, MapPin, Store, Sparkles, Brush, Shirt,
 } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useProfile } from "./profile-context";
 import { useT } from "./i18n";
 import { AvatarMirror } from "./AvatarMirror";
