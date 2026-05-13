@@ -1,8 +1,7 @@
 import { useProfile } from "./profile-context";
 import { useOutfit } from "./outfit-context";
-
-const HUMAN_MALE = "https://i.ibb.co/vzYgT9N/male-model.png";
-const HUMAN_FEMALE = "https://i.ibb.co/0X8XpYp/female-model.png";
+import HUMAN_MALE from "@/assets/avatar-male.png";
+import HUMAN_FEMALE from "@/assets/avatar-female.png";
 
 export function AvatarMirror() {
   const { gender } = useProfile();
@@ -18,11 +17,14 @@ export function AvatarMirror() {
       {/* mirror grid */}
       <div className="pointer-events-none absolute inset-0 opacity-30 [background:repeating-linear-gradient(0deg,transparent_0,transparent_22px,oklch(0.6_0.1_230_/0.06)_22px,oklch(0.6_0.1_230_/0.06)_23px)]" />
 
-      {/* avatar */}
+      {/* avatar — perfectly centered */}
       <img
         src={src}
         alt="Avatar"
-        className="relative z-10 h-[92%] w-auto object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)]"
+        width={768}
+        height={1344}
+        className="relative z-10 mx-auto h-full w-auto max-h-full object-contain object-bottom drop-shadow-[0_15px_30px_rgba(0,0,0,0.5)] transition-opacity duration-500"
+        key={src}
       />
 
       {/* outfit overlay (torso silhouette) */}

@@ -3,9 +3,8 @@ import { useProfile, type Gender } from "./profile-context";
 import { useT } from "./i18n";
 import { PiSignInButton } from "./PiSignInButton";
 import { LanguageToggle } from "./LanguageToggle";
-
-const HUMAN_MALE = "https://i.ibb.co/vzYgT9N/male-model.png";
-const HUMAN_FEMALE = "https://i.ibb.co/0X8XpYp/female-model.png";
+import HUMAN_MALE from "@/assets/avatar-male.png";
+import HUMAN_FEMALE from "@/assets/avatar-female.png";
 
 interface Props {
   onContinue: () => void;
@@ -16,7 +15,11 @@ export function LandingGate({ onContinue }: Props) {
   const isAr = lang === "ar";
   const { gender, setGender } = useProfile();
 
-  const choose = (g: Gender) => setGender(g);
+  const choose = (g: Gender) => {
+    setGender(g);
+    // Smooth transition into the mirror after a short beat
+    window.setTimeout(() => onContinue(), 280);
+  };
 
   return (
     <main className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col items-center justify-between px-4 py-8">
