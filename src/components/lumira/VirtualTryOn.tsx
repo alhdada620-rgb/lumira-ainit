@@ -6,6 +6,7 @@ import { useProfile } from "./profile-context";
 import { useSkin, deriveGarmentTint } from "./skin-context";
 import { onVoiceCommand, onTryOnItem, reportCommandResult } from "./voice-events";
 import { useT } from "./i18n";
+import { useOutfit } from "./outfit-context";
 import { generatePhotorealLook } from "@/lib/vton.functions";
 
 interface OutfitItem {
