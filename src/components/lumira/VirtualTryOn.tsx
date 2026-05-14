@@ -41,6 +41,24 @@ export function VirtualTryOn() {
     [extras, presets, t],
   );
   const [idx, setIdx] = useState(0);
+  const { prompt: outfitPrompt, color: outfitColor, accent: outfitAccent, label: outfitLabel } = useOutfit();
+
+  // Inject the live "Ask Lumira" prompt as the top dynamic outfit so the
+  // text description instantly changes the clothes shown in the try-on view.
+  useEffect(() => {
+    if (!outfitPrompt) return;
+    const incoming: DynamicOutfit = {
+      name: outfitLabel || outfitPrompt,
+      tag: t("tryon.askLumira") || "Ask Lumira",
+      color: `linear-gradient(135deg, ${outfitColor}, ${outfitAccent})`,
+    };
+    setExtras((prev) => {
+      if (prev[0]?.name === incoming.name) return prev;
+      return [incoming, ...prev.filter((o) => o.name !== incoming.name)].slice(0, 5);
+    });
+    setIdx(0);
+  }, [outfitPrompt, outfitColor, outfitAccent, outfitLabel, t]);
+
   const outfit = outfits[Math.min(idx, outfits.length - 1)] ?? outfits[0];
   const { stream, active, start, starting } = useCamera();
   const { height, weight, gender } = useProfile();
