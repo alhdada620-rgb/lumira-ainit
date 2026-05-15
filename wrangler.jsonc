@@ -1,7 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
-  "compatibility_date": "2025-09-24",
-  "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry",
+  "name": "lumira-ai",
+  "compatibility_date": "2026-05-15",
+  "main": "dist/index.html",
+  "build": {
+    "command": "vite build",
+    "directory": "dist"
+  }
 }
