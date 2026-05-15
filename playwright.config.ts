@@ -31,7 +31,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         viewport: { width: 1280, height: 900 },
         launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH, args: ["--no-sandbox"] }
           : undefined,
       },
     },
@@ -40,7 +40,7 @@ export default defineConfig({
       use: {
         ...devices["iPhone 13"],
         launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH, args: ["--no-sandbox"] }
           : undefined,
       },
     },
