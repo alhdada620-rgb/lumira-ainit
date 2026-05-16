@@ -4,7 +4,7 @@
   "compatibility_date": "2026-05-15",
   "main": "dist/index.html",
   "build": {
-    "command": "vite build",
+    "command": "bun run build",
     "directory": "dist"
   }
 }
