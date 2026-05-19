@@ -9,17 +9,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1️⃣ سحب الكود من المستودع
       - uses: actions/checkout@v4
 
+      # 2️⃣ إعداد Bun
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
+      # 3️⃣ تثبيت الـ dependencies
       - name: Install dependencies
         run: bun install
 
+      # 4️⃣ بناء المشروع
       - name: Build project
         run: bun run build
 
+      # 5️⃣ نشر على Cloudflare Pages
       - name: Deploy to Cloudflare Pages
         run: npx wrangler pages deploy ./dist --project-name=lumira-ai
