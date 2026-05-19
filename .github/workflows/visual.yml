@@ -1,12 +1,12 @@
-name: Visual Regression
+name: Build and Deploy
 
 on:
   push:
-  pull_request:
+    branches:
+      - main
 
 jobs:
-  visual:
-    name: Playwright RTL/LTR Screenshots
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,53 +18,8 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Install Playwright browsers
-        run: bunx playwright install --with-deps chromium
+      - name: Build project
+        run: bun run build
 
-      # First-run guard: if no baseline screenshots exist yet (fresh repo),
-      # generate them instead of failing the job. Subsequent runs compare
-      # against the committed baselines.
-      - name: Ensure baselines exist
-        id: baselines
-        run: |
-          if [ -z "$(find tests/visual/__screenshots__ -type f -name '*.png' 2>/dev/null | head -n1)" ]; then
-            echo "missing=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "missing=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Generate baselines (first run only)
-        if: steps.baselines.outputs.missing == 'true'
-        run: bun run test:visual:update
-        continue-on-error: true
-
-      - name: Run visual tests
-        if: steps.baselines.outputs.missing == 'false'
-        run: bun run test:visual
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-          if-no-files-found: ignore
-
-      - name: Upload generated baselines
-        if: steps.baselines.outputs.missing == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: visual-baselines
-          path: tests/visual/__screenshots__/
-          retention-days: 30
-          if-no-files-found: ignore
-
-      - name: Upload diffs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-diffs
-          path: test-results/
-          retention-days: 30
-          if-no-files-found: ignore
+      - name: Deploy to Cloudflare Pages
+        run: npx wrangler pages deploy ./dist --project-name=lumira-ai
