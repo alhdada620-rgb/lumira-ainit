@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumira AI | تطبيق لوميرا الذكي</title>
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.Pi) {
+                window.Pi.init({ version: "2.0", sandbox: true });
+                console.log("Pi SDK Initialized for eybs");
+            }
+        });
+    </script>
+</body>
+</html>
