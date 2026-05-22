@@ -7,14 +7,6 @@ type LogEntry = {
   time: string;
 };
 
-declare global {
-  interface Window {
-    Pi?: {
-      init?: (opts: { version: string; sandbox?: boolean }) => void;
-      authenticate?: (...args: unknown[]) => Promise<unknown>;
-    };
-  }
-}
 
 const MAX_LOGS = 30;
 
