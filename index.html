@@ -13,7 +13,7 @@
       window.addEventListener('load', function () {
         if (window.Pi) {
           try { 
-            // التثبيت الصحيح على نسخة 1.5 ساندبوكس
+            // التثبيت المستقر على نسخة 1.5 ساندبوكس للتجربة
             window.Pi.init({ version: "1.5", sandbox: true }); 
             console.log("Pi SDK Initialized successfully on version 1.5");
           } catch (e) {
@@ -25,6 +25,6 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/assets/index-CTPDF3sE.js"></script>
+    <script type="module" src="/src/index.tsx"></script>
   </body>
 </html>
