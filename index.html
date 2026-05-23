@@ -6,19 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lumira · Health & Elegance Smart Mirror</title>
     
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors *; img-src * data: blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors *; img-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval';">
 
     <script src="https://sdk.minepi.com/pi-sdk.js"></script>
     <script>
       window.addEventListener('load', function () {
+        // فحص ذكي: لو مكتبة Pi موجودة شغلها، لو مش موجودة اذكر ده في الكونسول بدون ما تعطل الموقع
         if (window.Pi) {
           try { 
-            // التثبيت المستقر على نسخة 1.5 ساندبوكس للتجربة
             window.Pi.init({ version: "1.5", sandbox: true }); 
             console.log("Pi SDK Initialized successfully on version 1.5");
           } catch (e) {
             console.error("Pi SDK Init Error:", e);
           }
+        } else {
+          console.log("Running outside Pi Browser - Pi SDK skipped safely.");
         }
       });
     </script>
