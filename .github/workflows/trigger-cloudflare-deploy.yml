@@ -1,0 +1,18 @@
+name: Trigger Cloudflare Pages Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages Deploy Hook
+        run: |
+          echo "Triggering Cloudflare Pages deploy..."
+          curl -X POST "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/04148fdf-60fe-428a-b7ea-91356fa4ec1b" \
+            -H "Content-Type: application/json" \
+            --fail-with-body
+          echo "Deploy hook triggered successfully."
