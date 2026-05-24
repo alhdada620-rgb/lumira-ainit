@@ -1,4 +1,2 @@
 /*
-  Access-Control-Allow-Origin: *
-  Content-Security-Policy: frame-ancestors 'self' https://*.pinet.com https://*.pi https://*.minepi.com pi://* http://localhost:* http://127.0.0.1:*;
-  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors *; img-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval';
