@@ -1,3 +1,4 @@
 /*
   Access-Control-Allow-Origin: *
-  X-Frame-Options: ALLOWALL
+  Content-Security-Policy: frame-ancestors 'self' https://*.pinet.com https://*.pi https://*.minepi.com pi://* http://localhost:* http://127.0.0.1:*;
+  Referrer-Policy: strict-origin-when-cross-origin
