@@ -1,2 +1,2 @@
 /*
-  Content-Security-Policy: default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; frame-ancestors *; img-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval';
+  Content-Security-Policy: frame-ancestors 'self' https://*.pinet.com https://*.minepi.com https://*.pi pi://* http://localhost:* http://127.0.0.1:*;
