@@ -1,16 +1,20 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import { cloudflare } from '@cloudflare/vite-plugin';
+import viteTsConfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    viteTsConfigPaths({ projects: ['./tsconfig.json'] }),
+    tailwindcss(),
+    tanstackStart(),
+    cloudflare({ viteEnvironment: { name: 'ssr' } }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
-  },
-  build: {
-    outDir: 'dist', // إجبار المخرجات تنزل في مجلد dist النظيف
-    emptyOutDir: true, // مسح المجلد القديم عشان ينزل الكود الجديد بالكامل
   },
 });
