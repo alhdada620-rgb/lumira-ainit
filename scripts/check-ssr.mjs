@@ -2,14 +2,15 @@
 /**
  * Post-build SSR smoke check.
  *
- * Runs after `vite build`. Catches ERR_MODULE_NOT_FOUND and similar
- * import-time failures BEFORE the user clicks Publish.
+ * Runs after `vite build`. Catches import-time and runtime JS failures
+ * BEFORE the user clicks Publish.
  *
- * Two checks:
+ * Checks:
  *   1. Scan recent dev-server daemon logs (when available in the sandbox)
- *      for ERR_MODULE_NOT_FOUND / "Cannot find module".
+ *      for module-resolution errors, ReferenceError, SyntaxError,
+ *      TypeError / "Cannot read properties of", etc.
  *   2. Dynamically import the built SSR bundle (dist/server/server.js) so
- *      any missing-module error surfaces here instead of in production.
+ *      any error surfaces here instead of in production.
  *
  * Exits non-zero on failure so the build (and therefore publish) aborts.
  */
@@ -28,7 +29,13 @@ const log = {
 };
 
 let failed = false;
-const PATTERNS = /ERR_MODULE_NOT_FOUND|Cannot find module|Failed to resolve import|missing module/i;
+
+const RESOLUTION_PATTERNS = /ERR_MODULE_NOT_FOUND|Cannot find module|Failed to resolve import|missing module/i;
+const JS_ERROR_PATTERNS = /ReferenceError|SyntaxError|TypeError|Cannot read propert|Cannot read propert|Cannot access before initialization|is not defined|Unexpected token|Unexpected identifier/i;
+const ALL_PATTERNS = new RegExp(
+  `(?:${RESOLUTION_PATTERNS.source.slice(1, -1)}|${JS_ERROR_PATTERNS.source.slice(1, -1)})`,
+  "i"
+);
 
 // 1. Scan dev-server daemon logs if sqlite + db are available.
 try {
@@ -38,13 +45,25 @@ try {
       `sqlite3 ${db} "SELECT content FROM daemon_logs WHERE daemon_name='vite' ORDER BY id DESC LIMIT 300;"`,
       { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
     );
-    const hits = out.split("\n").filter((l) => PATTERNS.test(l));
-    if (hits.length) {
-      log.err(`Found ${hits.length} module-resolution error(s) in dev-server logs:`);
-      hits.slice(0, 5).forEach((h) => console.error(`    ${h.trim()}`));
+    const lines = out.split("\n");
+
+    const resolutionHits = lines.filter((l) => RESOLUTION_PATTERNS.test(l));
+    const jsErrorHits    = lines.filter((l) => JS_ERROR_PATTERNS.test(l));
+
+    if (resolutionHits.length) {
+      log.err(`Found ${resolutionHits.length} module-resolution error(s) in dev-server logs:`);
+      resolutionHits.slice(0, 5).forEach((h) => console.error(`    ${h.trim()}`));
       failed = true;
     } else {
-      log.ok("No ERR_MODULE_NOT_FOUND in recent dev-server logs.");
+      log.ok("No module-resolution errors in recent dev-server logs.");
+    }
+
+    if (jsErrorHits.length) {
+      log.err(`Found ${jsErrorHits.length} JS runtime/syntax error(s) in dev-server logs:`);
+      jsErrorHits.slice(0, 5).forEach((h) => console.error(`    ${h.trim()}`));
+      failed = true;
+    } else {
+      log.ok("No ReferenceError / SyntaxError / TypeError in recent dev-server logs.");
     }
   } else {
     log.info("Sandbox daemon log DB not present — skipping log scan.");
@@ -58,15 +77,18 @@ const serverBundle = resolve(ROOT, "dist/server/server.js");
 if (existsSync(serverBundle)) {
   try {
     await import(pathToFileURL(serverBundle).href);
-    log.ok("SSR bundle imports cleanly (no missing modules).");
+    log.ok("SSR bundle imports cleanly (no missing modules / no throw).");
   } catch (e) {
-    const msg = String(e?.message ?? e);
-    if (PATTERNS.test(msg) || e?.code === "ERR_MODULE_NOT_FOUND") {
-      log.err(`SSR bundle import failed: ${msg}`);
+    const msg   = String(e?.message ?? e);
+    const isResolution = RESOLUTION_PATTERNS.test(msg) || e?.code === "ERR_MODULE_NOT_FOUND";
+    const isJSError    = JS_ERROR_PATTERNS.test(msg);
+
+    if (isResolution || isJSError) {
+      log.err(`SSR bundle import failed: ${msg.split("\n")[0]}`);
       failed = true;
     } else {
       // Non-resolution errors (e.g. env reads at top-level) are acceptable
-      // here — Workers runtime will handle them. We only gate on missing modules.
+      // here — Workers runtime will handle them. We only gate on hard errors.
       log.warn(`SSR bundle import threw (non-resolution): ${msg.split("\n")[0]}`);
     }
   }
@@ -75,7 +97,7 @@ if (existsSync(serverBundle)) {
 }
 
 if (failed) {
-  log.err("Pre-publish check FAILED. Fix module resolution before publishing.");
+  log.err("Pre-publish check FAILED. Fix errors before publishing.");
   process.exit(1);
 }
 log.ok("Pre-publish SSR check passed.");
