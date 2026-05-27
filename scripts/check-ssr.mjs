@@ -31,11 +31,73 @@ const log = {
 let failed = false;
 
 const RESOLUTION_PATTERNS = /ERR_MODULE_NOT_FOUND|Cannot find module|Failed to resolve import|missing module/i;
-const JS_ERROR_PATTERNS = /ReferenceError|SyntaxError|TypeError|Cannot read propert|Cannot read propert|Cannot access before initialization|is not defined|Unexpected token|Unexpected identifier/i;
+const JS_ERROR_PATTERNS = /ReferenceError|SyntaxError|TypeError|Cannot read properties|Cannot access before initialization|is not defined|Unexpected token|Unexpected identifier/i;
 const ALL_PATTERNS = new RegExp(
   `(?:${RESOLUTION_PATTERNS.source.slice(1, -1)}|${JS_ERROR_PATTERNS.source.slice(1, -1)})`,
   "i"
 );
+
+// Collectors for the interactive summary
+const resolutionErrors = [];
+const jsErrors = [];
+
+function addResolution(source, message) {
+  resolutionErrors.push({ source, message: message.trim().slice(0, 300) });
+  failed = true;
+}
+function addJsError(source, message) {
+  jsErrors.push({ source, message: message.trim().slice(0, 300) });
+  failed = true;
+}
+
+function printSummary() {
+  console.log("");
+  console.log("╔══════════════════════════════════════════════════════════════╗");
+  console.log("║                    SSR Smoke Check Summary                   ║");
+  console.log("╠══════════════════════════════════════════════════════════════╣");
+
+  const resCount = resolutionErrors.length;
+  const jsCount  = jsErrors.length;
+
+  if (!resCount && !jsCount && !failed) {
+    console.log("║  ✓ 0 errors found                                            ║");
+  } else {
+    console.log(`║  Module-resolution errors : ${String(resCount).padStart(3)}                          ║`);
+    console.log(`║  JS runtime/syntax errors : ${String(jsCount).padStart(3)}                          ║`);
+  }
+  console.log("╠══════════════════════════════════════════════════════════════╣");
+
+  if (resCount) {
+    console.log("║  Top module-resolution failures:                             ║");
+    const topRes = resolutionErrors.slice(0, 5);
+    topRes.forEach((e, i) => {
+      const line = `  ${i + 1}. [${e.source}] ${e.message}`.slice(0, 62);
+      console.log(`║${line.padEnd(62)}║`);
+    });
+    if (resCount > 5) {
+      console.log(`║  ... and ${resCount - 5} more                            ║`);
+    }
+    console.log("╠══════════════════════════════════════════════════════════════╣");
+  }
+
+  if (jsCount) {
+    console.log("║  Top JS runtime/syntax failures:                             ║");
+    const topJs = jsErrors.slice(0, 5);
+    topJs.forEach((e, i) => {
+      const line = `  ${i + 1}. [${e.source}] ${e.message}`.slice(0, 62);
+      console.log(`║${line.padEnd(62)}║`);
+    });
+    if (jsCount > 5) {
+      console.log(`║  ... and ${jsCount - 5} more                            ║`);
+    }
+    console.log("╠══════════════════════════════════════════════════════════════╣");
+  }
+
+  const status = failed ? "FAILED  — Fix before publishing." : "PASSED";
+  const statusColor = failed ? "\x1b[31m" : "\x1b[32m";
+  console.log(`${statusColor}║  Status: ${status.padEnd(52)}\x1b[0m║`);
+  console.log("╚══════════════════════════════════════════════════════════════╝");
+}
 
 // 1. Scan dev-server daemon logs if sqlite + db are available.
 try {
@@ -52,16 +114,20 @@ try {
 
     if (resolutionHits.length) {
       log.err(`Found ${resolutionHits.length} module-resolution error(s) in dev-server logs:`);
-      resolutionHits.slice(0, 5).forEach((h) => console.error(`    ${h.trim()}`));
-      failed = true;
+      resolutionHits.slice(0, 5).forEach((h) => {
+        console.error(`    ${h.trim()}`);
+        addResolution("dev-server log", h);
+      });
     } else {
       log.ok("No module-resolution errors in recent dev-server logs.");
     }
 
     if (jsErrorHits.length) {
       log.err(`Found ${jsErrorHits.length} JS runtime/syntax error(s) in dev-server logs:`);
-      jsErrorHits.slice(0, 5).forEach((h) => console.error(`    ${h.trim()}`));
-      failed = true;
+      jsErrorHits.slice(0, 5).forEach((h) => {
+        console.error(`    ${h.trim()}`);
+        addJsError("dev-server log", h);
+      });
     } else {
       log.ok("No ReferenceError / SyntaxError / TypeError in recent dev-server logs.");
     }
@@ -85,7 +151,8 @@ if (existsSync(serverBundle)) {
 
     if (isResolution || isJSError) {
       log.err(`SSR bundle import failed: ${msg.split("\n")[0]}`);
-      failed = true;
+      if (isResolution) addResolution("SSR bundle", msg.split("\n")[0]);
+      if (isJSError)    addJsError("SSR bundle", msg.split("\n")[0]);
     } else {
       // Non-resolution errors (e.g. env reads at top-level) are acceptable
       // here — Workers runtime will handle them. We only gate on hard errors.
@@ -96,8 +163,9 @@ if (existsSync(serverBundle)) {
   log.warn(`No SSR bundle at ${serverBundle} — skipping import smoke test.`);
 }
 
+printSummary();
+
 if (failed) {
-  log.err("Pre-publish check FAILED. Fix errors before publishing.");
   process.exit(1);
 }
 log.ok("Pre-publish SSR check passed.");
