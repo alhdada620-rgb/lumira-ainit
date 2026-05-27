@@ -15,10 +15,11 @@
  * Exits non-zero on failure so the build (and therefore publish) aborts.
  */
 
-import { existsSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve, dirname, relative, isAbsolute } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { execSync } from "node:child_process";
+import { findSourceMap, SourceMap } from "node:module";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const log = {
