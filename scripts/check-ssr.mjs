@@ -42,12 +42,79 @@ const ALL_PATTERNS = new RegExp(
 const resolutionErrors = [];
 const jsErrors = [];
 
+// ── Sourcemap resolution helpers ────────────────────────────────────────
+// Cache loaded SourceMap instances by absolute generated-file path.
+const smCache = new Map();
+
+function loadSourceMapFor(absPath) {
+  if (smCache.has(absPath)) return smCache.get(absPath);
+  let sm = null;
+  try {
+    // First try Node's runtime cache (works for already-imported modules).
+    sm = findSourceMap(absPath) ?? null;
+    if (!sm) {
+      // Fall back to reading the sibling .map file from disk.
+      const mapPath = absPath + ".map";
+      if (existsSync(mapPath)) {
+        const payload = JSON.parse(readFileSync(mapPath, "utf8"));
+        sm = new SourceMap(payload);
+      }
+    }
+  } catch {
+    sm = null;
+  }
+  smCache.set(absPath, sm);
+  return sm;
+}
+
+function mapFrame(absPath, line, column) {
+  const sm = loadSourceMapFor(absPath);
+  if (!sm) return null;
+  try {
+    // Node's SourceMap API is 0-indexed for both line and column.
+    const entry = sm.findEntry(Math.max(0, line - 1), Math.max(0, column - 1));
+    if (!entry || !entry.originalSource) return null;
+    let src = entry.originalSource;
+    if (src.startsWith("file://")) src = fileURLToPath(src);
+    if (isAbsolute(src)) {
+      const rel = relative(ROOT, src);
+      if (!rel.startsWith("..")) src = rel;
+    }
+    return {
+      source: src,
+      line: (entry.originalLine ?? 0) + 1,
+      column: (entry.originalColumn ?? 0) + 1,
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Resolve any "<path>:<line>:<col>" reference inside a string to original source.
+// Returns an array of "→ src/foo.ts:12:3" annotation strings (deduped).
+function resolveReferences(text) {
+  const out = new Set();
+  // Match absolute paths, file:// URLs, or dist-relative paths.
+  const re = /(?:file:\/\/)?((?:\/|[A-Za-z]:\\)[^\s:()'"]+|dist\/[^\s:()'"]+):(\d+):(\d+)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    let p = m[1];
+    if (!isAbsolute(p)) p = resolve(ROOT, p);
+    if (!existsSync(p)) continue;
+    const mapped = mapFrame(p, Number(m[2]), Number(m[3]));
+    if (mapped) out.add(`→ ${mapped.source}:${mapped.line}:${mapped.column}`);
+  }
+  return [...out];
+}
+
 function addResolution(source, message) {
-  resolutionErrors.push({ source, message: message.trim().slice(0, 300) });
+  const refs = resolveReferences(message);
+  resolutionErrors.push({ source, message: message.trim().slice(0, 300), refs });
   failed = true;
 }
 function addJsError(source, message) {
-  jsErrors.push({ source, message: message.trim().slice(0, 300) });
+  const refs = resolveReferences(message);
+  jsErrors.push({ source, message: message.trim().slice(0, 300), refs });
   failed = true;
 }
 
