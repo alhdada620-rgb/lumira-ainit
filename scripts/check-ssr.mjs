@@ -135,31 +135,24 @@ function printSummary() {
   }
   console.log("╠══════════════════════════════════════════════════════════════╣");
 
-  if (resCount) {
-    console.log("║  Top module-resolution failures:                             ║");
-    const topRes = resolutionErrors.slice(0, 5);
-    topRes.forEach((e, i) => {
+  const renderGroup = (title, list) => {
+    console.log(`║  ${title.padEnd(60)}║`);
+    list.slice(0, 5).forEach((e, i) => {
       const line = `  ${i + 1}. [${e.source}] ${e.message}`.slice(0, 62);
       console.log(`║${line.padEnd(62)}║`);
+      (e.refs ?? []).slice(0, 3).forEach((r) => {
+        const refLine = `      ${r}`.slice(0, 62);
+        console.log(`║${refLine.padEnd(62)}║`);
+      });
     });
-    if (resCount > 5) {
-      console.log(`║  ... and ${resCount - 5} more                            ║`);
+    if (list.length > 5) {
+      console.log(`║  ... and ${list.length - 5} more`.padEnd(63) + "║");
     }
     console.log("╠══════════════════════════════════════════════════════════════╣");
-  }
+  };
 
-  if (jsCount) {
-    console.log("║  Top JS runtime/syntax failures:                             ║");
-    const topJs = jsErrors.slice(0, 5);
-    topJs.forEach((e, i) => {
-      const line = `  ${i + 1}. [${e.source}] ${e.message}`.slice(0, 62);
-      console.log(`║${line.padEnd(62)}║`);
-    });
-    if (jsCount > 5) {
-      console.log(`║  ... and ${jsCount - 5} more                            ║`);
-    }
-    console.log("╠══════════════════════════════════════════════════════════════╣");
-  }
+  if (resCount) renderGroup("Top module-resolution failures:", resolutionErrors);
+  if (jsCount)  renderGroup("Top JS runtime/syntax failures:", jsErrors);
 
   const status = failed ? "FAILED  — Fix before publishing." : "PASSED";
   const statusColor = failed ? "\x1b[31m" : "\x1b[32m";
