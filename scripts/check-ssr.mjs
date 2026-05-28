@@ -231,6 +231,68 @@ if (existsSync(serverBundle)) {
   log.warn(`No SSR bundle at ${serverBundle} — skipping import smoke test.`);
 }
 
+// 3. Smoke-import every server chunk (server functions, middlewares, route
+//    bundles) under dist/server/assets/ in a Worker-like Node environment.
+//    Catches module-init crashes in individual handlers that the top-level
+//    server.js import may not eagerly evaluate.
+const assetsDir = resolve(ROOT, "dist/server/assets");
+if (existsSync(assetsDir)) {
+  // Worker-like globals. Node 20+ already provides fetch/Request/Response/crypto;
+  // warn if any are missing so the smoke check stays representative.
+  for (const g of ["fetch", "Request", "Response", "Headers", "crypto"]) {
+    if (typeof globalThis[g] === "undefined") {
+      log.warn(`globalThis.${g} unavailable — Node ${process.version} may not match Workers runtime.`);
+    }
+  }
+
+  // Stub env vars that handler modules sometimes read at top-level. Real
+  // values come from Workers at request time; we only want to surface JS
+  // errors, not missing-config errors.
+  const ENV_STUBS = [
+    "SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_SERVICE_ROLE_KEY",
+    "LOVABLE_API_KEY", "PI_NETWORK_API_KEY", "PI_API_KEY",
+  ];
+  for (const k of ENV_STUBS) {
+    if (!process.env[k]) process.env[k] = `__stub_${k.toLowerCase()}__`;
+  }
+
+  const { readdirSync } = await import("node:fs");
+  const chunks = readdirSync(assetsDir)
+    .filter((f) => f.endsWith(".js"))
+    .map((f) => resolve(assetsDir, f));
+
+  let okCount = 0;
+  let failCount = 0;
+  for (const chunk of chunks) {
+    const name = chunk.split("/").pop();
+    try {
+      await import(pathToFileURL(chunk).href);
+      okCount++;
+    } catch (e) {
+      const msg   = String(e?.message ?? e);
+      const stack = String(e?.stack ?? msg);
+      const isResolution = RESOLUTION_PATTERNS.test(msg) || e?.code === "ERR_MODULE_NOT_FOUND";
+      const isJSError    = JS_ERROR_PATTERNS.test(msg);
+      if (isResolution || isJSError) {
+        failCount++;
+        log.err(`Chunk ${name} failed to import: ${msg.split("\n")[0]}`);
+        const refs = resolveReferences(stack);
+        refs.slice(0, 3).forEach((r) => console.error(`    ${r}`));
+        if (isResolution) addResolution(`chunk:${name}`, stack);
+        if (isJSError)    addJsError(`chunk:${name}`, stack);
+      }
+      // Other errors (e.g. config validation) are tolerated here.
+    }
+  }
+  if (failCount === 0) {
+    log.ok(`All ${okCount} server chunk(s) imported cleanly in Worker-like env.`);
+  } else {
+    log.err(`${failCount} of ${chunks.length} server chunk(s) failed to import.`);
+  }
+} else {
+  log.info(`No assets dir at ${assetsDir} — skipping per-chunk smoke test.`);
+}
+
 printSummary();
 
 if (failed) {
