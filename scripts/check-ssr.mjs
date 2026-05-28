@@ -293,6 +293,87 @@ if (existsSync(assetsDir)) {
   log.info(`No assets dir at ${assetsDir} — skipping per-chunk smoke test.`);
 }
 
+// 4. Limited live invocation of the SSR handler with mock Request/Response
+//    objects, in a Worker-like Node env. Exercises the routing + render path
+//    end-to-end so route loader / component init errors surface before publish.
+if (existsSync(serverBundle)) {
+  // Ensure Worker-like globals exist (Node 20+ has them all).
+  for (const g of ["fetch", "Request", "Response", "Headers", "crypto"]) {
+    if (typeof globalThis[g] === "undefined") {
+      log.warn(`globalThis.${g} missing — skipping live SSR invocation.`);
+    }
+  }
+
+  try {
+    const mod = await import(pathToFileURL(serverBundle).href);
+    const handler = mod.default ?? mod;
+    const fetchFn =
+      typeof handler === "function" ? handler :
+      typeof handler?.fetch === "function" ? handler.fetch.bind(handler) :
+      null;
+
+    if (!fetchFn) {
+      log.warn("SSR bundle has no callable fetch handler — skipping live invocation.");
+    } else {
+      // Probe a representative set of routes. Add more as the app grows.
+      const probes = [
+        { method: "GET", path: "/" },
+        { method: "GET", path: "/mall" },
+        { method: "GET", path: "/__route_that_does_not_exist__" },
+      ];
+
+      // Minimal env / ctx shaped like Cloudflare Workers.
+      const env = { ...process.env };
+      const ctx = { waitUntil: () => {}, passThroughOnException: () => {} };
+
+      let okProbes = 0;
+      let failProbes = 0;
+      for (const p of probes) {
+        const url = `http://localhost${p.path}`;
+        try {
+          const req = new Request(url, { method: p.method, headers: { accept: "text/html" } });
+          const resPromise = Promise.resolve(fetchFn(req, env, ctx));
+          // 8s budget per probe — SSR shouldn't take longer in smoke mode.
+          const res = await Promise.race([
+            resPromise,
+            new Promise((_, rej) => setTimeout(() => rej(new Error("SSR probe timeout")), 8000)),
+          ]);
+          if (!(res instanceof Response)) {
+            throw new Error(`Handler returned non-Response for ${p.path}: ${typeof res}`);
+          }
+          // Drain body so any stream-time error throws here.
+          const body = await res.text();
+          // Surface "unhandled" h3 500s as JS errors so they appear in the summary.
+          if (res.status >= 500 && body.includes('"unhandled":true')) {
+            failProbes++;
+            log.err(`SSR ${p.method} ${p.path} → ${res.status} (h3 unhandled)`);
+            addJsError(`ssr:${p.path}`, `h3 unhandled 500 on ${p.path}: ${body.slice(0, 200)}`);
+            continue;
+          }
+          okProbes++;
+          log.ok(`SSR ${p.method} ${p.path} → ${res.status} (${body.length}b)`);
+        } catch (e) {
+          const msg   = String(e?.message ?? e);
+          const stack = String(e?.stack ?? msg);
+          const isResolution = RESOLUTION_PATTERNS.test(msg) || e?.code === "ERR_MODULE_NOT_FOUND";
+          const isJSError    = JS_ERROR_PATTERNS.test(msg) || ALL_PATTERNS.test(stack);
+          failProbes++;
+          log.err(`SSR ${p.method} ${p.path} threw: ${msg.split("\n")[0]}`);
+          const refs = resolveReferences(stack);
+          refs.slice(0, 3).forEach((r) => console.error(`    ${r}`));
+          if (isResolution) addResolution(`ssr:${p.path}`, stack);
+          else if (isJSError) addJsError(`ssr:${p.path}`, stack);
+          else addJsError(`ssr:${p.path}`, stack); // count anything that escapes here
+        }
+      }
+      log.info(`Live SSR probes: ${okProbes} ok, ${failProbes} failed.`);
+    }
+  } catch (e) {
+    log.warn(`Could not run live SSR probes: ${String(e?.message ?? e).split("\n")[0]}`);
+  }
+}
+
+
 printSummary();
 
 if (failed) {
