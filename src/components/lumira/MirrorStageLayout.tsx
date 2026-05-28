@@ -19,9 +19,10 @@ const HAIR_COLORS = ["#1a0f08", "#2a1a10", "#5a3820", "#8a5a3a", "#c89a5a", "#e8
 
 interface Props {
   onBack: () => void;
+  children?: React.ReactNode;
 }
 
-export function MirrorStageLayout({ onBack }: Props) {
+export function MirrorStageLayout({ onBack, children: _children }: Props) {
   const { lang } = useT();
   const isAr = lang === "ar";
   const p = useProfile();
