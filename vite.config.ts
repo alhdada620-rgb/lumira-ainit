@@ -23,10 +23,5 @@ function injectedHeadScriptsStub(): Plugin {
 export default defineConfig({
   vite: {
     plugins: [injectedHeadScriptsStub()],
-    build: {
-      // Emit sourcemaps so check-ssr.mjs can map runtime errors back to
-      // original source files/lines before publish.
-      sourcemap: true,
-    },
   },
 });
