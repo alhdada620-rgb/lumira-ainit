@@ -1,68 +1,37 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-    <script>
-        // تهيئة الـ SDK فور تحميل الصفحة
-        window.onload = function() {
-            if (window.Pi) {
-                window.Pi.init({ version: "1.5", sandbox: true });
-                console.log("Pi SDK Initialized");
-            }
-        };
-    </script>
-  <meta property="og:title" content="https://lumira-ai.lovable.app/">
-  <meta name="twitter:title" content="https://lumira-ai.lovable.app/">
-  <meta name="description" content="Lumira Health &amp; Elegance is a smart mirror dashboard offering AI-driven beauty, health, and fashion insights with AR try-on.">
-  <meta property="og:description" content="Lumira Health &amp; Elegance is a smart mirror dashboard offering AI-driven beauty, health, and fashion insights with AR try-on.">
-  <meta name="twitter:description" content="Lumira Health &amp; Elegance is a smart mirror dashboard offering AI-driven beauty, health, and fashion insights with AR try-on.">
-  <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/qBiC3UTMEGMU7NGx1VCYS5AMicw1/social-images/social-1779936499958-image_1778683968113.webp">
-  <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/qBiC3UTMEGMU7NGx1VCYS5AMicw1/social-images/social-1779936499958-image_1778683968113.webp">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta property="og:type" content="website">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumira · المراية الذكية للصحة والأناقة</title>
+
+  <!-- Pi SDK -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+  <script>
+    window.onload = function() {
+      if (window.Pi) {
+        window.Pi.init({ version: "1.5", sandbox: true });
+        console.log("Pi SDK Initialized");
+      }
+    };
+  </script>
+
+  <!-- SEO & Social -->
+  <meta name="description" content="Lumira Smart Mirror — تجربة الذكاء الاصطناعي للصحة والموضة مع محفظة Pi Network." />
+  <meta property="og:title" content="Lumira · Health & Elegance Smart Mirror" />
+  <meta property="og:description" content="AI-driven skin, fashion, and health dashboard with AR try-on and Pi Network wallet." />
+  <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/qBiC3UTMEGMU7NGx1VCYS5AMicw1/social-images/social-1779936499958-image_1778683968113.webp" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Lumira · Health & Elegance Smart Mirror" />
+  <meta name="twitter:description" content="AI-driven skin, fashion, and health dashboard with AR try-on and Pi Network wallet." />
+  <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/qBiC3UTMEGMU7NGx1VCYS5AMicw1/social-images/social-1779936499958-image_1778683968113.webp" />
 </head>
-<body style="text-align:center; padding-top:50px; font-family:sans-serif;">
-    <h2>Lumira Test Payment</h2>
-    <button id="pay-btn" style="padding:20px; background:purple; color:white; border-radius:15px; font-size:18px;">
-        إضغط هنا لفتح المحفظة ودفع 0.1 Pi
-    </button>
-    <p id="status" style="margin-top:20px; color:blue;"></p>
+<body>
+  <!-- Root app container -->
+  <div id="root"></div>
 
-    <script>
-        document.getElementById('pay-btn').onclick = async function() {
-            const status = document.getElementById('status');
-            
-            if (!window.Pi) {
-                alert("برجاء فتح الرابط داخل Pi Browser");
-                return;
-            }
-
-            status.innerText = "جاري الاتصال بالمحفظة...";
-
-            try {
-                // طلب التوثيق أولاً لإيقاظ الـ SDK
-                await window.Pi.authenticate(['payments']);
-                
-                // إنشاء عملية الدفع
-                await window.Pi.createPayment({
-                    amount: 0.1,
-                    memo: "Final Step 10 Verification",
-                    metadata: { orderId: "12345" }
-                }, {
-                    onReadyForServerApproval: (id) => { status.innerText = "تمت الموافقة، جاري التأكيد..."; },
-                    onReadyForServerCompletion: (id, tx) => { 
-                        status.style.color = "green";
-                        status.innerText = "مبروك! تمت العملية بنجاح.";
-                        alert("تم الدفع! الخطوة 10 المفروض تنور أخضر.");
-                    },
-                    onCancel: (id) => { status.innerText = "تم إلغاء العملية."; },
-                    onError: (err) => { status.innerText = "خطأ: " + err.message; }
-                });
-            } catch (err) {
-                status.innerText = "خطأ في التوثيق: " + err.message;
-            }
-        };
-    </script>
+  <!-- React/Vite entry -->
+  <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>
