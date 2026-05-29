@@ -12,10 +12,10 @@ export const verifyPiAccessToken = createServerFn({ method: "POST" })
     const res = await fetch("https://api.minepi.com/v2/me", {
       headers: { Authorization: `Bearer ${data.accessToken}` },
     });
-
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      throw new Error(`Pi /v2/me validation failed (${res.status}): ${text || res.statusText}`);
+      console.error("Pi /v2/me validation failed", res.status, text || res.statusText);
+      throw new Error("Authentication failed. Please try again.");
     }
 
     const me = (await res.json()) as { uid: string; username: string };
