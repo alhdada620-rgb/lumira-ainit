@@ -79,7 +79,7 @@ function RootComponent() {
   return (
     <>
       <Outlet />
-      <PiDebugOverlay />
+      {import.meta.env.DEV && <PiDebugOverlay />}
     </>
   );
 }
