@@ -13,6 +13,7 @@ const InputSchema = z.object({
 export const generateSkinInsight = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
+  .handler(async ({ data }) => {
     const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
     if (!LOVABLE_API_KEY) {
       return { insight: "AI insights unavailable. Please configure Lovable AI.", error: "missing_key" as const };
