@@ -97,7 +97,8 @@ export function PiPayWallet() {
               await approvePiPayment({ data: { paymentId } });
               setState("approved");
             } catch (e) {
-              setErrorMsg((e as Error).message);
+              console.error("approvePiPayment failed", e);
+              setErrorMsg(isAr ? "تعذّر معالجة الدفع. حاول مرة أخرى." : "Payment could not be processed. Please try again.");
               setState("error");
             }
           },
@@ -107,16 +108,21 @@ export function PiPayWallet() {
               setState("completed");
               setTimeout(() => setState("idle"), 2200);
             } catch (e) {
-              setErrorMsg((e as Error).message);
+              console.error("completePiPayment failed", e);
+              setErrorMsg(isAr ? "تعذّر إكمال الدفع. حاول مرة أخرى." : "Payment could not be completed. Please try again.");
               setState("error");
             }
           },
           onCancel: () => { setState("idle"); },
-          onError: (err) => { setErrorMsg(err.message); setState("error"); },
-        },
+          onError: (err) => {
+            console.error("Pi createPayment error", err);
+            setErrorMsg(isAr ? "حدث خطأ في الدفع. حاول مرة أخرى." : "A payment error occurred. Please try again.");
+            setState("error");
+          },
       );
     } catch (e) {
-      setErrorMsg((e as Error).message);
+      console.error("payWithPi failed", e);
+      setErrorMsg(isAr ? "تعذّر بدء عملية الدفع." : "Could not start the payment.");
       setState("error");
     }
   };
