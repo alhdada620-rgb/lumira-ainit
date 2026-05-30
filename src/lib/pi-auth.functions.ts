@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
-import { rateLimit } from "./rate-limit.server";
+import { rateLimit, getClientIp } from "./rate-limit.server";
 
 /**
  * Validates a Pi Network access token by calling Pi's /v2/me endpoint
@@ -28,10 +28,7 @@ export const verifyPiAccessToken = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const req = getRequest();
-    const ip =
-      req?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-      req?.headers.get("x-real-ip") ||
-      "unknown";
+    const ip = req ? getClientIp(req.headers) : "unknown";
 
     // 10 verification attempts per IP per minute.
     if (!rateLimit(`pi-verify:${ip}`, 10, 60_000)) {
