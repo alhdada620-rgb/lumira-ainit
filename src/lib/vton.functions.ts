@@ -23,11 +23,18 @@ const InputSchema = z.object({
 export const generatePhotorealLook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => InputSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { rateLimit } = await import("./rate-limit.server");
+    // 10 photoreal generations per user per minute.
+    if (!rateLimit(`vton:${userId}`, 10, 60_000)) {
+      return { image: null as string | null, error: "Too many requests. Please slow down." };
+    }
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
       return { image: null as string | null, error: "AI gateway not configured" };
     }
+
 
     const fitNote = [
       data.heightCm ? `${data.heightCm} cm tall` : null,
