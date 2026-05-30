@@ -3,10 +3,17 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InputSchema = z.object({
-  // data URL of the captured user frame (jpeg/png base64)
-  userImage: z.string().min(32).max(8_000_000),
+  // data URL of the captured user frame (jpeg/png/webp base64)
+  userImage: z
+    .string()
+    .min(32)
+    .max(8_000_000)
+    .regex(/^data:image\/(png|jpe?g|webp);base64,[A-Za-z0-9+/=]+$/, {
+      message: "userImage must be a base64 image data URL",
+    }),
   // Plain-language description of the garment to try on
   garmentPrompt: z.string().min(2).max(400),
+
   // Optional body profile to fine-tune fit
   heightCm: z.number().min(80).max(250).optional(),
   weightKg: z.number().min(20).max(300).optional(),
