@@ -78,7 +78,7 @@ serve(async (req) => {
 
     const heightStr = profile.height ?? "—";
     const weightStr = profile.weight ?? "—";
-    const user = isAr
+    const userMsg = isAr
       ? `<user_data>\nالزي: ${outfit.brand} · ${outfit.name} (${outfit.category} / ${outfit.fabric})\nالبروفايل: ${profile.gender}, ${heightStr}سم, ${weightStr}كجم, لون البشرة ${profile.skinTone}.\n</user_data>`
       : `<user_data>\nOutfit: ${outfit.brand} · ${outfit.name} (${outfit.category} / ${outfit.fabric})\nProfile: ${profile.gender}, ${heightStr}cm, ${weightStr}kg, skin tone ${profile.skinTone}.\n</user_data>`;
 
