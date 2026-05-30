@@ -13,11 +13,18 @@ const InputSchema = z.object({
 export const generateSkinInsight = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => InputSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { rateLimit } = await import("@/lib/rate-limit.server");
+    // 20 AI insight calls per user per minute.
+    if (!rateLimit(`skin-insight:${userId}`, 20, 60_000)) {
+      return { insight: "Too many requests. Please slow down.", error: "rate_limit" as const };
+    }
     const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
     if (!LOVABLE_API_KEY) {
       return { insight: "AI insights unavailable. Please configure Lovable AI.", error: "missing_key" as const };
     }
+
 
     const systemPrompt = `You are Lumira, an AI skincare advisor on a luxury smart mirror.
 Give ONE concise, elegant skincare tip (max 2 sentences, ~30 words) personalized to the user's metrics.

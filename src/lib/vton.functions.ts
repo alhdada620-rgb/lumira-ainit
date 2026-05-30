@@ -3,10 +3,17 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InputSchema = z.object({
-  // data URL of the captured user frame (jpeg/png base64)
-  userImage: z.string().min(32).max(8_000_000),
+  // data URL of the captured user frame (jpeg/png/webp base64)
+  userImage: z
+    .string()
+    .min(32)
+    .max(8_000_000)
+    .regex(/^data:image\/(png|jpe?g|webp);base64,[A-Za-z0-9+/=]+$/, {
+      message: "userImage must be a base64 image data URL",
+    }),
   // Plain-language description of the garment to try on
   garmentPrompt: z.string().min(2).max(400),
+
   // Optional body profile to fine-tune fit
   heightCm: z.number().min(80).max(250).optional(),
   weightKg: z.number().min(20).max(300).optional(),
@@ -16,11 +23,18 @@ const InputSchema = z.object({
 export const generatePhotorealLook = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => InputSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const { rateLimit } = await import("./rate-limit.server");
+    // 10 photoreal generations per user per minute.
+    if (!rateLimit(`vton:${userId}`, 10, 60_000)) {
+      return { image: null as string | null, error: "Too many requests. Please slow down." };
+    }
     const apiKey = process.env.LOVABLE_API_KEY;
     if (!apiKey) {
       return { image: null as string | null, error: "AI gateway not configured" };
     }
+
 
     const fitNote = [
       data.heightCm ? `${data.heightCm} cm tall` : null,
