@@ -25,11 +25,41 @@ async function piFetch(path: string, init: RequestInit = {}): Promise<Record<str
   return body;
 }
 
+/**
+ * Server-side "back-edge" verification: ask Pi's API for the canonical payment
+ * record and confirm it exists and looks plausible before we touch our DB or
+ * call /approve or /complete. This is what lets feature access be checked
+ * server-side rather than relying on client React state.
+ */
+async function fetchPiPayment(paymentId: string): Promise<{
+  status?: { developer_approved?: boolean; transaction_verified?: boolean; developer_completed?: boolean; cancelled?: boolean };
+  transaction?: { txid?: string; verified?: boolean } | null;
+  amount?: number;
+  user_uid?: string;
+} | null> {
+  try {
+    const body = await piFetch(`/payments/${paymentId}`, { method: "GET" });
+    return body as Record<string, unknown> as Awaited<ReturnType<typeof fetchPiPayment>>;
+  } catch (e) {
+    console.error("fetchPiPayment failed", paymentId, e);
+    return null;
+  }
+}
+
 export const approvePiPayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data) => z.object({ paymentId: z.string().min(1).max(128) }).parse(data))
+  .inputValidator((data) => z.object({ paymentId: z.string().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/) }).parse(data))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+
+    // Back-edge check: confirm Pi knows about this payment before we record/approve it.
+    const piPayment = await fetchPiPayment(data.paymentId);
+    if (!piPayment) {
+      throw new Error("Payment not found.");
+    }
+    if (piPayment.status?.cancelled) {
+      throw new Error("Payment was cancelled.");
+    }
 
     // Claim or verify ownership of this payment id (RLS enforces user_id = auth.uid()).
     const { data: existing, error: selErr } = await supabase
@@ -68,8 +98,8 @@ export const completePiPayment = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) =>
     z.object({
-      paymentId: z.string().min(1).max(128),
-      txid: z.string().min(1).max(256),
+      paymentId: z.string().min(1).max(128).regex(/^[A-Za-z0-9_-]+$/),
+      txid: z.string().min(1).max(256).regex(/^[A-Za-z0-9_-]+$/),
     }).parse(data),
   )
   .handler(async ({ data, context }) => {
@@ -89,6 +119,24 @@ export const completePiPayment = createServerFn({ method: "POST" })
       throw new Error("Forbidden");
     }
 
+    // Back-edge check: ask Pi for the canonical record and confirm the txid
+    // the client sent matches what Pi reports + the transaction is verified.
+    const piPayment = await fetchPiPayment(data.paymentId);
+    if (!piPayment) {
+      throw new Error("Payment not found.");
+    }
+    if (piPayment.status?.cancelled) {
+      throw new Error("Payment was cancelled.");
+    }
+    const piTxid = piPayment.transaction?.txid;
+    if (!piTxid || piTxid !== data.txid) {
+      console.error("txid mismatch", { reported: data.txid, fromPi: piTxid });
+      throw new Error("Transaction ID does not match Pi records.");
+    }
+    if (piPayment.transaction?.verified === false) {
+      throw new Error("Transaction not yet verified on Pi network.");
+    }
+
     await piFetch(`/payments/${data.paymentId}/complete`, {
       method: "POST",
       body: JSON.stringify({ txid: data.txid }),
@@ -100,4 +148,26 @@ export const completePiPayment = createServerFn({ method: "POST" })
       .eq("payment_id", data.paymentId);
 
     return { ok: true as const };
+  });
+
+/**
+ * Server-side entitlement check. Use this from server functions guarding
+ * paid features instead of trusting client React state. Returns true only
+ * if the authenticated user has at least one completed payment row.
+ */
+export const hasPiEntitlement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data, error } = await supabase
+      .from("pi_payments")
+      .select("payment_id")
+      .eq("user_id", userId)
+      .eq("status", "completed")
+      .limit(1);
+    if (error) {
+      console.error("hasPiEntitlement query failed", error);
+      return { entitled: false as const };
+    }
+    return { entitled: (data?.length ?? 0) > 0 };
   });
