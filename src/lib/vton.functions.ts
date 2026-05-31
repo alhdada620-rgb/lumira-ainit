@@ -2,6 +2,19 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+// Strip control chars, prompt-injection delimiters, code-fence/HTML-ish
+// characters, and collapse runs of repeated dashes/equals/hashes that
+// jailbreak prompts often use as section markers. Mirrors the sanitizer
+// used in the style-advisor edge function.
+function sanitizePrompt(input: string): string {
+  return input
+    .replace(/[\u0000-\u001F\u007F]/g, " ")
+    .replace(/[`<>]/g, "")
+    .replace(/-{3,}|={3,}|#{2,}/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 const InputSchema = z.object({
   // data URL of the captured user frame (jpeg/png/webp base64)
   userImage: z
@@ -11,8 +24,14 @@ const InputSchema = z.object({
     .regex(/^data:image\/(png|jpe?g|webp);base64,[A-Za-z0-9+/=]+$/, {
       message: "userImage must be a base64 image data URL",
     }),
-  // Plain-language description of the garment to try on
-  garmentPrompt: z.string().min(2).max(400),
+  // Plain-language description of the garment to try on.
+  // Sanitized to neutralize prompt-injection attempts before it reaches the model.
+  garmentPrompt: z
+    .string()
+    .min(2)
+    .max(400)
+    .transform(sanitizePrompt)
+    .refine((s) => s.length >= 2, { message: "garmentPrompt is empty after sanitization" }),
 
   // Optional body profile to fine-tune fit
   heightCm: z.number().min(80).max(250).optional(),
