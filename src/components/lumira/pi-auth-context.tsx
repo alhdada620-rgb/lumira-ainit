@@ -77,7 +77,8 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
       const Pi = await waitForPi();
 
       // Treat Pi.init(...) as a Promise — await it fully before authenticate().
-      await Promise.resolve(Pi.init({ version: "2.0", sandbox: true }));
+      const sandbox = (import.meta.env.VITE_PI_SANDBOX ?? "true") !== "false";
+      await Promise.resolve(Pi.init({ version: "2.0", sandbox }));
 
       setStatus("authenticating");
       const auth = await Pi.authenticate(["username"], () => { /* no-op */ });

@@ -43,20 +43,21 @@ export function PiPayWallet() {
   const [state, setState] = useState<PayState>("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Initialize Pi SDK in sandbox mode (Testnet) once available
+  // Initialize Pi SDK once available. Sandbox flag is env-driven.
+  const piSandbox = (import.meta.env.VITE_PI_SANDBOX ?? "true") !== "false";
   useEffect(() => {
     let cancelled = false;
     const tryInit = () => {
       if (cancelled) return;
       if (window.Pi) {
-        try { window.Pi.init({ version: "2.0", sandbox: true }); } catch { /* already inited */ }
+        try { window.Pi.init({ version: "2.0", sandbox: piSandbox }); } catch { /* already inited */ }
         return;
       }
       setTimeout(tryInit, 300);
     };
     tryInit();
     return () => { cancelled = true; };
-  }, []);
+  }, [piSandbox]);
 
   const usd = (balance * 0.336).toFixed(2);
 
@@ -80,7 +81,7 @@ export function PiPayWallet() {
     try {
       setState("auth");
       // Await Pi.init() fully (treat as Promise) before any authenticate/createPayment call.
-      await Promise.resolve(window.Pi.init({ version: "2.0", sandbox: true }));
+      await Promise.resolve(window.Pi.init({ version: "2.0", sandbox: piSandbox }));
       await window.Pi.authenticate(["username", "payments"], handleIncomplete);
 
       setState("creating");
