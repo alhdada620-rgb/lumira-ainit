@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      pi_identities: {
+        Row: {
+          created_at: string
+          id: string
+          last_verified_at: string
+          pi_uid: string
+          pi_username: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_verified_at?: string
+          pi_uid: string
+          pi_username: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_verified_at?: string
+          pi_uid?: string
+          pi_username?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pi_payments: {
         Row: {
           created_at: string
