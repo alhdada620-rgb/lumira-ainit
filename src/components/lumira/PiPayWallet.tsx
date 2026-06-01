@@ -81,7 +81,7 @@ export function PiPayWallet() {
     try {
       setState("auth");
       // Await Pi.init() fully (treat as Promise) before any authenticate/createPayment call.
-      await Promise.resolve(window.Pi.init({ version: "2.0", sandbox: true }));
+      await Promise.resolve(window.Pi.init({ version: "2.0", sandbox: piSandbox }));
       await window.Pi.authenticate(["username", "payments"], handleIncomplete);
 
       setState("creating");
