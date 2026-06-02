@@ -115,7 +115,9 @@ export const approvePiPayment = createServerFn({ method: "POST" })
 
     await piFetch(`/payments/${data.paymentId}/approve`, { method: "POST" });
 
-    await supabase
+    // Status updates go through service role; authenticated UPDATE is revoked
+    // so clients cannot self-promote a row to 'completed' via PostgREST.
+    await supabaseAdmin
       .from("pi_payments")
       .update({ status: "approved", updated_at: new Date().toISOString() })
       .eq("payment_id", data.paymentId);
@@ -181,7 +183,7 @@ export const completePiPayment = createServerFn({ method: "POST" })
       body: JSON.stringify({ txid: data.txid }),
     });
 
-    await supabase
+    await supabaseAdmin
       .from("pi_payments")
       .update({ status: "completed", txid: data.txid, updated_at: new Date().toISOString() })
       .eq("payment_id", data.paymentId);
