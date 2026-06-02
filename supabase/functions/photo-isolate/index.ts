@@ -34,35 +34,7 @@ serve(async (req) => {
     const badUrl = () => new Response(JSON.stringify({ error: "Invalid imageUrl" }), {
       status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
-    if (!imageUrl || typeof imageUrl !== "string") return badUrl();
-    // Allow https URLs (<=2048 chars) or data:image/* URIs (<=8MB)
-    if (imageUrl.startsWith("data:")) {
-      if (!/^data:image\/(png|jpeg|jpg|webp|gif);base64,/i.test(imageUrl)) return badUrl();
-      if (imageUrl.length > 8 * 1024 * 1024) return badUrl();
-    } else {
-      if (imageUrl.length > 2048) return badUrl();
-      let parsed: URL;
-      try { parsed = new URL(imageUrl); } catch { return badUrl(); }
-      if (parsed.protocol !== "https:") return badUrl();
-      const host = parsed.hostname.toLowerCase();
-      // Strip brackets from IPv6 literal hosts (URL.hostname keeps them)
-      const bareHost = host.startsWith("[") && host.endsWith("]")
-        ? host.slice(1, -1)
-        : host;
-      const isIPv6Private =
-        bareHost === "::1" || bareHost === "::" ||
-        /^fe[89ab][0-9a-f]?:/i.test(bareHost) || // fe80::/10 link-local
-        /^f[cd][0-9a-f]{2}:/i.test(bareHost) ||  // fc00::/7 unique-local
-        /^::ffff:(127|10|169\.254|192\.168|172\.(1[6-9]|2\d|3[01]))\./i.test(bareHost); // IPv4-mapped
-      if (
-        host === "localhost" || host === "0.0.0.0" ||
-        /^127\./.test(host) || /^10\./.test(host) ||
-        /^192\.168\./.test(host) || /^169\.254\./.test(host) ||
-        /^172\.(1[6-9]|2\d|3[0-1])\./.test(host) ||
-        host.endsWith(".local") || host.endsWith(".internal") ||
-        isIPv6Private
-      ) return badUrl();
-    }
+    if (!isSafeImageUrl(imageUrl)) return badUrl();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
