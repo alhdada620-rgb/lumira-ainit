@@ -26,7 +26,7 @@ export function isSafeImageUrl(imageUrl: unknown): boolean {
     bareHost === "::1" || bareHost === "::" ||
     /^fe[89ab][0-9a-f]?:/i.test(bareHost) ||      // fe80::/10 link-local
     /^f[cd][0-9a-f]{2}:/i.test(bareHost) ||       // fc00::/7 unique-local
-    /^::ffff:(127|10|169\.254|192\.168|172\.(1[6-9]|2\d|3[01]))\./i.test(bareHost);
+    /^::ffff:/i.test(bareHost);                    // any IPv4-mapped IPv6 (URL parser normalises dotted form to hex)
 
   if (
     host === "localhost" || host === "0.0.0.0" ||
