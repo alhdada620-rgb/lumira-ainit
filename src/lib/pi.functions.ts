@@ -183,7 +183,7 @@ export const completePiPayment = createServerFn({ method: "POST" })
       body: JSON.stringify({ txid: data.txid }),
     });
 
-    await supabase
+    await supabaseAdmin
       .from("pi_payments")
       .update({ status: "completed", txid: data.txid, updated_at: new Date().toISOString() })
       .eq("payment_id", data.paymentId);
