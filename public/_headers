@@ -1,2 +1,15 @@
 /*
   Content-Security-Policy: frame-ancestors 'self' https://*.pinet.com https://*.minepi.com https://*.pi pi://* http://localhost:* http://127.0.0.1:*;
+
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+/
+  Cache-Control: no-cache, no-store, must-revalidate

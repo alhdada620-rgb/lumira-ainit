@@ -13,8 +13,47 @@
         window.Pi.init({ version: "1.5", sandbox: true });
         console.log("Pi SDK Initialized");
       }
+
+      // Pi Browser cache-buster: register a service worker that wipes
+      // stale caches on every publish, and auto-reload when it activates.
+      if ('serviceWorker' in navigator) {
+        // Bump this version string in sync with public/sw.js BUILD_VERSION
+        // (or rely on the no-cache header for /sw.js so the new file is
+        // always fetched). The ?v= forces Pi Browser to refetch the SW URL.
+        var SW_VERSION = 'v3';
+        var swUrl = '/sw.js?v=' + SW_VERSION;
+
+        navigator.serviceWorker.register(swUrl).then(function (reg) {
+          // Check for updates on every page load (Pi Browser stays open long).
+          reg.update().catch(function () {});
+
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+          reg.addEventListener('updatefound', function () {
+            var nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener('statechange', function () {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                nw.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+        }).catch(function (err) {
+          console.warn('SW registration failed:', err);
+        });
+
+        // When a new SW takes control, reload once to load the fresh build.
+        var reloaded = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+          if (reloaded) return;
+          reloaded = true;
+          window.location.reload();
+        });
+      }
     };
   </script>
+
 
   <!-- SEO & Social -->
   <meta name="description" content="Lumira Smart Mirror — تجربة الذكاء الاصطناعي للصحة والموضة مع محفظة Pi Network." />
