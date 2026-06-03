@@ -54,6 +54,43 @@ export const Route = createRootRoute({
     ],
     scripts: [
       { src: "https://sdk.minepi.com/pi-sdk.js" },
+      {
+        children: `
+          window.addEventListener('load', function () {
+            try {
+              if (window.Pi && !window.__piInitDone) {
+                window.__piInitDone = true;
+                window.Pi.init({ version: "2.0", sandbox: true });
+                console.log("Pi SDK Initialized");
+              }
+            } catch (e) { console.warn("Pi SDK init failed:", e); }
+
+            if ('serviceWorker' in navigator) {
+              var swUrl = '/sw.js?v=v3';
+              navigator.serviceWorker.register(swUrl).then(function (reg) {
+                reg.update().catch(function () {});
+                if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                reg.addEventListener('updatefound', function () {
+                  var nw = reg.installing;
+                  if (!nw) return;
+                  nw.addEventListener('statechange', function () {
+                    if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                      nw.postMessage({ type: 'SKIP_WAITING' });
+                    }
+                  });
+                });
+              }).catch(function (err) { console.warn('SW registration failed:', err); });
+
+              var reloaded = false;
+              navigator.serviceWorker.addEventListener('controllerchange', function () {
+                if (reloaded) return;
+                reloaded = true;
+                window.location.reload();
+              });
+            }
+          });
+        `,
+      },
     ],
   }),
   shellComponent: RootShell,
