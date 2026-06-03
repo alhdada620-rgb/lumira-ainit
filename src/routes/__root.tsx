@@ -60,7 +60,7 @@ export const Route = createRootRoute({
             try {
               if (window.Pi && !window.__piInitDone) {
                 window.__piInitDone = true;
-                window.Pi.init({ version: "2.0", sandbox: true });
+                window.Pi.init({ version: "1.5", sandbox: true });
                 console.log("Pi SDK Initialized");
               }
             } catch (e) { console.warn("Pi SDK init failed:", e); }
