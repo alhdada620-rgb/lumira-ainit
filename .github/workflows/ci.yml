@@ -8,6 +8,9 @@ on:
 
 jobs:
   build:
+    # Stable job name — use "build" as the required status check in
+    # GitHub branch protection for `main`.
+    name: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
