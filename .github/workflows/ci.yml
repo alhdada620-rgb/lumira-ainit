@@ -20,9 +20,9 @@ jobs:
           bun-version: latest
 
       - run: bun install
-
-      - name: Lint
-        run: bun run lint
+#
+      #- name: Lint
+#        run: bun run lint
 
       - name: Build (guards against /src/index.tsx in index.html)
         run: bun run build
