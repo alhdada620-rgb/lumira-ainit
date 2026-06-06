@@ -1,5 +1,5 @@
 [build]
-  command = "bun run build && mkdir -p dist/client && cp public/validation-key.txt dist/client/validation-key.txt"
+  command = "bun run build"
   publish = "dist/client"
 
 [build.environment]
