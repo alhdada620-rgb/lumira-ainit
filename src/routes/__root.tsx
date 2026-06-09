@@ -109,9 +109,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <style dangerouslySetInnerHTML={{ __html: INITIAL_LOADER_CSS }} />
       </head>
       <body>
+        <div id="initial-loader" aria-hidden="true">
+          <div className="ring" />
+          <div className="brand">Lumira</div>
+          <div className="hint">جاري التحميل…</div>
+        </div>
         {children}
+        <script dangerouslySetInnerHTML={{ __html: INITIAL_LOADER_HIDE_JS }} />
         <Scripts />
       </body>
     </html>
@@ -119,6 +126,14 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  useEffect(() => {
+    const el = document.getElementById("initial-loader");
+    if (!el) return;
+    el.classList.add("hide");
+    const t = setTimeout(() => el.parentNode?.removeChild(el), 400);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <>
       <Outlet />
@@ -126,3 +141,4 @@ function RootComponent() {
     </>
   );
 }
+
