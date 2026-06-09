@@ -1,7 +1,13 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 import { PiDebugOverlay } from "@/components/lumira/PiDebugOverlay";
+
+const INITIAL_LOADER_CSS = `#initial-loader{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#0b0b12;color:#e8e6f3;font-family:'Tajawal','Inter',system-ui,sans-serif;z-index:9999;transition:opacity .35s ease}#initial-loader.hide{opacity:0;pointer-events:none}#initial-loader .ring{width:54px;height:54px;border-radius:50%;border:3px solid rgba(255,255,255,.12);border-top-color:#a78bfa;animation:lumira-spin .9s linear infinite}#initial-loader .brand{font-size:20px;font-weight:700;letter-spacing:.5px;background:linear-gradient(90deg,#a78bfa,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}#initial-loader .hint{font-size:13px;opacity:.6}@keyframes lumira-spin{to{transform:rotate(360deg)}}`;
+
+const INITIAL_LOADER_HIDE_JS = `(function(){function hide(){var el=document.getElementById('initial-loader');if(!el)return;el.classList.add('hide');setTimeout(function(){el&&el.parentNode&&el.parentNode.removeChild(el)},400)}if(document.readyState==='complete'){setTimeout(hide,50)}else{window.addEventListener('load',function(){setTimeout(hide,50)})}})();`;
+
 
 function NotFoundComponent() {
   return (
@@ -103,9 +109,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <style dangerouslySetInnerHTML={{ __html: INITIAL_LOADER_CSS }} />
       </head>
       <body>
+        <div id="initial-loader" aria-hidden="true">
+          <div className="ring" />
+          <div className="brand">Lumira</div>
+          <div className="hint">جاري التحميل…</div>
+        </div>
         {children}
+        <script dangerouslySetInnerHTML={{ __html: INITIAL_LOADER_HIDE_JS }} />
         <Scripts />
       </body>
     </html>
@@ -113,6 +126,14 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  useEffect(() => {
+    const el = document.getElementById("initial-loader");
+    if (!el) return;
+    el.classList.add("hide");
+    const t = setTimeout(() => el.parentNode?.removeChild(el), 400);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <>
       <Outlet />
@@ -120,3 +141,4 @@ function RootComponent() {
     </>
   );
 }
+
