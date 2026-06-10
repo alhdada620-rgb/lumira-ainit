@@ -21,8 +21,11 @@ interface PiAuthCtx {
   user: PiAuthUser | null;
   status: PiAuthStatus;
   error: string | null;
+  isDemo: boolean;
   signIn: () => Promise<void>;
 }
+
+const DEMO_USER: PiAuthUser = { uid: "demo-pioneer", username: "Pioneer Demo" };
 
 interface PiAuthResult {
   user: { uid: string; username: string };
