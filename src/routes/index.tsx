@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CameraProvider } from "@/components/lumira/camera-context";
 import { WalletProvider } from "@/components/lumira/wallet-context";
