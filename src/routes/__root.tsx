@@ -63,13 +63,31 @@ export const Route = createRootRoute({
       {
         children: `
           window.addEventListener('load', function () {
+            function hideLoader(){
+              var el=document.getElementById('initial-loader');
+              if(!el)return;
+              el.classList.add('hide');
+              setTimeout(function(){el&&el.parentNode&&el.parentNode.removeChild(el)},400);
+            }
+            // Safety timeout: never block UI on Pi SDK
+            var piTimer = setTimeout(function(){
+              console.warn('Pi SDK init timed out (5s) — entering demo mode');
+              window.__piDemoMode = true;
+              hideLoader();
+            }, 5000);
             try {
               if (window.Pi && !window.__piInitDone) {
                 window.__piInitDone = true;
-                window.Pi.init({ version: "1.5", sandbox: true });
-                console.log("Pi SDK Initialized");
+                Promise.resolve(window.Pi.init({ version: "2.0", sandbox: true }))
+                  .then(function(){ clearTimeout(piTimer); console.log("Pi SDK Initialized"); })
+                  .catch(function(e){ clearTimeout(piTimer); console.warn("Pi SDK init failed:", e); window.__piDemoMode = true; hideLoader(); });
+              } else if (!window.Pi) {
+                // SDK script not loaded yet — timer will handle fallback
+              } else {
+                clearTimeout(piTimer);
               }
-            } catch (e) { console.warn("Pi SDK init failed:", e); }
+            } catch (e) { clearTimeout(piTimer); console.warn("Pi SDK init failed:", e); window.__piDemoMode = true; hideLoader(); }
+
 
             if ('serviceWorker' in navigator) {
               var swUrl = '/sw.js?v=v3';
