@@ -69,7 +69,18 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<PiAuthUser | null>(null);
   const [status, setStatus] = useState<PiAuthStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [isDemo, setIsDemo] = useState(false);
   const inFlight = useRef(false);
+  const settled = useRef(false);
+
+  const enterDemo = useCallback((reason: string) => {
+    if (settled.current) return;
+    settled.current = true;
+    console.warn("[Pi] entering demo mode:", reason);
+    setUser(DEMO_USER);
+    setIsDemo(true);
+    setStatus("authenticated");
+  }, []);
 
   const signIn = useCallback(async () => {
     if (inFlight.current) return;
@@ -77,9 +88,8 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
     setError(null);
     try {
       setStatus("initializing");
-      const Pi = await waitForPi();
+      const Pi = await waitForPi(4000);
 
-      // Treat Pi.init(...) as a Promise — await it fully before authenticate().
       const sandbox = (import.meta.env.VITE_PI_SANDBOX ?? "true") !== "false";
       await Promise.resolve(Pi.init({ version: "2.0", sandbox }));
 
@@ -89,22 +99,30 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
       setStatus("verifying");
       const result = await verifyPiAccessToken({ data: { accessToken: auth.accessToken } });
 
+      if (settled.current) return;
+      settled.current = true;
       setUser({ uid: result.uid, username: result.username });
+      setIsDemo(false);
       setStatus("authenticated");
     } catch (e) {
       setError((e as Error).message);
-      setStatus("error");
+      enterDemo((e as Error).message);
     } finally {
       inFlight.current = false;
     }
-  }, []);
+  }, [enterDemo]);
 
-  // Auto-trigger Pi authentication on app load.
+  // Auto-trigger Pi authentication on app load, with hard 5s fallback to demo.
   useEffect(() => {
     void signIn();
-  }, [signIn]);
+    const t = window.setTimeout(() => enterDemo("5s timeout"), 5000);
+    return () => window.clearTimeout(t);
+  }, [signIn, enterDemo]);
 
-  const value = useMemo<PiAuthCtx>(() => ({ user, status, error, signIn }), [user, status, error, signIn]);
+  const value = useMemo<PiAuthCtx>(
+    () => ({ user, status, error, isDemo, signIn }),
+    [user, status, error, isDemo, signIn],
+  );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
