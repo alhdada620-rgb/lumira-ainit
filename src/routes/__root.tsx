@@ -62,59 +62,44 @@ export const Route = createRootRoute({
       { src: "https://sdk.minepi.com/pi-sdk.js" },
       {
         children: `
-          window.addEventListener('load', function () {
+          (function(){
             function hideLoader(){
               var el=document.getElementById('initial-loader');
               if(!el)return;
               el.classList.add('hide');
               setTimeout(function(){el&&el.parentNode&&el.parentNode.removeChild(el)},400);
             }
-            // Safety timeout: never block UI on Pi SDK
-            var piTimer = setTimeout(function(){
-              console.warn('Pi SDK init timed out (5s) — entering demo mode');
-              window.__piDemoMode = true;
-              hideLoader();
-            }, 5000);
+            // Hide as early as possible — don't wait on Pi SDK or external scripts
+            if(document.readyState!=='loading'){ setTimeout(hideLoader,50); }
+            else { document.addEventListener('DOMContentLoaded',function(){ setTimeout(hideLoader,50); }); }
+            // Absolute safety net
+            setTimeout(hideLoader, 3000);
+
+            // Pi SDK init — fire-and-forget, never block UI
             try {
               if (window.Pi && !window.__piInitDone) {
                 window.__piInitDone = true;
                 Promise.resolve(window.Pi.init({ version: "2.0", sandbox: true }))
-                  .then(function(){ clearTimeout(piTimer); console.log("Pi SDK Initialized"); })
-                  .catch(function(e){ clearTimeout(piTimer); console.warn("Pi SDK init failed:", e); window.__piDemoMode = true; hideLoader(); });
-              } else if (!window.Pi) {
-                // SDK script not loaded yet — timer will handle fallback
-              } else {
-                clearTimeout(piTimer);
+                  .then(function(){ console.log("Pi SDK Initialized"); })
+                  .catch(function(e){ console.warn("Pi SDK init failed:", e); });
               }
-            } catch (e) { clearTimeout(piTimer); console.warn("Pi SDK init failed:", e); window.__piDemoMode = true; hideLoader(); }
+            } catch (e) { console.warn("Pi SDK init threw:", e); }
 
-
+            // Service worker: register but DO NOT auto-reload on controllerchange
+            // (that caused an infinite reload loop in Pi Browser and kept the
+            // loader visible forever).
             if ('serviceWorker' in navigator) {
-              var swUrl = '/sw.js?v=v3';
-              navigator.serviceWorker.register(swUrl).then(function (reg) {
-                reg.update().catch(function () {});
-                if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-                reg.addEventListener('updatefound', function () {
-                  var nw = reg.installing;
-                  if (!nw) return;
-                  nw.addEventListener('statechange', function () {
-                    if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-                      nw.postMessage({ type: 'SKIP_WAITING' });
-                    }
-                  });
-                });
-              }).catch(function (err) { console.warn('SW registration failed:', err); });
-
-              var reloaded = false;
-              navigator.serviceWorker.addEventListener('controllerchange', function () {
-                if (reloaded) return;
-                reloaded = true;
-                window.location.reload();
+              window.addEventListener('load', function(){
+                navigator.serviceWorker.register('/sw.js?v=v3').then(function (reg) {
+                  reg.update().catch(function () {});
+                  if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                }).catch(function (err) { console.warn('SW registration failed:', err); });
               });
             }
-          });
+          })();
         `,
       },
+
     ],
   }),
   shellComponent: RootShell,
