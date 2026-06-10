@@ -93,7 +93,7 @@ export function LandingGate({ onContinue }: Props) {
           <span>{isAr ? "افتح المرآة" : "Open Mirror"}</span>
           <ArrowRight className={`h-4 w-4 transition group-hover:translate-x-1 ${isAr ? "rotate-180" : ""}`} />
         </button>
-        <PiSignInButton />
+        
       </div>
     </main>
   );
