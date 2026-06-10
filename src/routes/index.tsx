@@ -55,6 +55,12 @@ function Shell() {
   const [stage, setStage] = useState<"landing" | "mirror">("landing");
   const { t, lang } = useT();
   const isAr = lang === "ar";
+  const { user } = usePiAuth();
+
+  // Auto-enter dashboard once Pi auth resolves (real user OR demo fallback after timeout).
+  useEffect(() => {
+    if (user && stage === "landing") setStage("mirror");
+  }, [user, stage]);
 
   return (
     <>
