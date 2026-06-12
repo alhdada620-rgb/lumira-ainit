@@ -6,7 +6,7 @@ Lumira AI is a next-generation personal fashion assistant that helps you discove
 
 - 🌐 **Live Preview**: [https://id-preview--378402c9-4d38-4241-bdc3-852ddac39235.lovable.app](https://id-preview--378402c9-4d38-4241-bdc3-852ddac39235.lovable.app)
 - 🚀 **Published Site**: [https://lumira-ai.lovable.app](https://lumira-ai.lovable.app)
-- 🐙 **Repository**: [https://github.com/alhdada620-rgb/lumira-ai](https://github.com/alhdada620-rgb/lumira-ai)
+- 🐙 **Repository**: [https://github.com/alhdada620-rgb/lumira-ainit](https://github.com/alhdada620-rgb/lumira-ainit)
 
 ## Features
 
@@ -30,8 +30,8 @@ Lumira AI is a next-generation personal fashion assistant that helps you discove
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/alhdada620-rgb/lumira-ai.git
-   cd lumira-ai
+   git clone https://github.com/alhdada620-rgb/lumira-ainit.git
+   cd lumira-ainit
    ```
 
 2. Install dependencies:
