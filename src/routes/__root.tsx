@@ -48,6 +48,7 @@ export const Route = createRootRoute({
       { name: "twitter:description", content: "Lumira Health & Elegance is a smart mirror dashboard offering AI-driven beauty and health insights." },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/qBiC3UTMEGMU7NGx1VCYS5AMicw1/social-images/social-1776735981793-IMG_٢٠٢٦٠٤١٧_١١٥٧١٥.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/qBiC3UTMEGMU7NGx1VCYS5AMicw1/social-images/social-1776735981793-IMG_٢٠٢٦٠٤١٧_١١٥٧١٥.webp" },
+      { name: "google-site-verification", content: "CDY6LwXaA3Ko-VYYAo3m2KqHrixmx9NLatNKd4_nP_A" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
