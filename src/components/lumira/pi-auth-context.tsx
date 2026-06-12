@@ -112,12 +112,14 @@ export function PiAuthProvider({ children }: { children: ReactNode }) {
     }
   }, [enterDemo]);
 
-  // Auto-trigger Pi authentication on app load, with hard 5s fallback to demo.
+  // IMPORTANT: do NOT auto-trigger Pi.authenticate on mount — each call
+  // consumes Pi Network credit. Enter demo immediately; the user explicitly
+  // clicks "Sign in with Pi" (PiSignInButton) to spend credit intentionally.
   useEffect(() => {
-    void signIn();
-    const t = window.setTimeout(() => enterDemo("5s timeout"), 5000);
+    const t = window.setTimeout(() => enterDemo("no-auto-auth"), 300);
     return () => window.clearTimeout(t);
-  }, [signIn, enterDemo]);
+  }, [enterDemo]);
+
 
   const value = useMemo<PiAuthCtx>(
     () => ({ user, status, error, isDemo, signIn }),
