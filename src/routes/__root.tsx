@@ -64,6 +64,27 @@ export const Route = createRootRoute({
       {
         children: `
           (function(){
+            // TEMP DEBUG: surface any JS error on screen (for Pi Browser diagnosis)
+            function showError(msg){
+              try{
+                var box=document.getElementById('lumira-err-box');
+                if(!box){
+                  box=document.createElement('div');
+                  box.id='lumira-err-box';
+                  box.style.cssText='position:fixed;top:0;left:0;right:0;z-index:2147483647;background:rgba(180,0,0,.92);color:#fff;font:12px/1.5 monospace;padding:10px 14px;max-height:45vh;overflow:auto;direction:ltr;text-align:left;white-space:pre-wrap;word-break:break-all';
+                  document.documentElement.appendChild(box);
+                }
+                box.textContent+=(box.textContent?'\\n---\\n':'')+msg;
+              }catch(e){}
+            }
+            window.onerror=function(message,source,lineno,colno,error){
+              showError('JS Error: '+message+'\\n'+(source||'')+':'+lineno+':'+colno+(error&&error.stack?'\\n'+error.stack:''));
+            };
+            window.addEventListener('unhandledrejection',function(ev){
+              var r=ev&&ev.reason;
+              showError('Unhandled rejection: '+(r&&r.stack?r.stack:String(r)));
+            });
+
             function hideLoader(){
               var el=document.getElementById('initial-loader');
               if(!el)return;
