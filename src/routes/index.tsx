@@ -23,6 +23,7 @@ import bgImg from "@/assets/lumira-bg.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Lumira · Health & Elegance Smart Mirror" },
