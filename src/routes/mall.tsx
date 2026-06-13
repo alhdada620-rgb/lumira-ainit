@@ -36,6 +36,7 @@ const ITEMS: Item[] = [
 
 export const Route = createFileRoute("/mall")({
   component: MallShell,
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Lumira Mall — Shop with Amazon & Pi" },
