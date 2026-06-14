@@ -85,43 +85,48 @@ export function PiPayWallet() {
       await window.Pi.authenticate(["username", "payments"], handleIncomplete);
 
       setState("creating");
-      window.Pi.createPayment(
-        {
-          amount: 0.01,
-          memo: "Lumira test transaction (Step 10)",
-          metadata: { kind: "lumira_test", ts: Date.now() },
-          identifier: `lumira-${Date.now()}`,
-        },
-        {
-          onReadyForServerApproval: async (paymentId) => {
-            try {
-              await approvePiPayment({ data: { paymentId } });
-              setState("approved");
-            } catch (e) {
-              console.error("approvePiPayment failed", e);
-              setErrorMsg(isAr ? "تعذّر معالجة الدفع. حاول مرة أخرى." : "Payment could not be processed. Please try again.");
+      // Defer createPayment off the main React thread so the Pi wallet
+      // window appears instantly without being blocked by render work.
+      setTimeout(() => {
+        if (!window.Pi) return;
+        window.Pi.createPayment(
+          {
+            amount: 0.01,
+            memo: "Lumira test transaction (Step 10)",
+            metadata: { kind: "lumira_test", ts: Date.now() },
+            identifier: `lumira-${Date.now()}`,
+          },
+          {
+            onReadyForServerApproval: async (paymentId) => {
+              try {
+                await approvePiPayment({ data: { paymentId } });
+                setState("approved");
+              } catch (e) {
+                console.error("approvePiPayment failed", e);
+                setErrorMsg(isAr ? "تعذّر معالجة الدفع. حاول مرة أخرى." : "Payment could not be processed. Please try again.");
+                setState("error");
+              }
+            },
+            onReadyForServerCompletion: async (paymentId, txid) => {
+              try {
+                await completePiPayment({ data: { paymentId, txid } });
+                setState("completed");
+                setTimeout(() => setState("idle"), 2200);
+              } catch (e) {
+                console.error("completePiPayment failed", e);
+                setErrorMsg(isAr ? "تعذّر إكمال الدفع. حاول مرة أخرى." : "Payment could not be completed. Please try again.");
+                setState("error");
+              }
+            },
+            onCancel: () => { setState("idle"); },
+            onError: (err) => {
+              console.error("Pi createPayment error", err);
+              setErrorMsg(isAr ? "حدث خطأ في الدفع. حاول مرة أخرى." : "A payment error occurred. Please try again.");
               setState("error");
-            }
+            },
           },
-          onReadyForServerCompletion: async (paymentId, txid) => {
-            try {
-              await completePiPayment({ data: { paymentId, txid } });
-              setState("completed");
-              setTimeout(() => setState("idle"), 2200);
-            } catch (e) {
-              console.error("completePiPayment failed", e);
-              setErrorMsg(isAr ? "تعذّر إكمال الدفع. حاول مرة أخرى." : "Payment could not be completed. Please try again.");
-              setState("error");
-            }
-          },
-          onCancel: () => { setState("idle"); },
-          onError: (err) => {
-            console.error("Pi createPayment error", err);
-            setErrorMsg(isAr ? "حدث خطأ في الدفع. حاول مرة أخرى." : "A payment error occurred. Please try again.");
-            setState("error");
-          },
-        },
-      );
+        );
+      }, 50);
     } catch (e) {
       console.error("payWithPi failed", e);
       setErrorMsg(isAr ? "تعذّر بدء عملية الدفع." : "Could not start the payment.");
