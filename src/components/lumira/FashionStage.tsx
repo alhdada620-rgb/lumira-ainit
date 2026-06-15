@@ -118,8 +118,12 @@ export function FashionStage() {
         </div>
 
         {/* مسرح العرض الطولي 9:16 */}
-        <div ref={stageRef} className="relative aspect-[9/16] w-full rounded-[2.5rem] overflow-hidden border border-accent/30 bg-background shadow-2xl">
-          <img src={CLOSET_BACKDROP} className="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm" />
+        <div
+          ref={stageRef}
+          suppressHydrationWarning
+          className="relative aspect-[9/16] w-full rounded-[2.5rem] overflow-hidden border border-accent/30 bg-background shadow-2xl"
+        >
+          <img suppressHydrationWarning src={CLOSET_BACKDROP} alt="Lumira virtual closet" className="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm" />
           
           {mode === "live" && (
             <video ref={videoRef} playsInline muted className="absolute inset-0 h-full w-full object-cover scale-x-[-1]" />
@@ -128,7 +132,9 @@ export function FashionStage() {
           {mode === "avatar" && (
             <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500" style={{ transform: rotated ? "rotateY(45deg)" : "none" }}>
               <img 
+                suppressHydrationWarning
                 src={profile.gender === "female" ? HUMAN_FEMALE : HUMAN_MALE} 
+                alt={profile.gender === "female" ? "Female mannequin" : "Male mannequin"}
                 className="h-[90%] object-contain drop-shadow-2xl" 
               />
             </div>
@@ -136,7 +142,7 @@ export function FashionStage() {
 
           {overlay && (
             <div className="absolute top-[22%] left-1/2 -translate-x-1/2 w-[75%] z-30 animate-in fade-in zoom-in duration-300">
-               <img src={overlay.imageUrl} className="w-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
+               <img suppressHydrationWarning src={overlay.imageUrl} alt={overlay.name} className="w-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
             </div>
           )}
 
@@ -172,7 +178,7 @@ export function FashionStage() {
           <div className="grid grid-cols-2 gap-2">
             {brand.items.map(item => (
               <button key={item.id} onClick={() => setOverlay(item)} className="p-2 bg-white/5 border border-white/10 rounded-xl hover:border-accent/50 transition-all">
-                <img src={item.imageUrl} className="h-20 w-full object-contain mb-2" />
+                <img suppressHydrationWarning src={item.imageUrl} alt={item.name} className="h-20 w-full object-contain mb-2" />
                 <p className="text-[9px] font-bold truncate">{item.name}</p>
               </button>
             ))}
