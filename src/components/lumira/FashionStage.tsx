@@ -10,11 +10,14 @@ import { useT } from "./i18n";
 import { useProfile } from "./profile-context";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import CLOSET_BACKDROP from "@/assets/closet-backdrop.jpg";
+import HUMAN_MALE from "@/assets/mannequin-male.png";
+import HUMAN_FEMALE from "@/assets/mannequin-female.png";
+import HM_TEE from "@/assets/garments/hm-tee.png";
+import HM_DENIM from "@/assets/garments/hm-denim.png";
+import NIKE_HOODIE from "@/assets/garments/nike-hoodie.png";
+import ZARA_BLAZER from "@/assets/garments/zara-blazer.png";
 
-// روابط CDN عالمية لضمان عمل الـ Build فوراً لمشروع إسلام علي
-const CLOSET_BACKDROP = "https://images.unsplash.com/photo-1558997519-83ec9902981c?q=80&w=1000&auto=format&fit=crop";
-const HUMAN_MALE = "https://i.ibb.co/vzYgT9N/male-model.png";
-const HUMAN_FEMALE = "https://i.ibb.co/0X8XpYp/female-model.png";
 const AMAZON_LOGO = "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg";
 
 type Category = "top" | "bottom" | "dress" | "accessory" | "lips" | "cheeks" | "eyes";
@@ -46,22 +49,22 @@ const BRANDS: Brand[] = [
     id: "hm", name: "H&M", outfit: "Casual Crew",
     tint: "linear-gradient(135deg, oklch(0.55 0.2 25 / 0.55), oklch(0.4 0.15 25 / 0.4))",
     items: [
-      { id: "hm-1", name: "Oversized Tee", tag: "Everyday", category: "top", color: "#e8d9b8", imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400", query: "h&m oversized tee", gradient: "linear-gradient(135deg, oklch(0.9 0.02 90 / 0.5), oklch(0.78 0.04 80 / 0.4))" },
-      { id: "hm-2", name: "Denim Jacket", tag: "Layering", category: "top", color: "#3a5a82", imageUrl: "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400", query: "h&m denim jacket", gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
+      { id: "hm-1", name: "Oversized Tee", tag: "Everyday", category: "top", color: "#e8d9b8", imageUrl: HM_TEE, query: "h&m oversized tee", gradient: "linear-gradient(135deg, oklch(0.9 0.02 90 / 0.5), oklch(0.78 0.04 80 / 0.4))" },
+      { id: "hm-2", name: "Denim Jacket", tag: "Layering", category: "top", color: "#3a5a82", imageUrl: HM_DENIM, query: "h&m denim jacket", gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
     ],
   },
   {
     id: "nike", name: "NIKE", outfit: "Sporty Tech",
     tint: "linear-gradient(135deg, oklch(0.5 0.1 230 / 0.55), oklch(0.3 0.05 230 / 0.45))",
     items: [
-      { id: "nike-1", name: "Tech Hoodie", tag: "Training", category: "top", color: "#1a1f2e", imageUrl: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400", query: "nike tech fleece", gradient: "linear-gradient(135deg, oklch(0.25 0.02 260 / 0.55), oklch(0.4 0.04 260 / 0.45))" },
+      { id: "nike-1", name: "Tech Hoodie", tag: "Training", category: "top", color: "#1a1f2e", imageUrl: NIKE_HOODIE, query: "nike tech fleece", gradient: "linear-gradient(135deg, oklch(0.25 0.02 260 / 0.55), oklch(0.4 0.04 260 / 0.45))" },
     ],
   },
   {
     id: "zara", name: "ZARA", outfit: "Minimalist",
     tint: "linear-gradient(135deg, oklch(0.35 0.04 60 / 0.55), oklch(0.2 0.02 60 / 0.45))",
     items: [
-      { id: "zara-1", name: "Wool Blazer", tag: "Smart", category: "top", color: "#2a2f3d", imageUrl: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", query: "zara wool blazer", gradient: "linear-gradient(135deg, oklch(0.3 0.02 260 / 0.55), oklch(0.5 0.04 260 / 0.45))" },
+      { id: "zara-1", name: "Wool Blazer", tag: "Smart", category: "top", color: "#2a2f3d", imageUrl: ZARA_BLAZER, query: "zara wool blazer", gradient: "linear-gradient(135deg, oklch(0.3 0.02 260 / 0.55), oklch(0.5 0.04 260 / 0.45))" },
     ],
   },
 ];
