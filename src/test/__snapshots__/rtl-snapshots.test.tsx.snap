@@ -58,7 +58,7 @@ exports[`Direction snapshots — LTR (en) > FashionStage matches LTR snapshot 1`
       >
         <img
           class="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm"
-          src="https://images.unsplash.com/photo-1558997519-83ec9902981c?q=80&w=1000&auto=format&fit=crop"
+          src="/src/assets/closet-backdrop.jpg"
         />
         <div
           class="absolute inset-0 flex items-center justify-center transition-transform duration-500"
@@ -66,7 +66,7 @@ exports[`Direction snapshots — LTR (en) > FashionStage matches LTR snapshot 1`
         >
           <img
             class="h-[90%] object-contain drop-shadow-2xl"
-            src="https://i.ibb.co/vzYgT9N/male-model.png"
+            src="/src/assets/mannequin-male.png"
           />
         </div>
         <button
@@ -171,7 +171,7 @@ exports[`Direction snapshots — LTR (en) > FashionStage matches LTR snapshot 1`
           >
             <img
               class="h-20 w-full object-contain mb-2"
-              src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400"
+              src="/src/assets/garments/hm-tee.png"
             />
             <p
               class="text-[9px] font-bold truncate"
@@ -184,7 +184,7 @@ exports[`Direction snapshots — LTR (en) > FashionStage matches LTR snapshot 1`
           >
             <img
               class="h-20 w-full object-contain mb-2"
-              src="https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400"
+              src="/src/assets/garments/hm-denim.png"
             />
             <p
               class="text-[9px] font-bold truncate"
@@ -1007,7 +1007,7 @@ exports[`Direction snapshots — RTL (ar) > FashionStage matches RTL snapshot 1`
       >
         <img
           class="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm"
-          src="https://images.unsplash.com/photo-1558997519-83ec9902981c?q=80&w=1000&auto=format&fit=crop"
+          src="/src/assets/closet-backdrop.jpg"
         />
         <div
           class="absolute inset-0 flex items-center justify-center transition-transform duration-500"
@@ -1015,7 +1015,7 @@ exports[`Direction snapshots — RTL (ar) > FashionStage matches RTL snapshot 1`
         >
           <img
             class="h-[90%] object-contain drop-shadow-2xl"
-            src="https://i.ibb.co/vzYgT9N/male-model.png"
+            src="/src/assets/mannequin-male.png"
           />
         </div>
         <button
@@ -1120,7 +1120,7 @@ exports[`Direction snapshots — RTL (ar) > FashionStage matches RTL snapshot 1`
           >
             <img
               class="h-20 w-full object-contain mb-2"
-              src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400"
+              src="/src/assets/garments/hm-tee.png"
             />
             <p
               class="text-[9px] font-bold truncate"
@@ -1133,7 +1133,7 @@ exports[`Direction snapshots — RTL (ar) > FashionStage matches RTL snapshot 1`
           >
             <img
               class="h-20 w-full object-contain mb-2"
-              src="https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400"
+              src="/src/assets/garments/hm-denim.png"
             />
             <p
               class="text-[9px] font-bold truncate"
