@@ -9,7 +9,10 @@ export function AvatarMirror() {
   const src = gender === "female" ? HUMAN_FEMALE : HUMAN_MALE;
 
   return (
-    <div className="relative mx-auto flex aspect-[9/16] w-full max-w-[420px] items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-[oklch(0.06_0.01_260)] shadow-[0_0_60px_oklch(0.4_0.1_230_/0.4)]">
+    <div
+      suppressHydrationWarning
+      className="relative mx-auto flex aspect-[9/16] w-full max-w-[420px] items-center justify-center overflow-hidden rounded-[2rem] border border-white/10 bg-[oklch(0.06_0.01_260)] shadow-[0_0_60px_oklch(0.4_0.1_230_/0.4)]"
+    >
       {/* ambient glows */}
       <span className="pointer-events-none absolute -top-20 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full bg-primary/20 blur-3xl" />
       <span className="pointer-events-none absolute bottom-0 left-1/2 h-40 w-72 -translate-x-1/2 rounded-full bg-accent/15 blur-3xl" />
@@ -19,6 +22,7 @@ export function AvatarMirror() {
 
       {/* avatar — perfectly centered */}
       <img
+        suppressHydrationWarning
         src={src}
         alt="Avatar"
         width={768}

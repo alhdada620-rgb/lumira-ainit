@@ -10,11 +10,14 @@ import { useT } from "./i18n";
 import { useProfile } from "./profile-context";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import CLOSET_BACKDROP from "@/assets/closet-backdrop.jpg";
+import HUMAN_MALE from "@/assets/mannequin-male.png";
+import HUMAN_FEMALE from "@/assets/mannequin-female.png";
+import HM_TEE from "@/assets/garments/hm-tee.png";
+import HM_DENIM from "@/assets/garments/hm-denim.png";
+import NIKE_HOODIE from "@/assets/garments/nike-hoodie.png";
+import ZARA_BLAZER from "@/assets/garments/zara-blazer.png";
 
-// روابط CDN عالمية لضمان عمل الـ Build فوراً لمشروع إسلام علي
-const CLOSET_BACKDROP = "https://images.unsplash.com/photo-1558997519-83ec9902981c?q=80&w=1000&auto=format&fit=crop";
-const HUMAN_MALE = "https://i.ibb.co/vzYgT9N/male-model.png";
-const HUMAN_FEMALE = "https://i.ibb.co/0X8XpYp/female-model.png";
 const AMAZON_LOGO = "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg";
 
 type Category = "top" | "bottom" | "dress" | "accessory" | "lips" | "cheeks" | "eyes";
@@ -46,22 +49,22 @@ const BRANDS: Brand[] = [
     id: "hm", name: "H&M", outfit: "Casual Crew",
     tint: "linear-gradient(135deg, oklch(0.55 0.2 25 / 0.55), oklch(0.4 0.15 25 / 0.4))",
     items: [
-      { id: "hm-1", name: "Oversized Tee", tag: "Everyday", category: "top", color: "#e8d9b8", imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400", query: "h&m oversized tee", gradient: "linear-gradient(135deg, oklch(0.9 0.02 90 / 0.5), oklch(0.78 0.04 80 / 0.4))" },
-      { id: "hm-2", name: "Denim Jacket", tag: "Layering", category: "top", color: "#3a5a82", imageUrl: "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?w=400", query: "h&m denim jacket", gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
+      { id: "hm-1", name: "Oversized Tee", tag: "Everyday", category: "top", color: "#e8d9b8", imageUrl: HM_TEE, query: "h&m oversized tee", gradient: "linear-gradient(135deg, oklch(0.9 0.02 90 / 0.5), oklch(0.78 0.04 80 / 0.4))" },
+      { id: "hm-2", name: "Denim Jacket", tag: "Layering", category: "top", color: "#3a5a82", imageUrl: HM_DENIM, query: "h&m denim jacket", gradient: "linear-gradient(135deg, oklch(0.45 0.08 240 / 0.5), oklch(0.6 0.1 230 / 0.45))" },
     ],
   },
   {
     id: "nike", name: "NIKE", outfit: "Sporty Tech",
     tint: "linear-gradient(135deg, oklch(0.5 0.1 230 / 0.55), oklch(0.3 0.05 230 / 0.45))",
     items: [
-      { id: "nike-1", name: "Tech Hoodie", tag: "Training", category: "top", color: "#1a1f2e", imageUrl: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400", query: "nike tech fleece", gradient: "linear-gradient(135deg, oklch(0.25 0.02 260 / 0.55), oklch(0.4 0.04 260 / 0.45))" },
+      { id: "nike-1", name: "Tech Hoodie", tag: "Training", category: "top", color: "#1a1f2e", imageUrl: NIKE_HOODIE, query: "nike tech fleece", gradient: "linear-gradient(135deg, oklch(0.25 0.02 260 / 0.55), oklch(0.4 0.04 260 / 0.45))" },
     ],
   },
   {
     id: "zara", name: "ZARA", outfit: "Minimalist",
     tint: "linear-gradient(135deg, oklch(0.35 0.04 60 / 0.55), oklch(0.2 0.02 60 / 0.45))",
     items: [
-      { id: "zara-1", name: "Wool Blazer", tag: "Smart", category: "top", color: "#2a2f3d", imageUrl: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400", query: "zara wool blazer", gradient: "linear-gradient(135deg, oklch(0.3 0.02 260 / 0.55), oklch(0.5 0.04 260 / 0.45))" },
+      { id: "zara-1", name: "Wool Blazer", tag: "Smart", category: "top", color: "#2a2f3d", imageUrl: ZARA_BLAZER, query: "zara wool blazer", gradient: "linear-gradient(135deg, oklch(0.3 0.02 260 / 0.55), oklch(0.5 0.04 260 / 0.45))" },
     ],
   },
 ];
@@ -115,8 +118,12 @@ export function FashionStage() {
         </div>
 
         {/* مسرح العرض الطولي 9:16 */}
-        <div ref={stageRef} className="relative aspect-[9/16] w-full rounded-[2.5rem] overflow-hidden border border-accent/30 bg-background shadow-2xl">
-          <img src={CLOSET_BACKDROP} className="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm" />
+        <div
+          ref={stageRef}
+          suppressHydrationWarning
+          className="relative aspect-[9/16] w-full rounded-[2.5rem] overflow-hidden border border-accent/30 bg-background shadow-2xl"
+        >
+          <img suppressHydrationWarning src={CLOSET_BACKDROP} alt="Lumira virtual closet" className="absolute inset-0 h-full w-full object-cover opacity-50 blur-sm" />
           
           {mode === "live" && (
             <video ref={videoRef} playsInline muted className="absolute inset-0 h-full w-full object-cover scale-x-[-1]" />
@@ -125,7 +132,9 @@ export function FashionStage() {
           {mode === "avatar" && (
             <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500" style={{ transform: rotated ? "rotateY(45deg)" : "none" }}>
               <img 
+                suppressHydrationWarning
                 src={profile.gender === "female" ? HUMAN_FEMALE : HUMAN_MALE} 
+                alt={profile.gender === "female" ? "Female mannequin" : "Male mannequin"}
                 className="h-[90%] object-contain drop-shadow-2xl" 
               />
             </div>
@@ -133,7 +142,7 @@ export function FashionStage() {
 
           {overlay && (
             <div className="absolute top-[22%] left-1/2 -translate-x-1/2 w-[75%] z-30 animate-in fade-in zoom-in duration-300">
-               <img src={overlay.imageUrl} className="w-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
+               <img suppressHydrationWarning src={overlay.imageUrl} alt={overlay.name} className="w-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
             </div>
           )}
 
@@ -169,7 +178,7 @@ export function FashionStage() {
           <div className="grid grid-cols-2 gap-2">
             {brand.items.map(item => (
               <button key={item.id} onClick={() => setOverlay(item)} className="p-2 bg-white/5 border border-white/10 rounded-xl hover:border-accent/50 transition-all">
-                <img src={item.imageUrl} className="h-20 w-full object-contain mb-2" />
+                <img suppressHydrationWarning src={item.imageUrl} alt={item.name} className="h-20 w-full object-contain mb-2" />
                 <p className="text-[9px] font-bold truncate">{item.name}</p>
               </button>
             ))}

@@ -187,8 +187,12 @@ export function VirtualTryOn() {
   return (
     <GlassPanel title={t("tryon.title")} icon={<Shirt className="h-3.5 w-3.5" />} accent>
       <div className="space-y-4">
-        <div className="relative h-44 overflow-hidden rounded-lg border border-accent/20">
+        <div
+          suppressHydrationWarning
+          className="relative h-44 overflow-hidden rounded-lg border border-accent/20"
+        >
           <video
+            suppressHydrationWarning
             ref={videoRef}
             playsInline
             muted
@@ -220,7 +224,7 @@ export function VirtualTryOn() {
           <div className="absolute inset-0 hud-grid opacity-40" />
 
           {!active && (
-            <svg viewBox="0 0 100 120" className="absolute inset-0 h-full w-full text-foreground/70">
+            <svg suppressHydrationWarning viewBox="0 0 100 120" className="absolute inset-0 h-full w-full text-foreground/70">
               <circle cx="50" cy="20" r="10" fill="currentColor" opacity="0.5" />
               <path d="M30,40 L70,40 L75,90 L60,90 L55,55 L45,55 L40,90 L25,90 Z" fill="currentColor" opacity="0.5" />
             </svg>
