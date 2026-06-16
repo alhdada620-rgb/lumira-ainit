@@ -50,17 +50,7 @@ function useKycTrial(eligible: boolean) {
   return daysLeft;
 }
 
-interface PiSDK {
-  init(o: { version: "2.0"; sandbox?: boolean }): unknown;
-  authenticate(s: string[], cb: (p: { identifier: string; transaction?: { txid: string } }) => void): Promise<{ accessToken: string; user: { uid: string; username: string } }>;
-  createPayment(p: { amount: number; memo: string; metadata: Record<string, unknown>; identifier: string }, cb: {
-    onReadyForServerApproval: (id: string) => void;
-    onReadyForServerCompletion: (id: string, txid: string) => void;
-    onCancel: (id: string) => void;
-    onError: (err: Error) => void;
-  }): void;
-}
-declare global { interface Window { Pi?: PiSDK } }
+// Pi SDK Window.Pi type is declared globally in PiPayWallet.tsx; reuse it here.
 
 type PayState = "idle" | "auth" | "creating" | "approved" | "completed" | "error";
 
